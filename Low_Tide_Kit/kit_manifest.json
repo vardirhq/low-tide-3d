@@ -1,0 +1,1991 @@
+{
+  "version": "0.1",
+  "units": "meters",
+  "source_axes": "X right, Y forward, Z up",
+  "gltf_axes": "X right, Y up, -Z forward",
+  "source_to_gltf": "(x,y,z) -> (x,z,-y)",
+  "grid_m": 1,
+  "prop_snap_m": 0.25,
+  "deck_height_m": 1.25,
+  "deck_size_m": [
+    3,
+    6
+  ],
+  "assets": [
+    {
+      "id": "floor_1m",
+      "footprint_m": [
+        1,
+        1
+      ],
+      "description": "Deck top at local Z=0; cell pivot at center of walking surface.",
+      "sockets": [
+        {
+          "name": "edge_E",
+          "position": [
+            0.5,
+            0,
+            -0.12
+          ],
+          "normal": [
+            1,
+            0,
+            0
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        },
+        {
+          "name": "edge_W",
+          "position": [
+            -0.5,
+            0,
+            -0.12
+          ],
+          "normal": [
+            -1,
+            0,
+            0
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        },
+        {
+          "name": "edge_N",
+          "position": [
+            0,
+            0.5,
+            -0.12
+          ],
+          "normal": [
+            0,
+            1,
+            0
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        },
+        {
+          "name": "edge_S",
+          "position": [
+            0,
+            -0.5,
+            -0.12
+          ],
+          "normal": [
+            0,
+            -1,
+            0
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        }
+      ]
+    },
+    {
+      "id": "wall_low_1m",
+      "footprint_m": [
+        1,
+        0.12
+      ],
+      "description": "Lower wall; local +Y is exterior; endpoints X +/-0.5.",
+      "sockets": [
+        {
+          "name": "equipment",
+          "position": [
+            0,
+            0.105,
+            0.65
+          ],
+          "normal": [
+            0,
+            1,
+            0
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        }
+      ]
+    },
+    {
+      "id": "wall_upper_1m",
+      "footprint_m": [
+        1,
+        0.12
+      ],
+      "description": "Removable upper wall, pivot remains at deck level. Full height 2.2 m.",
+      "sockets": []
+    },
+    {
+      "id": "window_upper_1m",
+      "footprint_m": [
+        1,
+        0.12
+      ],
+      "description": "Open window aperture, no transparent sorting dependency.",
+      "sockets": []
+    },
+    {
+      "id": "corner_post",
+      "footprint_m": [
+        0.1,
+        0.1
+      ],
+      "description": "Shared junction post fills 0.1 m gap between adjacent wall spans.",
+      "sockets": []
+    },
+    {
+      "id": "corner_upper",
+      "footprint_m": [
+        0.1,
+        0.1
+      ],
+      "description": "Removable upper portion of shared corner/junction post.",
+      "sockets": []
+    },
+    {
+      "id": "doorway_1m",
+      "footprint_m": [
+        1,
+        0.18
+      ],
+      "description": "0.82 m clear doorway, 2.05 m clear headroom; no threshold collider.",
+      "sockets": []
+    },
+    {
+      "id": "roof_1m",
+      "footprint_m": [
+        1,
+        1
+      ],
+      "description": "Removable roof tile; pivot on deck; underside at 2.22 m.",
+      "sockets": []
+    },
+    {
+      "id": "track_bogie_3m",
+      "footprint_m": [
+        0.72,
+        3
+      ],
+      "description": "Self-contained 3 m tracked bogie; pivot at ground beneath center. Wheel axles local X.",
+      "sockets": [
+        {
+          "name": "chassis",
+          "position": [
+            0,
+            0,
+            1.1
+          ],
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        }
+      ]
+    },
+    {
+      "id": "helm",
+      "footprint_m": [
+        1,
+        0.75
+      ],
+      "description": "Console front faces local +Y; operator stands at -Y.",
+      "sockets": [
+        {
+          "name": "operator",
+          "position": [
+            0,
+            -0.7,
+            0
+          ],
+          "normal": [
+            0,
+            1,
+            0
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        }
+      ]
+    },
+    {
+      "id": "engine",
+      "footprint_m": [
+        1,
+        1.5
+      ],
+      "description": "Engine skid with exposed cylinders, exhaust and removable service space.",
+      "sockets": []
+    },
+    {
+      "id": "bed",
+      "footprint_m": [
+        0.85,
+        2
+      ],
+      "description": "Single bed; feet at -Y, head at +Y.",
+      "sockets": []
+    },
+    {
+      "id": "workbench",
+      "footprint_m": [
+        1.35,
+        0.6
+      ],
+      "description": "Bench front faces -Y.",
+      "sockets": []
+    },
+    {
+      "id": "kitchen",
+      "footprint_m": [
+        1.25,
+        0.55
+      ],
+      "description": "Compact cabinet, sink and single burner; front faces -Y.",
+      "sockets": []
+    },
+    {
+      "id": "crate",
+      "footprint_m": [
+        0.5,
+        0.5
+      ],
+      "description": "Stackable cargo crate, bottom-center pivot.",
+      "sockets": []
+    },
+    {
+      "id": "stool",
+      "footprint_m": [
+        0.45,
+        0.45
+      ],
+      "description": "Small helm stool.",
+      "sockets": []
+    },
+    {
+      "id": "rug",
+      "footprint_m": [
+        1,
+        1.5
+      ],
+      "description": "Thin woven rug; decorative, not collision.",
+      "sockets": []
+    },
+    {
+      "id": "tank",
+      "footprint_m": [
+        0.65,
+        1
+      ],
+      "description": "Exterior horizontal tank; pivot is mounting base.",
+      "sockets": [
+        {
+          "name": "mount",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1
+          ],
+          "standard": "LT_mount_025",
+          "load_rating": "prototype_unrated"
+        }
+      ]
+    },
+    {
+      "id": "lamp",
+      "footprint_m": [
+        0.2,
+        0.25
+      ],
+      "description": "Warm wall lamp, back toward +Y.",
+      "sockets": []
+    },
+    {
+      "id": "interior_partition_1m",
+      "footprint_m": [
+        1,
+        0.1
+      ],
+      "description": "Low engine-room bulkhead; distinct from exterior panels.",
+      "sockets": []
+    },
+    {
+      "id": "vent",
+      "footprint_m": [
+        0.5,
+        0.16
+      ],
+      "description": "Bolt-on exterior vent; back at local Y=0, faces +Y.",
+      "sockets": []
+    },
+    {
+      "id": "antenna",
+      "footprint_m": [
+        0.3,
+        0.3
+      ],
+      "description": "Socket accessory; bottom pivot.",
+      "sockets": []
+    },
+    {
+      "id": "exhaust_stack",
+      "footprint_m": [
+        0.55,
+        0.22
+      ],
+      "description": "External engine exhaust continuation; inlet pivot; local +X outward.",
+      "sockets": []
+    },
+    {
+      "id": "ramp",
+      "footprint_m": [
+        0.82,
+        2.75
+      ],
+      "description": "Hinge pivot at top; extends local -Y 2.75 m, drops 1.25 m. 24.4 degree slope.",
+      "sockets": []
+    }
+  ],
+  "assembly": [
+    {
+      "name": "floor_1m__000",
+      "asset": "floor_1m",
+      "position": [
+        -1,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__001",
+      "asset": "floor_1m",
+      "position": [
+        -1,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__002",
+      "asset": "floor_1m",
+      "position": [
+        -1,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__003",
+      "asset": "floor_1m",
+      "position": [
+        -1,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__004",
+      "asset": "floor_1m",
+      "position": [
+        -1,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__005",
+      "asset": "floor_1m",
+      "position": [
+        -1,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__006",
+      "asset": "floor_1m",
+      "position": [
+        0,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__007",
+      "asset": "floor_1m",
+      "position": [
+        0,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__008",
+      "asset": "floor_1m",
+      "position": [
+        0,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__009",
+      "asset": "floor_1m",
+      "position": [
+        0,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__010",
+      "asset": "floor_1m",
+      "position": [
+        0,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__011",
+      "asset": "floor_1m",
+      "position": [
+        0,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__012",
+      "asset": "floor_1m",
+      "position": [
+        1,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__013",
+      "asset": "floor_1m",
+      "position": [
+        1,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__014",
+      "asset": "floor_1m",
+      "position": [
+        1,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__015",
+      "asset": "floor_1m",
+      "position": [
+        1,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__016",
+      "asset": "floor_1m",
+      "position": [
+        1,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "floor_1m__017",
+      "asset": "floor_1m",
+      "position": [
+        1,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "track_bogie_3m__018",
+      "asset": "track_bogie_3m",
+      "position": [
+        -1.85,
+        -1.5,
+        0
+      ],
+      "yaw_degrees": 0,
+      "group": "running_gear"
+    },
+    {
+      "name": "track_bogie_3m__019",
+      "asset": "track_bogie_3m",
+      "position": [
+        -1.85,
+        1.5,
+        0
+      ],
+      "yaw_degrees": 0,
+      "group": "running_gear"
+    },
+    {
+      "name": "track_bogie_3m__020",
+      "asset": "track_bogie_3m",
+      "position": [
+        1.85,
+        -1.5,
+        0
+      ],
+      "yaw_degrees": 0,
+      "group": "running_gear"
+    },
+    {
+      "name": "track_bogie_3m__021",
+      "asset": "track_bogie_3m",
+      "position": [
+        1.85,
+        1.5,
+        0
+      ],
+      "yaw_degrees": 0,
+      "group": "running_gear"
+    },
+    {
+      "name": "wall_low_1m__022",
+      "asset": "wall_low_1m",
+      "position": [
+        -1,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 180,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__023",
+      "asset": "wall_upper_1m",
+      "position": [
+        -1,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 180,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__024",
+      "asset": "wall_low_1m",
+      "position": [
+        -1,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "window_upper_1m__025",
+      "asset": "window_upper_1m",
+      "position": [
+        -1,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "doorway_1m__026",
+      "asset": "doorway_1m",
+      "position": [
+        0,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "wall_low_1m__027",
+      "asset": "wall_low_1m",
+      "position": [
+        0,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "window_upper_1m__028",
+      "asset": "window_upper_1m",
+      "position": [
+        0,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__029",
+      "asset": "wall_low_1m",
+      "position": [
+        1,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 180,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__030",
+      "asset": "wall_upper_1m",
+      "position": [
+        1,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 180,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__031",
+      "asset": "wall_low_1m",
+      "position": [
+        1,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "window_upper_1m__032",
+      "asset": "window_upper_1m",
+      "position": [
+        1,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__033",
+      "asset": "wall_low_1m",
+      "position": [
+        -1.5,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__034",
+      "asset": "wall_upper_1m",
+      "position": [
+        -1.5,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__035",
+      "asset": "wall_low_1m",
+      "position": [
+        -1.5,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__036",
+      "asset": "wall_upper_1m",
+      "position": [
+        -1.5,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__037",
+      "asset": "wall_low_1m",
+      "position": [
+        -1.5,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "structure"
+    },
+    {
+      "name": "window_upper_1m__038",
+      "asset": "window_upper_1m",
+      "position": [
+        -1.5,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__039",
+      "asset": "wall_low_1m",
+      "position": [
+        -1.5,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__040",
+      "asset": "wall_upper_1m",
+      "position": [
+        -1.5,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__041",
+      "asset": "wall_low_1m",
+      "position": [
+        -1.5,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "structure"
+    },
+    {
+      "name": "window_upper_1m__042",
+      "asset": "window_upper_1m",
+      "position": [
+        -1.5,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__043",
+      "asset": "wall_low_1m",
+      "position": [
+        -1.5,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__044",
+      "asset": "wall_upper_1m",
+      "position": [
+        -1.5,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__045",
+      "asset": "wall_low_1m",
+      "position": [
+        1.5,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__046",
+      "asset": "wall_upper_1m",
+      "position": [
+        1.5,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__047",
+      "asset": "wall_low_1m",
+      "position": [
+        1.5,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__048",
+      "asset": "wall_upper_1m",
+      "position": [
+        1.5,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__049",
+      "asset": "wall_low_1m",
+      "position": [
+        1.5,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "structure"
+    },
+    {
+      "name": "window_upper_1m__050",
+      "asset": "window_upper_1m",
+      "position": [
+        1.5,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__051",
+      "asset": "wall_low_1m",
+      "position": [
+        1.5,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__052",
+      "asset": "wall_upper_1m",
+      "position": [
+        1.5,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__053",
+      "asset": "wall_low_1m",
+      "position": [
+        1.5,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "structure"
+    },
+    {
+      "name": "window_upper_1m__054",
+      "asset": "window_upper_1m",
+      "position": [
+        1.5,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "wall_low_1m__055",
+      "asset": "wall_low_1m",
+      "position": [
+        1.5,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "structure"
+    },
+    {
+      "name": "wall_upper_1m__056",
+      "asset": "wall_upper_1m",
+      "position": [
+        1.5,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__057",
+      "asset": "corner_post",
+      "position": [
+        -1.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__058",
+      "asset": "corner_upper",
+      "position": [
+        -1.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__059",
+      "asset": "corner_post",
+      "position": [
+        -1.5,
+        -2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__060",
+      "asset": "corner_upper",
+      "position": [
+        -1.5,
+        -2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__061",
+      "asset": "corner_post",
+      "position": [
+        -1.5,
+        -1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__062",
+      "asset": "corner_upper",
+      "position": [
+        -1.5,
+        -1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__063",
+      "asset": "corner_post",
+      "position": [
+        -1.5,
+        0,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__064",
+      "asset": "corner_upper",
+      "position": [
+        -1.5,
+        0,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__065",
+      "asset": "corner_post",
+      "position": [
+        -1.5,
+        1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__066",
+      "asset": "corner_upper",
+      "position": [
+        -1.5,
+        1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__067",
+      "asset": "corner_post",
+      "position": [
+        -1.5,
+        2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__068",
+      "asset": "corner_upper",
+      "position": [
+        -1.5,
+        2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__069",
+      "asset": "corner_post",
+      "position": [
+        -1.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__070",
+      "asset": "corner_upper",
+      "position": [
+        -1.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__071",
+      "asset": "corner_post",
+      "position": [
+        1.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__072",
+      "asset": "corner_upper",
+      "position": [
+        1.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__073",
+      "asset": "corner_post",
+      "position": [
+        1.5,
+        -2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__074",
+      "asset": "corner_upper",
+      "position": [
+        1.5,
+        -2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__075",
+      "asset": "corner_post",
+      "position": [
+        1.5,
+        -1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__076",
+      "asset": "corner_upper",
+      "position": [
+        1.5,
+        -1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__077",
+      "asset": "corner_post",
+      "position": [
+        1.5,
+        0,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__078",
+      "asset": "corner_upper",
+      "position": [
+        1.5,
+        0,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__079",
+      "asset": "corner_post",
+      "position": [
+        1.5,
+        1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__080",
+      "asset": "corner_upper",
+      "position": [
+        1.5,
+        1,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__081",
+      "asset": "corner_post",
+      "position": [
+        1.5,
+        2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__082",
+      "asset": "corner_upper",
+      "position": [
+        1.5,
+        2,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__083",
+      "asset": "corner_post",
+      "position": [
+        1.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__084",
+      "asset": "corner_upper",
+      "position": [
+        1.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__085",
+      "asset": "corner_post",
+      "position": [
+        -0.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__086",
+      "asset": "corner_upper",
+      "position": [
+        -0.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__087",
+      "asset": "corner_post",
+      "position": [
+        -0.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__088",
+      "asset": "corner_upper",
+      "position": [
+        -0.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__089",
+      "asset": "corner_post",
+      "position": [
+        0.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__090",
+      "asset": "corner_upper",
+      "position": [
+        0.5,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "corner_post__091",
+      "asset": "corner_post",
+      "position": [
+        0.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "structure"
+    },
+    {
+      "name": "corner_upper__092",
+      "asset": "corner_upper",
+      "position": [
+        0.5,
+        3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "upper_walls"
+    },
+    {
+      "name": "roof_1m__093",
+      "asset": "roof_1m",
+      "position": [
+        -1,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__094",
+      "asset": "roof_1m",
+      "position": [
+        -1,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__095",
+      "asset": "roof_1m",
+      "position": [
+        -1,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__096",
+      "asset": "roof_1m",
+      "position": [
+        -1,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__097",
+      "asset": "roof_1m",
+      "position": [
+        -1,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__098",
+      "asset": "roof_1m",
+      "position": [
+        -1,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__099",
+      "asset": "roof_1m",
+      "position": [
+        0,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__100",
+      "asset": "roof_1m",
+      "position": [
+        0,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__101",
+      "asset": "roof_1m",
+      "position": [
+        0,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__102",
+      "asset": "roof_1m",
+      "position": [
+        0,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__103",
+      "asset": "roof_1m",
+      "position": [
+        0,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__104",
+      "asset": "roof_1m",
+      "position": [
+        0,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__105",
+      "asset": "roof_1m",
+      "position": [
+        1,
+        -2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__106",
+      "asset": "roof_1m",
+      "position": [
+        1,
+        -1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__107",
+      "asset": "roof_1m",
+      "position": [
+        1,
+        -0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__108",
+      "asset": "roof_1m",
+      "position": [
+        1,
+        0.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__109",
+      "asset": "roof_1m",
+      "position": [
+        1,
+        1.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "roof_1m__110",
+      "asset": "roof_1m",
+      "position": [
+        1,
+        2.5,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "helm__111",
+      "asset": "helm",
+      "position": [
+        0,
+        2.45,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "stool__112",
+      "asset": "stool",
+      "position": [
+        0,
+        1.75,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "bed__113",
+      "asset": "bed",
+      "position": [
+        -0.95,
+        0.65,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "kitchen__114",
+      "asset": "kitchen",
+      "position": [
+        1.16,
+        0.45,
+        1.25
+      ],
+      "yaw_degrees": -90,
+      "group": "interior"
+    },
+    {
+      "name": "workbench__115",
+      "asset": "workbench",
+      "position": [
+        -1.13,
+        -1.48,
+        1.25
+      ],
+      "yaw_degrees": 90,
+      "group": "interior"
+    },
+    {
+      "name": "engine__116",
+      "asset": "engine",
+      "position": [
+        0.95,
+        -1.95,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "interior_partition_1m__117",
+      "asset": "interior_partition_1m",
+      "position": [
+        1,
+        -1.03,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "rug__118",
+      "asset": "rug",
+      "position": [
+        0,
+        0.15,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "crate__119",
+      "asset": "crate",
+      "position": [
+        -1.03,
+        -2.55,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "crate__120",
+      "asset": "crate",
+      "position": [
+        -1.03,
+        -2.55,
+        1.73
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "crate__121",
+      "asset": "crate",
+      "position": [
+        1.02,
+        1.9,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "interior"
+    },
+    {
+      "name": "ramp__122",
+      "asset": "ramp",
+      "position": [
+        0,
+        -3,
+        1.25
+      ],
+      "yaw_degrees": 0,
+      "group": "access"
+    },
+    {
+      "name": "tank__123",
+      "asset": "tank",
+      "position": [
+        1.86,
+        0.2,
+        1.13
+      ],
+      "yaw_degrees": 0,
+      "group": "accessories"
+    },
+    {
+      "name": "tank__124",
+      "asset": "tank",
+      "position": [
+        -1.86,
+        -0.2,
+        1.13
+      ],
+      "yaw_degrees": 0,
+      "group": "accessories"
+    },
+    {
+      "name": "antenna__125",
+      "asset": "antenna",
+      "position": [
+        -1.4,
+        2.9,
+        3.48
+      ],
+      "yaw_degrees": 0,
+      "group": "roof"
+    },
+    {
+      "name": "vent__126",
+      "asset": "vent",
+      "position": [
+        1.58,
+        -2,
+        1.53
+      ],
+      "yaw_degrees": -90,
+      "group": "accessories"
+    },
+    {
+      "name": "exhaust_stack__127",
+      "asset": "exhaust_stack",
+      "position": [
+        1.5,
+        -1.43,
+        2.65
+      ],
+      "yaw_degrees": 0,
+      "group": "accessories"
+    },
+    {
+      "name": "lamp__128",
+      "asset": "lamp",
+      "position": [
+        -1.35,
+        0.8,
+        2.0
+      ],
+      "yaw_degrees": 90,
+      "group": "interior"
+    },
+    {
+      "name": "lamp__129",
+      "asset": "lamp",
+      "position": [
+        1.35,
+        0.6,
+        2.0
+      ],
+      "yaw_degrees": -90,
+      "group": "interior"
+    },
+    {
+      "name": "lamp__130",
+      "asset": "lamp",
+      "position": [
+        -1.35,
+        -1.5,
+        2.0
+      ],
+      "yaw_degrees": 90,
+      "group": "interior"
+    }
+  ],
+  "stats": [
+    {
+      "file": "modules/floor_1m.glb",
+      "triangles_instanced": 592,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 48916
+    },
+    {
+      "file": "modules/wall_low_1m.glb",
+      "triangles_instanced": 348,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 30964
+    },
+    {
+      "file": "modules/wall_upper_1m.glb",
+      "triangles_instanced": 176,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 17368
+    },
+    {
+      "file": "modules/window_upper_1m.glb",
+      "triangles_instanced": 264,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 23700
+    },
+    {
+      "file": "modules/corner_post.glb",
+      "triangles_instanced": 88,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 10548
+    },
+    {
+      "file": "modules/corner_upper.glb",
+      "triangles_instanced": 44,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 6908
+    },
+    {
+      "file": "modules/doorway_1m.glb",
+      "triangles_instanced": 176,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 17288
+    },
+    {
+      "file": "modules/roof_1m.glb",
+      "triangles_instanced": 264,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 23128
+    },
+    {
+      "file": "modules/track_bogie_3m.glb",
+      "triangles_instanced": 3800,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 279692
+    },
+    {
+      "file": "modules/helm.glb",
+      "triangles_instanced": 692,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 57324
+    },
+    {
+      "file": "modules/engine.glb",
+      "triangles_instanced": 1016,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 79972
+    },
+    {
+      "file": "modules/bed.glb",
+      "triangles_instanced": 420,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 35856
+    },
+    {
+      "file": "modules/workbench.glb",
+      "triangles_instanced": 700,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 57536
+    },
+    {
+      "file": "modules/kitchen.glb",
+      "triangles_instanced": 592,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 49824
+    },
+    {
+      "file": "modules/crate.glb",
+      "triangles_instanced": 320,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 28184
+    },
+    {
+      "file": "modules/stool.glb",
+      "triangles_instanced": 220,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 20032
+    },
+    {
+      "file": "modules/rug.glb",
+      "triangles_instanced": 96,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 11580
+    },
+    {
+      "file": "modules/tank.glb",
+      "triangles_instanced": 400,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 34816
+    },
+    {
+      "file": "modules/lamp.glb",
+      "triangles_instanced": 228,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 21424
+    },
+    {
+      "file": "modules/interior_partition_1m.glb",
+      "triangles_instanced": 484,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 40040
+    },
+    {
+      "file": "modules/vent.glb",
+      "triangles_instanced": 264,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 23172
+    },
+    {
+      "file": "modules/antenna.glb",
+      "triangles_instanced": 124,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 13072
+    },
+    {
+      "file": "modules/exhaust_stack.glb",
+      "triangles_instanced": 264,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 23836
+    },
+    {
+      "file": "modules/ramp.glb",
+      "triangles_instanced": 544,
+      "mesh_definitions": 1,
+      "instances": 1,
+      "bytes": 43908
+    },
+    {
+      "file": "starter_crawler_full.glb",
+      "triangles_instanced": 50544,
+      "mesh_definitions": 24,
+      "instances": 131,
+      "bytes": 966384
+    },
+    {
+      "file": "starter_crawler_cutaway.glb",
+      "triangles_instanced": 41268,
+      "mesh_definitions": 19,
+      "instances": 77,
+      "bytes": 888192
+    },
+    {
+      "file": "modular_kit_catalog.glb",
+      "triangles_instanced": 12116,
+      "mesh_definitions": 24,
+      "instances": 24,
+      "bytes": 929856
+    }
+  ]
+}

@@ -1,0 +1,478 @@
+{
+  "axes": "Source Z-up meters. Convert vectors (x,y,z) to glTF (x,z,-y); box extents (x,z,y).",
+  "policy": "Child colliders of one crawler body, not independent dynamic bodies. Decorative props omitted. Not loaded into GLB automatically.",
+  "modules": {
+    "floor_1m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            -0.2
+          ],
+          "size": [
+            1,
+            1,
+            0.4
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "wall_low_1m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.003863996589218044,
+            0.46
+          ],
+          "size": [
+            0.92,
+            0.1977279931784361,
+            0.92
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "wall_upper_1m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            1.57
+          ],
+          "size": [
+            0.92,
+            0.18,
+            1.3000000000000003
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "window_upper_1m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            -0.39,
+            0.0,
+            1.56
+          ],
+          "size": [
+            0.12,
+            0.16,
+            1.2800000000000002
+          ]
+        },
+        {
+          "type": "box",
+          "center": [
+            0.39,
+            0.0,
+            1.56
+          ],
+          "size": [
+            0.12,
+            0.16,
+            1.2800000000000002
+          ]
+        },
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            0.99
+          ],
+          "size": [
+            0.88,
+            0.17,
+            0.1299999999999999
+          ]
+        },
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            2.13
+          ],
+          "size": [
+            0.88,
+            0.17,
+            0.1299999999999999
+          ]
+        },
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            1.56
+          ],
+          "size": [
+            0.045,
+            0.09,
+            1.0
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "corner_post": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            0.48
+          ],
+          "size": [
+            0.14,
+            0.14,
+            0.96
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "corner_upper": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            1.56
+          ],
+          "size": [
+            0.1,
+            0.1,
+            1.2800000000000002
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "doorway_1m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            -0.455,
+            0.0,
+            1.06
+          ],
+          "size": [
+            0.08999999999999997,
+            0.18,
+            2.12
+          ]
+        },
+        {
+          "type": "box",
+          "center": [
+            0.455,
+            0.0,
+            1.06
+          ],
+          "size": [
+            0.08999999999999997,
+            0.18,
+            2.12
+          ]
+        },
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            2.12
+          ],
+          "size": [
+            1.0,
+            0.18,
+            0.13999999999999968
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "roof_1m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            2.276
+          ],
+          "size": [
+            1.0,
+            1.0,
+            0.1120000000000001
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "track_bogie_3m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0,
+            0,
+            0.56
+          ],
+          "size": [
+            0.74,
+            2.96,
+            1.12
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "helm": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            0.6925
+          ],
+          "size": [
+            0.96,
+            0.68,
+            1.385
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "engine": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.03750000000000003,
+            0.0,
+            0.7309093367795925
+          ],
+          "size": [
+            1.025,
+            1.45,
+            1.461818673559185
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "bed": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            0.46499999999999997
+          ],
+          "size": [
+            0.85,
+            2.0,
+            0.9299999999999999
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "workbench": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0012500000000000289,
+            0.7324999999999999
+          ],
+          "size": [
+            1.35,
+            0.6025,
+            1.4649999999999999
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "kitchen": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            -0.02125000000000002,
+            0.6095105651629515
+          ],
+          "size": [
+            1.3,
+            0.6425000000000001,
+            1.219021130325903
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "crate": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            -0.003500000000000003,
+            0.249
+          ],
+          "size": [
+            0.51,
+            0.537,
+            0.498
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "stool": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            0.26
+          ],
+          "size": [
+            0.43,
+            0.43,
+            0.52
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "rug": {
+      "shapes": [],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "tank": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            -0.0866434890351652,
+            0.385
+          ],
+          "size": [
+            0.624,
+            1.0932869780703305,
+            0.77
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "lamp": {
+      "shapes": [],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "interior_partition_1m": {
+      "shapes": [
+        {
+          "type": "box",
+          "center": [
+            0.0,
+            0.0,
+            0.4675
+          ],
+          "size": [
+            1.0,
+            0.14,
+            0.935
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "vent": {
+      "shapes": [],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "antenna": {
+      "shapes": [],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "exhaust_stack": {
+      "shapes": [],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    },
+    "ramp": {
+      "shapes": [
+        {
+          "type": "convex_hull",
+          "vertices": [
+            [
+              -0.41,
+              0.0,
+              0.0
+            ],
+            [
+              -0.41,
+              -2.75,
+              -1.25
+            ],
+            [
+              -0.41,
+              0.0,
+              -0.075
+            ],
+            [
+              -0.41,
+              -2.75,
+              -1.325
+            ],
+            [
+              0.41,
+              0.0,
+              0.0
+            ],
+            [
+              0.41,
+              -2.75,
+              -1.25
+            ],
+            [
+              0.41,
+              0.0,
+              -0.075
+            ],
+            [
+              0.41,
+              -2.75,
+              -1.325
+            ]
+          ]
+        }
+      ],
+      "note": "Conservative prototype collision; hidden visual groups must retain collision."
+    }
+  }
+}

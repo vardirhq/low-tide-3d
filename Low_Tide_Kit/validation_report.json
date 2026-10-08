@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "module_count": 24,
+  "closed_positive_volume_parts": 288,
+  "checks": [
+    "All primitive parts watertight, consistently wound, positive volume",
+    "Finite vertex positions",
+    "All module GLBs imported independently with trimesh",
+    "Assembly GLB headers and quaternion lengths",
+    "Socket +Z axes match attachment normals",
+    "18 unique 1-meter floor cells",
+    "0.82 m center aisle free of fixed props, except helm/stool at terminus"
+  ],
+  "not_tested": [
+    "Blender application import (Blender unavailable)",
+    "Sindri runtime import and physics",
+    "Character navigation and stepping",
+    "Track animation",
+    "glTF validator conformance suite"
+  ],
+  "assemblies": [
+    {
+      "file": "starter_crawler_full.glb",
+      "mesh_definitions": 24,
+      "module_instances": 131,
+      "gltf_bounds_m": [
+        [
+          -2.2200000047683717,
+          -0.07500004768371582,
+          -3.3799999952316284
+        ],
+        [
+          2.2200000047683717,
+          4.8799999761581425,
+          5.75
+        ]
+      ],
+      "import": "PASS"
+    },
+    {
+      "file": "starter_crawler_cutaway.glb",
+      "mesh_definitions": 19,
+      "module_instances": 77,
+      "gltf_bounds_m": [
+        [
+          -2.2200000047683717,
+          -0.07500004768371582,
+          -3.102727994322777
+        ],
+        [
+          2.2200000047683717,
+          3.8618186950683593,
+          5.75
+        ]
+      ],
+      "import": "PASS"
+    },
+    {
+      "file": "modular_kit_catalog.glb",
+      "mesh_definitions": 24,
+      "module_instances": 24,
+      "gltf_bounds_m": [
+        [
+          -0.675000011920929,
+          -1.3250000476837158,
+          -12.17000000178814
+        ],
+        [
+          17.96000000834465,
+          2.3320000171661377,
+          0.5
+        ]
+      ],
+      "import": "PASS"
+    }
+  ]
+}
