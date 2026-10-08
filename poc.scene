@@ -1,0 +1,117 @@
+{
+  "format_version": 10,
+  "metadata": {
+    "name": "Low Tide 3D • Isometric renderer gate (crawler GLB not yet loaded)"
+  },
+  "entities": [
+    {
+      "id": "environment",
+      "name": "Seabed haze",
+      "components": {
+        "sindri.environment": {
+          "background": [
+            0.28,
+            0.24,
+            0.18,
+            1
+          ],
+          "shadows": {
+            "enabled": false,
+            "map_size": 1024,
+            "distance": 64,
+            "bias": 0.002
+          }
+        }
+      }
+    },
+    {
+      "id": "camera",
+      "name": "Three-quarter orthographic camera",
+      "transform_3d": {
+        "position": [
+          11,
+          10,
+          12
+        ],
+        "rotation": [
+          -0.279848,
+          0.364705,
+          0.11829,
+          0.880476
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.camera": {
+          "projection": "orthographic",
+          "vertical_size": 16,
+          "near": 0.1,
+          "far": 120,
+          "fit": "height"
+        }
+      }
+    },
+    {
+      "id": "ground",
+      "name": "Flat seabed ground (temporary)",
+      "transform_3d": {
+        "position": [
+          0,
+          -0.36,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          36,
+          0.5,
+          36
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "procedural:checkerboard",
+          "layer": 0
+        }
+      }
+    },
+    {
+      "id": "origin-marker",
+      "name": "Renderer marker, NOT the crawler",
+      "transform_3d": {
+        "position": [
+          0,
+          0.35,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          0.7,
+          0.7,
+          0.7
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "procedural:checkerboard",
+          "layer": 1
+        }
+      }
+    }
+  ]
+}
