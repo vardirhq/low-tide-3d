@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "description": "Existing cutaway layout with two interchangeable equipment slots. null removes an item.",
+  "overrides": {
+    "crate__121": "workbench",
+    "tank__124": null
+  }
+}
