@@ -26,6 +26,16 @@ jobs:
           repository: vardirhq/sindri-engine
           ref: main
           path: sindri-engine
+      - name: Identify Sindri revision
+        id: sindri-revision
+        working-directory: sindri-engine
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Restore compiled browser player
+        id: player-cache
+        uses: actions/cache@v4
+        with:
+          path: sindri-engine/cached-player
+          key: sindri-player-web-v1-${{ runner.os }}-rust-1.95.0-${{ steps.sindri-revision.outputs.sha }}
       - name: Install Rust and WASM target
         uses: dtolnay/rust-toolchain@1.95.0
         with:
@@ -43,27 +53,34 @@ jobs:
         working-directory: sindri-engine
         run: cargo run -p sindri-export --bin sindri-export -- ../low-tide-3d "$RUNNER_TEMP/low-tide-web" --base /low-tide-3d/
       - name: Build current Sindri player
+        if: steps.player-cache.outputs.cache-hit != 'true'
         working-directory: sindri-engine
         run: cargo build --release -p sindri-player --lib --target wasm32-unknown-unknown
       - name: Cache wasm-bindgen CLI
+        if: steps.player-cache.outputs.cache-hit != 'true'
         id: wasm-bindgen-cache
         uses: actions/cache@v4
         with:
           path: ~/.cargo/bin/wasm-bindgen
           key: wasm-bindgen-cli-${{ runner.os }}-${{ hashFiles('sindri-engine/Cargo.lock') }}
       - name: Install wasm-bindgen CLI matching Cargo.lock
-        if: steps.wasm-bindgen-cache.outputs.cache-hit != 'true'
+        if: steps.player-cache.outputs.cache-hit != 'true' && steps.wasm-bindgen-cache.outputs.cache-hit != 'true'
         working-directory: sindri-engine
         shell: bash
         run: |
           version=$(awk '/name = "wasm-bindgen"/ { found=1; next } found && /^version = / { gsub(/"/, "", $3); print $3; exit }' Cargo.lock)
           test -n "$version"
           cargo install wasm-bindgen-cli --version "$version" --locked
-      - name: Generate browser bindings
+      - name: Generate and cache browser player
+        if: steps.player-cache.outputs.cache-hit != 'true'
         working-directory: sindri-engine
         run: |
+          mkdir -p cached-player
+          wasm-bindgen target/wasm32-unknown-unknown/release/sindri_player.wasm --target web --out-dir cached-player --out-name sindri_player
+      - name: Copy browser player into export
+        run: |
           mkdir -p "$RUNNER_TEMP/low-tide-web/pkg"
-          wasm-bindgen target/wasm32-unknown-unknown/release/sindri_player.wasm --target web --out-dir "$RUNNER_TEMP/low-tide-web/pkg" --out-name sindri_player
+          cp sindri-engine/cached-player/sindri_player.js sindri-engine/cached-player/sindri_player_bg.wasm "$RUNNER_TEMP/low-tide-web/pkg/"
           touch "$RUNNER_TEMP/low-tide-web/.nojekyll"
       - name: Check export
         run: |
