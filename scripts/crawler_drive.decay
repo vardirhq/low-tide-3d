@@ -16,8 +16,21 @@ script CrawlerDrive {
         this.ring = World.find("Stick ring");
         this.knob = World.find("Stick knob");
         this.reset_button = World.find("Reset crawler");
+        // These independent GLB props ride the moving crawler root.
+        // Offsets are crawler-local, not world coordinates.
+        attach_equipment("Crawler side cargo", Vec3(-2.15, 1.28, 0.65));
+        attach_equipment("Crawler auxiliary tank", Vec3(2.18, 1.18, -0.45));
+        attach_equipment("Crawler roof antenna", Vec3(0.75, 3.45, -1.65));
         World.set_active(this.ring, false);
         World.set_active(this.knob, false);
+    }
+
+    fn attach_equipment(name: String, offset: Vec3) {
+        let part = World.find(name);
+        if part != null {
+            World.set_parent(part, this.entity);
+            part.transform.position = offset;
+        }
     }
 
     fn update(dt: f32) {
