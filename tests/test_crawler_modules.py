@@ -59,6 +59,14 @@ class CrawlerModuleTests(unittest.TestCase):
         )})
         self.assertEqual(struct.unpack_from("<I", cleaned, 8)[0], len(cleaned))
 
+    def test_touch_equipment_controls(self):
+        scene = json.loads((ROOT / "poc.scene").read_text())
+        by_name = {entity["name"]: entity for entity in scene["entities"]}
+        for label, field in (("cargo", "cargo_button"), ("tank", "tank_button"), ("antenna", "antenna_button")):
+            entity = by_name[f"Toggle {label}"]
+            self.assertIn("sindri.ui.button", entity["components"])
+            self.assertIn(f"Ui.is_pressed(this.{field})", self.drive)
+
     def test_equipment_toggle_controls(self):
         for key, entity, state in (
             ("Digit1", "cargo", "cargo_installed"),
