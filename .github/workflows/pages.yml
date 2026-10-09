@@ -55,6 +55,9 @@ jobs:
       - name: Validate crawler module layout
         working-directory: low-tide-3d
         run: python3 -m unittest discover -s tests -p 'test_crawler_modules.py'
+      - name: Validate equipment slot contract
+        working-directory: low-tide-3d
+        run: python3 scripts/validate_equipment_slots.py
       - name: Export Low Tide scene
         working-directory: sindri-engine
         run: cargo run -p sindri-export --bin sindri-export -- ../low-tide-3d "$RUNNER_TEMP/low-tide-web" --base /low-tide-3d/
