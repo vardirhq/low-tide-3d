@@ -459,6 +459,12 @@
         },
         "sindri.ui.button": {
           "label": "RESET"
+        },
+        "weave.style": {
+          "classes": [
+            "hud-button",
+            "hud-reset"
+          ]
         }
       }
     },
@@ -683,6 +689,12 @@
         },
         "sindri.ui.button": {
           "label": "CARGO"
+        },
+        "weave.style": {
+          "classes": [
+            "hud-button",
+            "hud-equipment"
+          ]
         }
       }
     },
@@ -723,6 +735,12 @@
         },
         "sindri.ui.button": {
           "label": "TANK"
+        },
+        "weave.style": {
+          "classes": [
+            "hud-button",
+            "hud-equipment"
+          ]
         }
       }
     },
@@ -763,6 +781,12 @@
         },
         "sindri.ui.button": {
           "label": "ANTENNA"
+        },
+        "weave.style": {
+          "classes": [
+            "hud-button",
+            "hud-equipment"
+          ]
         }
       }
     },
@@ -835,6 +859,12 @@
         },
         "sindri.ui.button": {
           "label": "BUILD"
+        },
+        "weave.style": {
+          "classes": [
+            "hud-button",
+            "hud-build"
+          ]
         }
       }
     }

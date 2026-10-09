@@ -59,6 +59,28 @@ class CrawlerModuleTests(unittest.TestCase):
         )})
         self.assertEqual(struct.unpack_from("<I", cleaned, 8)[0], len(cleaned))
 
+    def test_build_mode_controls_remain_usable(self):
+        self.assertIn("sync_mode_controls();", self.drive)
+        self.assertIn("World.set_active(this.cargo_button, this.build_mode)", self.drive)
+        self.assertIn("World.set_active(this.tank_button, this.build_mode)", self.drive)
+        self.assertIn("World.set_active(this.antenna_button, this.build_mode)", self.drive)
+        self.assertIn("World.set_active(this.reset_button, !this.build_mode)", self.drive)
+        equipment = self.drive.index('Input.just_pressed("Digit1")')
+        pause = self.drive.index("if this.build_mode {", equipment)
+        self.assertLess(equipment, pause, "Equipment must work before driving is paused")
+
+    def test_responsive_weave_hud(self):
+        scene = json.loads((ROOT / "poc.scene").read_text())
+        by_id = {e["id"]: e for e in scene["entities"]}
+        for key in ("touch-build", "touch-reset", "touch-cargo", "touch-tank", "touch-antenna"):
+            self.assertIn("weave.style", by_id[key]["components"])
+            self.assertIn("sindri.ui.button", by_id[key]["components"])
+        manifest = (ROOT / "sindri.toml").read_text()
+        self.assertIn('assets/ui/hud.weave', manifest)
+        css = (ROOT / "assets/ui/hud.weave").read_text()
+        self.assertIn("@media (orientation: portrait)", css)
+        self.assertIn("@media (max-height: 500px)", css)
+
     def test_floorplan_build_camera_mode(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
         by_name = {e["name"]: e for e in scene["entities"]}
