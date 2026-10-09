@@ -1,13 +1,25 @@
-// Minimal 3D model movement proof: no physics or animation.
-// Hold Up/Down to drive along world Z; press Space to reset.
+// Simple 3D movement proof. Keyboard and on-screen touch buttons share controls.
 script CrawlerDrive {
     @export let speed: f32 = 2.0;
 
+    var forward_button: Entity = null;
+    var reverse_button: Entity = null;
+    var reset_button: Entity = null;
+
+    fn start() {
+        this.forward_button = World.find("Drive forward");
+        this.reverse_button = World.find("Drive reverse");
+        this.reset_button = World.find("Reset crawler");
+    }
+
     fn update(dt: f32) {
-        let throttle = Input.axis("ArrowDown", "ArrowUp");
+        var throttle = Input.axis("ArrowDown", "ArrowUp");
+        if Ui.is_held(this.forward_button) { throttle += 1.0; }
+        if Ui.is_held(this.reverse_button) { throttle -= 1.0; }
+        throttle = clamp(throttle, -1.0, 1.0);
         this.transform.position.z -= throttle * speed * dt;
 
-        if Input.just_pressed("Space") {
+        if Input.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
             this.transform.position.z = 0.0;
         }
     }
