@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "coordinate_system": "Sindri Y-up; positions local to crawler root",
+  "slots": [
+    {
+      "id": "cargo-rear",
+      "assembly_mount": "crate__120",
+      "scene_entity": "cargo-module",
+      "name": "Crawler side cargo",
+      "asset": "crate",
+      "position": [
+        -1.03,
+        2.21,
+        2.55
+      ],
+      "enabled": true
+    },
+    {
+      "id": "tank-starboard",
+      "assembly_mount": "tank__123",
+      "scene_entity": "fuel-module",
+      "name": "Crawler auxiliary tank",
+      "asset": "tank",
+      "position": [
+        1.86,
+        1.13,
+        -0.2
+      ],
+      "enabled": true
+    },
+    {
+      "id": "antenna-roof",
+      "assembly_mount": "antenna__125",
+      "scene_entity": "antenna-module",
+      "name": "Crawler roof antenna",
+      "asset": "antenna",
+      "position": [
+        -1.4,
+        3.48,
+        -2.9
+      ],
+      "enabled": true
+    }
+  ]
+}
