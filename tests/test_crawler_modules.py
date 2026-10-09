@@ -59,6 +59,16 @@ class CrawlerModuleTests(unittest.TestCase):
         )})
         self.assertEqual(struct.unpack_from("<I", cleaned, 8)[0], len(cleaned))
 
+    def test_equipment_toggle_controls(self):
+        for key, entity, state in (
+            ("Digit1", "cargo", "cargo_installed"),
+            ("Digit2", "tank", "tank_installed"),
+            ("Digit3", "antenna", "antenna_installed"),
+        ):
+            self.assertIn(f'Input.just_pressed("{key}")', self.drive)
+            self.assertIn(f"World.set_active(this.{entity}, this.{state})", self.drive)
+        self.assertIn("World.set_parent(part, this.entity)", self.drive)
+
     def test_module_assets_exist(self):
         for item in self.manifest["assembly"]:
             asset = ROOT / "Low_Tide_Kit/modules" / (item["asset"] + ".glb")
