@@ -73,7 +73,7 @@ class CrawlerModuleTests(unittest.TestCase):
             ("Digit2", "tank", "tank_installed"),
             ("Digit3", "antenna", "antenna_installed"),
         ):
-            self.assertIn(f'Input.just_pressed("{key}")', self.drive)
+            self.assertIn(f'Input.Keyboard.just_pressed("{key}")', self.drive)
             self.assertIn(f"World.set_active(this.{entity}, this.{state})", self.drive)
         self.assertIn("World.set_parent(part, this.entity)", self.drive)
 
