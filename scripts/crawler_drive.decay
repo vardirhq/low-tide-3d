@@ -1,9 +1,10 @@
 // Keyboard and Sindri's native floating touch stick control the crawler.
-// Horizontal stick movement is reserved for steering once 3D yaw is exposed.
+// Steering uses 3D yaw and movement follows the crawler's facing direction.
 const KNOB_TRAVEL: f32 = 0.11;
 
 script CrawlerDrive {
     @export let speed: f32 = 2.0;
+    @export let turn_speed: f32 = 1.6;
 
     var ring: Entity = null;
     var knob: Entity = null;
@@ -20,31 +21,41 @@ script CrawlerDrive {
     }
 
     fn update(dt: f32) {
-        let keys = Input.axis("ArrowDown", "ArrowUp");
+        let keys = Input.Keyboard.axis("ArrowDown", "ArrowUp");
         var throttle = keys;
-        if Stick.held && abs(Stick.y) > abs(keys) {
-            throttle = -Stick.y;
+        if Input.Stick.held && abs(Input.Stick.y) > abs(keys) {
+            throttle = -Input.Stick.y;
         }
-        this.transform.position.z -= throttle * speed * dt;
+        let steer_keys = Input.Keyboard.axis("ArrowLeft", "ArrowRight");
+        var steering = steer_keys;
+        if Input.Stick.held && abs(Input.Stick.x) > abs(steer_keys) {
+            steering = Input.Stick.x;
+        }
+        // Steering reverses with the crawler, like a tracked vehicle.
+        if abs(throttle) > 0.01 {
+            this.transform.yaw += steering * turn_speed * dt * sign(throttle);
+        }
+        this.transform.world_position += this.transform.forward * throttle * speed * dt;
 
-        if Input.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
-            this.transform.position.z = 0.0;
+        if Input.Keyboard.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
+            this.transform.position = Vec3(0.0, 0.0, 0.0);
+            this.transform.yaw = 0.0;
         }
 
         draw_stick();
     }
 
     fn draw_stick() {
-        if Stick.held && !this.drawing {
-            this.drawing = !Pointer.over_ui;
-            this.anchor = Pointer.overlay;
+        if Input.Stick.held && !this.drawing {
+            this.drawing = !Input.Pointer.over_ui;
+            this.anchor = Input.Pointer.overlay;
         }
-        if !Stick.held { this.drawing = false; }
+        if !Input.Stick.held { this.drawing = false; }
         World.set_active(this.ring, this.drawing);
         World.set_active(this.knob, this.drawing);
         if this.drawing {
             this.ring.transform.position = Vec3(this.anchor.x, this.anchor.y, 0.0);
-            let push = Vec2(Stick.x, -Stick.y) * KNOB_TRAVEL;
+            let push = Vec2(Input.Stick.x, -Input.Stick.y) * KNOB_TRAVEL;
             this.knob.transform.position = Vec3(this.anchor.x + push.x, this.anchor.y + push.y, 0.0);
         }
     }
