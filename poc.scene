@@ -561,6 +561,90 @@
           "layer": 81
         }
       }
+    },
+    {
+      "id": "cargo-module",
+      "name": "Crawler side cargo",
+      "transform_3d": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/crate.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "fuel-module",
+      "name": "Crawler auxiliary tank",
+      "transform_3d": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/tank.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "antenna-module",
+      "name": "Crawler roof antenna",
+      "transform_3d": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/antenna.glb",
+          "layer": 1
+        }
+      }
     }
   ]
 }
