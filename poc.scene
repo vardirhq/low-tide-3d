@@ -459,23 +459,6 @@
         },
         "sindri.ui.button": {
           "label": "RESET"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-button",
-            "hud-reset"
-          ]
-        },
-        "sindri.ui.text": {
-          "text": "RESET",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 21,
-          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     },
@@ -700,23 +683,6 @@
         },
         "sindri.ui.button": {
           "label": "CARGO"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-button",
-            "hud-equipment"
-          ]
-        },
-        "sindri.ui.text": {
-          "text": "CARGO",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 21,
-          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     },
@@ -757,23 +723,6 @@
         },
         "sindri.ui.button": {
           "label": "TANK"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-button",
-            "hud-equipment"
-          ]
-        },
-        "sindri.ui.text": {
-          "text": "TANK",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 21,
-          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     },
@@ -814,112 +763,6 @@
         },
         "sindri.ui.button": {
           "label": "ANTENNA"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-button",
-            "hud-equipment"
-          ]
-        },
-        "sindri.ui.text": {
-          "text": "ANTENNA",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 21,
-          "font": "fonts/ChakraPetch-Regular.ttf"
-        }
-      }
-    },
-    {
-      "id": "floorplan-camera",
-      "name": "Crawler floorplan camera",
-      "disabled": true,
-      "transform_3d": {
-        "position": [
-          0,
-          14,
-          0
-        ],
-        "rotation": [
-          -0.70710678,
-          0,
-          0,
-          0.70710678
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "components": {
-        "sindri.camera": {
-          "projection": "orthographic",
-          "vertical_size": 9,
-          "near": 0.1,
-          "far": 80,
-          "fit": "shorter"
-        }
-      }
-    },
-    {
-      "id": "touch-build",
-      "name": "Toggle build mode",
-      "transform_3d": {
-        "position": [
-          0.74,
-          0.79,
-          0
-        ],
-        "scale": [
-          0.4,
-          0.16,
-          1
-        ]
-      },
-      "components": {
-        "sindri.ui.shape": {
-          "kind": "rect",
-          "fill": [
-            0.08,
-            0.14,
-            0.17,
-            0.9
-          ],
-          "stroke": [
-            0.68,
-            0.56,
-            0.35,
-            1
-          ],
-          "stroke_width": 0.015,
-          "corner_radius": 0.15,
-          "anchor": "center",
-          "layer": 20
-        },
-        "sindri.ui.button": {
-          "label": "BUILD"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-button",
-            "hud-build"
-          ]
-        },
-        "sindri.ui.text": {
-          "text": "BUILD",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 21,
-          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     }

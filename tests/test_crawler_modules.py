@@ -59,56 +59,6 @@ class CrawlerModuleTests(unittest.TestCase):
         )})
         self.assertEqual(struct.unpack_from("<I", cleaned, 8)[0], len(cleaned))
 
-    def test_build_mode_controls_remain_usable(self):
-        self.assertIn("sync_mode_controls();", self.drive)
-        self.assertIn("World.set_active(this.cargo_button, this.build_mode)", self.drive)
-        self.assertIn("World.set_active(this.tank_button, this.build_mode)", self.drive)
-        self.assertIn("World.set_active(this.antenna_button, this.build_mode)", self.drive)
-        self.assertIn("World.set_active(this.reset_button, !this.build_mode)", self.drive)
-        equipment = self.drive.index('Input.just_pressed("Digit1")')
-        pause = self.drive.index("if this.build_mode {", equipment)
-        self.assertLess(equipment, pause, "Equipment must work before driving is paused")
-
-    def test_mobile_button_labels(self):
-        scene = json.loads((ROOT / "poc.scene").read_text())
-        by_id = {e["id"]: e for e in scene["entities"]}
-        for key in ("touch-build", "touch-reset", "touch-cargo", "touch-tank", "touch-antenna"):
-            button = by_id[key]
-            self.assertIn("sindri.ui.text", button["components"])
-            self.assertIn("sindri.ui.button", button["components"])
-            self.assertEqual(button["components"]["sindri.ui.text"]["text"], button["components"]["sindri.ui.button"]["label"])
-            self.assertTrue(button["components"]["sindri.ui.text"]["font"])
-            self.assertNotIn(key + "-label", by_id)
-        css = (ROOT / "assets/ui/hud.weave").read_text()
-        self.assertNotIn("\n    width:", css)
-        self.assertNotIn("\n    height:", css)
-        self.assertNotIn(" x:", css)
-
-    def test_responsive_weave_hud(self):
-        scene = json.loads((ROOT / "poc.scene").read_text())
-        by_id = {e["id"]: e for e in scene["entities"]}
-        for key in ("touch-build", "touch-reset", "touch-cargo", "touch-tank", "touch-antenna"):
-            self.assertIn("weave.style", by_id[key]["components"])
-            self.assertIn("sindri.ui.button", by_id[key]["components"])
-        manifest = (ROOT / "sindri.toml").read_text()
-        self.assertIn('assets/ui/hud.weave', manifest)
-        css = (ROOT / "assets/ui/hud.weave").read_text()
-        self.assertIn("@media (orientation: portrait)", css)
-        self.assertIn("@media (max-height: 500px)", css)
-
-    def test_floorplan_build_camera_mode(self):
-        scene = json.loads((ROOT / "poc.scene").read_text())
-        by_name = {e["name"]: e for e in scene["entities"]}
-        camera = by_name["Crawler floorplan camera"]
-        self.assertEqual(camera["components"]["sindri.camera"]["projection"], "orthographic")
-        self.assertEqual(camera["components"]["sindri.camera"]["fit"], "shorter")
-        self.assertTrue(camera["disabled"])
-        self.assertIn("sindri.ui.button", by_name["Toggle build mode"]["components"])
-        self.assertIn("World.set_parent(this.floorplan_camera, this.entity)", self.drive)
-        self.assertIn("World.set_active(this.gameplay_camera, !this.build_mode)", self.drive)
-        self.assertIn("World.set_active(this.floorplan_camera, this.build_mode)", self.drive)
-        self.assertIn("if this.build_mode {", self.drive)
-
     def test_touch_equipment_controls(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
         by_name = {entity["name"]: entity for entity in scene["entities"]}
