@@ -1,0 +1,90 @@
+name: Low Tide 3D WebGPU preview
+on:
+  push:
+    branches: [main, poc/isometric-crawler]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: low-tide-pages-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Low Tide
+        uses: actions/checkout@v4
+        with:
+          path: low-tide-3d
+      - name: Checkout Sindri main
+        uses: actions/checkout@v4
+        with:
+          repository: vardirhq/sindri-engine
+          ref: main
+          path: sindri-engine
+      - name: Install Rust and WASM target
+        uses: dtolnay/rust-toolchain@1.95.0
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Cache Rust builds
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: sindri-engine -> target
+          key: low-tide-web
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libudev-dev pkg-config libvulkan1 mesa-vulkan-drivers
+      - name: Export Low Tide scene
+        working-directory: sindri-engine
+        run: cargo run --locked -p sindri-export --bin sindri-export -- ../low-tide-3d "$RUNNER_TEMP/low-tide-web" --base /low-tide-3d/
+      - name: Build current Sindri player
+        working-directory: sindri-engine
+        run: cargo build --locked --release -p sindri-player --lib --target wasm32-unknown-unknown
+      - name: Install wasm-bindgen CLI matching Cargo.lock
+        working-directory: sindri-engine
+        shell: bash
+        run: |
+          version=$(awk '/name = "wasm-bindgen"/ { found=1; next } found && /^version = / { gsub(/"/, "", $3); print $3; exit }' Cargo.lock)
+          test -n "$version"
+          cargo install wasm-bindgen-cli --version "$version" --locked
+      - name: Generate browser bindings
+        working-directory: sindri-engine
+        run: |
+          mkdir -p "$RUNNER_TEMP/low-tide-web/pkg"
+          wasm-bindgen target/wasm32-unknown-unknown/release/sindri_player.wasm --target web --out-dir "$RUNNER_TEMP/low-tide-web/pkg" --out-name sindri_player
+          touch "$RUNNER_TEMP/low-tide-web/.nojekyll"
+      - name: Check export
+        run: |
+          test -s "$RUNNER_TEMP/low-tide-web/index.html"
+          test -s "$RUNNER_TEMP/low-tide-web/pkg/sindri_player.js"
+          test -s "$RUNNER_TEMP/low-tide-web/pkg/sindri_player_bg.wasm"
+          grep -q '/low-tide-3d/' "$RUNNER_TEMP/low-tide-web/index.html"
+      - name: Upload build preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: low-tide-web-preview
+          path: ${{ runner.temp }}/low-tide-web
+      - name: Configure Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/low-tide-web
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
