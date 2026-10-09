@@ -1,37 +1,45 @@
-/* Low Tide touch HUD. Presentation only: Decay keeps the button actions. */
+/* Small touch targets around the outer edge, never a full-screen input shield. */
 .hud-button {
-    width: 132px;
-    height: 52px;
+    width: 104px;
+    height: 48px;
     background: #17262fe8;
     border-color: #bda47c;
     border-width: 2px;
-    border-radius: 12px;
+    border-radius: 10px;
+}
+.hud-label {
+    width: 90%;
+    height: 60%;
+    color: #fff2d7;
+    font-size: 15px;
+    text-align: center;
+    font-weight: 700;
 }
 #touch-build {
-    x: 38vw;
-    y: -40vh;
-    width: 150px;
-    height: 58px;
+    x: 35vw; y: -40vh;
+    width: 112px; height: 52px;
     background: #36564b;
     border-color: #e2c899;
 }
-#touch-reset { x: 38vw; y: 40vh; }
-#touch-cargo { x: -32vw; y: -40vh; }
-#touch-tank { x: -17vw; y: -40vh; }
-#touch-antenna { x: -2vw; y: -40vh; }
+#touch-reset { x: 35vw; y: 39vh; }
+#touch-cargo { x: -30vw; y: 39vh; }
+#touch-tank { x: 0vw; y: 39vh; }
+#touch-antenna { x: 30vw; y: 39vh; }
 @media (orientation: portrait) {
-    .hud-button { width: 27vw; height: 52px; border-radius: 10px; }
-    #touch-build { x: 26vw; y: -42vh; width: 37vw; height: 58px; }
-    #touch-reset { x: 26vw; y: 42vh; width: 37vw; height: 54px; }
-    #touch-cargo { x: -31vw; y: -33vh; }
-    #touch-tank { x: 0vw; y: -33vh; }
-    #touch-antenna { x: 31vw; y: -33vh; }
+    .hud-button { width: 26vw; height: 46px; }
+    #touch-build { x: 29vw; y: -42vh; width: 28vw; height: 50px; }
+    #touch-reset { x: 29vw; y: 42vh; width: 28vw; height: 48px; }
+    #touch-cargo { x: -31vw; y: 41vh; }
+    #touch-tank { x: 0vw; y: 41vh; }
+    #touch-antenna { x: 31vw; y: 41vh; }
+    .hud-label { font-size: 13px; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
-    .hud-button { width: 110px; height: 44px; }
-    #touch-build { x: 38vw; y: -36vh; width: 125px; height: 46px; }
-    #touch-reset { x: 38vw; y: 36vh; }
-    #touch-cargo { x: -32vw; y: -36vh; }
-    #touch-tank { x: -16vw; y: -36vh; }
-    #touch-antenna { x: 0vw; y: -36vh; }
+    .hud-button { width: 94px; height: 40px; }
+    #touch-build { x: 38vw; y: -35vh; width: 100px; height: 42px; }
+    #touch-reset { x: 38vw; y: 35vh; }
+    #touch-cargo { x: -30vw; y: 35vh; }
+    #touch-tank { x: -13vw; y: 35vh; }
+    #touch-antenna { x: 4vw; y: 35vh; }
+    .hud-label { font-size: 12px; }
 }
