@@ -73,12 +73,16 @@ class CrawlerModuleTests(unittest.TestCase):
         scene = json.loads((ROOT / "poc.scene").read_text())
         by_id = {e["id"]: e for e in scene["entities"]}
         for key in ("touch-build", "touch-reset", "touch-cargo", "touch-tank", "touch-antenna"):
-            label = by_id[key + "-label"]
-            self.assertEqual(label["parent"], key)
-            self.assertIn("sindri.ui.text", label["components"])
-            self.assertEqual(label["components"]["sindri.ui.text"]["text"], by_id[key]["components"]["sindri.ui.button"]["label"])
+            button = by_id[key]
+            self.assertIn("sindri.ui.text", button["components"])
+            self.assertIn("sindri.ui.button", button["components"])
+            self.assertEqual(button["components"]["sindri.ui.text"]["text"], button["components"]["sindri.ui.button"]["label"])
+            self.assertTrue(button["components"]["sindri.ui.text"]["font"])
+            self.assertNotIn(key + "-label", by_id)
         css = (ROOT / "assets/ui/hud.weave").read_text()
-        self.assertIn(".hud-label", css)
+        self.assertNotIn("width:", css)
+        self.assertNotIn("height:", css)
+        self.assertNotIn(" x:", css)
 
     def test_responsive_weave_hud(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
