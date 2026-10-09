@@ -17,10 +17,11 @@ script CrawlerDrive {
         this.knob = World.find("Stick knob");
         this.reset_button = World.find("Reset crawler");
         // These independent GLB props ride the moving crawler root.
-        // Offsets are crawler-local, not world coordinates.
-        attach_equipment("Crawler side cargo", Vec3(-2.15, 1.28, 0.65));
-        attach_equipment("Crawler auxiliary tank", Vec3(2.18, 1.18, -0.45));
-        attach_equipment("Crawler roof antenna", Vec3(0.75, 3.45, -1.65));
+        // Offsets come from the kit manifest, converted from source Z-up to GLB Y-up.
+        // Cargo is stacked above the rear crate; the other two match kit mounts.
+        attach_equipment("Crawler side cargo", Vec3(-1.03, 2.21, 2.55));
+        attach_equipment("Crawler auxiliary tank", Vec3(1.86, 1.13, -0.2));
+        attach_equipment("Crawler roof antenna", Vec3(-1.4, 3.48, -2.9));
         World.set_active(this.ring, false);
         World.set_active(this.knob, false);
     }
