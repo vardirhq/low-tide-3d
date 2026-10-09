@@ -6,6 +6,9 @@ script CrawlerDrive {
     @export let speed: f32 = 2.0;
     @export let turn_speed: f32 = 1.6;
 
+    var cargo_button: Entity = null;
+    var tank_button: Entity = null;
+    var antenna_button: Entity = null;
     var cargo: Entity = null;
     var tank: Entity = null;
     var antenna: Entity = null;
@@ -23,6 +26,9 @@ script CrawlerDrive {
         this.ring = World.find("Stick ring");
         this.knob = World.find("Stick knob");
         this.reset_button = World.find("Reset crawler");
+        this.cargo_button = World.find("Toggle cargo");
+        this.tank_button = World.find("Toggle tank");
+        this.antenna_button = World.find("Toggle antenna");
         // These independent GLB props ride the moving crawler root.
         // Offsets come from the kit manifest, converted from source Z-up to GLB Y-up.
         // Cargo is stacked above the rear crate; the other two match kit mounts.
@@ -47,15 +53,15 @@ script CrawlerDrive {
     fn update(dt: f32) {
         // Prototype install/remove: hide the attached model without destroying it.
         // This preserves its parent and local mount for reinstallation.
-        if Input.just_pressed("Digit1") {
+        if (Input.just_pressed("Digit1") || Ui.is_pressed(this.cargo_button)) {
             this.cargo_installed = !this.cargo_installed;
             if this.cargo != null { World.set_active(this.cargo, this.cargo_installed); }
         }
-        if Input.just_pressed("Digit2") {
+        if (Input.just_pressed("Digit2") || Ui.is_pressed(this.tank_button)) {
             this.tank_installed = !this.tank_installed;
             if this.tank != null { World.set_active(this.tank, this.tank_installed); }
         }
-        if Input.just_pressed("Digit3") {
+        if (Input.just_pressed("Digit3") || Ui.is_pressed(this.antenna_button)) {
             this.antenna_installed = !this.antenna_installed;
             if this.antenna != null { World.set_active(this.antenna, this.antenna_installed); }
         }
