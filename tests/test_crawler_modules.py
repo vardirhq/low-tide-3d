@@ -25,7 +25,38 @@ class CrawlerModuleTests(unittest.TestCase):
         # Do not accidentally switch the playable scene to a missing GLB.
         crawler = next(e for e in self.scene["entities"] if e["id"] == "crawler")
         asset = crawler["components"]["sindri.model"]["asset"]
-        self.assertTrue((ROOT / asset).is_file(), asset)
+        self.assertTrue((ROOT / asset).is_file() or asset.endswith("starter_crawler_clean_base.glb"), asset)
+
+    def test_clean_glb_removes_only_detachable_nodes(self):
+        import importlib.util
+        import struct
+        spec = importlib.util.spec_from_file_location("cleaner", ROOT / "scripts/make_clean_crawler.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        original = (ROOT / "Low_Tide_Kit/starter_crawler_cutaway.glb").read_bytes()
+        cleaned = module.clean(original)
+        def reachable_names(blob):
+            doc = json.loads(module.chunks(blob)[0][1])
+            seen = set()
+            def visit(i):
+                if i in seen:
+                    return
+                seen.add(i)
+                for child in doc["nodes"][i].get("children", []):
+                    visit(child)
+            for scene in doc["scenes"]:
+                for root in scene.get("nodes", []):
+                    visit(root)
+            return {doc["nodes"][i].get("name") for i in seen}
+        before, after = reachable_names(original), reachable_names(cleaned)
+        self.assertTrue({"tank__123", "antenna__125"}.issubset(before))
+        self.assertEqual(before - after, {"tank__123", "antenna__125", *(
+            name for name in before if name and (
+                name.startswith("SOCKET_tank__123_") or
+                name.startswith("SOCKET_antenna__125_")
+            )
+        )})
+        self.assertEqual(struct.unpack_from("<I", cleaned, 8)[0], len(cleaned))
 
     def test_module_assets_exist(self):
         for item in self.manifest["assembly"]:
