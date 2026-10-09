@@ -69,6 +69,17 @@ class CrawlerModuleTests(unittest.TestCase):
         pause = self.drive.index("if this.build_mode {", equipment)
         self.assertLess(equipment, pause, "Equipment must work before driving is paused")
 
+    def test_mobile_button_labels(self):
+        scene = json.loads((ROOT / "poc.scene").read_text())
+        by_id = {e["id"]: e for e in scene["entities"]}
+        for key in ("touch-build", "touch-reset", "touch-cargo", "touch-tank", "touch-antenna"):
+            label = by_id[key + "-label"]
+            self.assertEqual(label["parent"], key)
+            self.assertIn("sindri.ui.text", label["components"])
+            self.assertEqual(label["components"]["sindri.ui.text"]["text"], by_id[key]["components"]["sindri.ui.button"]["label"])
+        css = (ROOT / "assets/ui/hud.weave").read_text()
+        self.assertIn(".hud-label", css)
+
     def test_responsive_weave_hud(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
         by_id = {e["id"]: e for e in scene["entities"]}
