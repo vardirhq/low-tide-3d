@@ -49,6 +49,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libasound2-dev libudev-dev pkg-config libvulkan1 mesa-vulkan-drivers
+      - name: Generate clean crawler base
+        working-directory: low-tide-3d
+        run: python3 scripts/make_clean_crawler.py
+      - name: Validate crawler module layout
+        working-directory: low-tide-3d
+        run: python3 -m unittest discover -s tests -p 'test_crawler_modules.py'
       - name: Export Low Tide scene
         working-directory: sindri-engine
         run: cargo run -p sindri-export --bin sindri-export -- ../low-tide-3d "$RUNNER_TEMP/low-tide-web" --base /low-tide-3d/
