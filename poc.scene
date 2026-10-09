@@ -465,6 +465,17 @@
             "hud-button",
             "hud-reset"
           ]
+        },
+        "sindri.ui.text": {
+          "text": "RESET",
+          "font_size": 0.05,
+          "bounds": [
+            0.32,
+            0.1
+          ],
+          "anchor": "center",
+          "layer": 21,
+          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     },
@@ -695,6 +706,17 @@
             "hud-button",
             "hud-equipment"
           ]
+        },
+        "sindri.ui.text": {
+          "text": "CARGO",
+          "font_size": 0.05,
+          "bounds": [
+            0.32,
+            0.1
+          ],
+          "anchor": "center",
+          "layer": 21,
+          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     },
@@ -741,6 +763,17 @@
             "hud-button",
             "hud-equipment"
           ]
+        },
+        "sindri.ui.text": {
+          "text": "TANK",
+          "font_size": 0.05,
+          "bounds": [
+            0.32,
+            0.1
+          ],
+          "anchor": "center",
+          "layer": 21,
+          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     },
@@ -787,6 +820,17 @@
             "hud-button",
             "hud-equipment"
           ]
+        },
+        "sindri.ui.text": {
+          "text": "ANTENNA",
+          "font_size": 0.05,
+          "bounds": [
+            0.32,
+            0.1
+          ],
+          "anchor": "center",
+          "layer": 21,
+          "font": "fonts/ChakraPetch-Regular.ttf"
         }
       }
     },
@@ -865,26 +909,7 @@
             "hud-button",
             "hud-build"
           ]
-        }
-      }
-    },
-    {
-      "id": "touch-build-label",
-      "name": "BUILD label",
-      "parent": "touch-build",
-      "transform_3d": {
-        "position": [
-          0,
-          0,
-          0.01
-        ],
-        "scale": [
-          0.28,
-          0.08,
-          1
-        ]
-      },
-      "components": {
+        },
         "sindri.ui.text": {
           "text": "BUILD",
           "font_size": 0.05,
@@ -893,153 +918,8 @@
             0.1
           ],
           "anchor": "center",
-          "layer": 25,
+          "layer": 21,
           "font": "fonts/ChakraPetch-Regular.ttf"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-label"
-          ]
-        }
-      }
-    },
-    {
-      "id": "touch-reset-label",
-      "name": "RESET label",
-      "parent": "touch-reset",
-      "transform_3d": {
-        "position": [
-          0,
-          0,
-          0.01
-        ],
-        "scale": [
-          0.28,
-          0.08,
-          1
-        ]
-      },
-      "components": {
-        "sindri.ui.text": {
-          "text": "RESET",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 25,
-          "font": "fonts/ChakraPetch-Regular.ttf"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-label"
-          ]
-        }
-      }
-    },
-    {
-      "id": "touch-cargo-label",
-      "name": "CARGO label",
-      "parent": "touch-cargo",
-      "transform_3d": {
-        "position": [
-          0,
-          0,
-          0.01
-        ],
-        "scale": [
-          0.28,
-          0.08,
-          1
-        ]
-      },
-      "components": {
-        "sindri.ui.text": {
-          "text": "CARGO",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 25,
-          "font": "fonts/ChakraPetch-Regular.ttf"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-label"
-          ]
-        }
-      }
-    },
-    {
-      "id": "touch-tank-label",
-      "name": "TANK label",
-      "parent": "touch-tank",
-      "transform_3d": {
-        "position": [
-          0,
-          0,
-          0.01
-        ],
-        "scale": [
-          0.28,
-          0.08,
-          1
-        ]
-      },
-      "components": {
-        "sindri.ui.text": {
-          "text": "TANK",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 25,
-          "font": "fonts/ChakraPetch-Regular.ttf"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-label"
-          ]
-        }
-      }
-    },
-    {
-      "id": "touch-antenna-label",
-      "name": "ANTENNA label",
-      "parent": "touch-antenna",
-      "transform_3d": {
-        "position": [
-          0,
-          0,
-          0.01
-        ],
-        "scale": [
-          0.28,
-          0.08,
-          1
-        ]
-      },
-      "components": {
-        "sindri.ui.text": {
-          "text": "ANTENNA",
-          "font_size": 0.05,
-          "bounds": [
-            0.32,
-            0.1
-          ],
-          "anchor": "center",
-          "layer": 25,
-          "font": "fonts/ChakraPetch-Regular.ttf"
-        },
-        "weave.style": {
-          "classes": [
-            "hud-label"
-          ]
         }
       }
     }
