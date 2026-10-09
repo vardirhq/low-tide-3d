@@ -33,7 +33,7 @@ script CrawlerDrive {
         }
         // Steering reverses with the crawler, like a tracked vehicle.
         if abs(throttle) > 0.01 {
-            this.transform.yaw += steering * turn_speed * dt * sign(throttle);
+            this.transform.yaw -= steering * turn_speed * dt * sign(throttle);
         }
         this.transform.world_position += this.transform.forward * throttle * speed * dt;
 
