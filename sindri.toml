@@ -3,3 +3,6 @@ format_version = 1
 [project]
 name = "Low Tide 3D — Isometric POC"
 main_scene = "poc.scene"
+
+[assets]
+include = ["assets/ui/hud.weave"]
