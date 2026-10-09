@@ -5,7 +5,7 @@ script CrawlerDrive {
 
     fn update(dt: f32) {
         let throttle = Input.axis("ArrowDown", "ArrowUp");
-        this.transform.position.z += throttle * speed * dt;
+        this.transform.position.z -= throttle * speed * dt;
 
         if Input.just_pressed("Space") {
             this.transform.position.z = 0.0;
