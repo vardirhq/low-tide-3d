@@ -18,3 +18,11 @@ to responsive Weave with the full build HUD.
 
 The camera's 90-degree pitch is authored as a quaternion in the scene; Decay
 does not need to mutate camera rotation at runtime.
+
+## Contextual controls
+
+BUILD remains visible in both modes. Normal driving shows RESET and the
+floating stick; build mode hides RESET and the stick, shows CARGO/TANK/ANTENNA,
+and keeps equipment toggles responsive while movement is paused. Weave styles
+the controls for portrait and compact landscape viewports. This is still a
+prototype equipment toolbar, not inventory or free placement.
