@@ -53,28 +53,28 @@ script CrawlerDrive {
     fn update(dt: f32) {
         // Prototype install/remove: hide the attached model without destroying it.
         // This preserves its parent and local mount for reinstallation.
-        if (Input.just_pressed("Digit1") || Ui.is_pressed(this.cargo_button)) {
+        if (Input.Keyboard.just_pressed("Digit1") || Ui.is_pressed(this.cargo_button)) {
             this.cargo_installed = !this.cargo_installed;
             if this.cargo != null { World.set_active(this.cargo, this.cargo_installed); }
         }
-        if (Input.just_pressed("Digit2") || Ui.is_pressed(this.tank_button)) {
+        if (Input.Keyboard.just_pressed("Digit2") || Ui.is_pressed(this.tank_button)) {
             this.tank_installed = !this.tank_installed;
             if this.tank != null { World.set_active(this.tank, this.tank_installed); }
         }
-        if (Input.just_pressed("Digit3") || Ui.is_pressed(this.antenna_button)) {
+        if (Input.Keyboard.just_pressed("Digit3") || Ui.is_pressed(this.antenna_button)) {
             this.antenna_installed = !this.antenna_installed;
             if this.antenna != null { World.set_active(this.antenna, this.antenna_installed); }
         }
 
-        let keys = Input.axis("ArrowDown", "ArrowUp");
+        let keys = Input.Keyboard.axis("ArrowDown", "ArrowUp");
         var throttle = keys;
-        if Stick.held && abs(Stick.y) > abs(keys) {
-            throttle = -Stick.y;
+        if Input.Stick.held && abs(Input.Stick.y) > abs(keys) {
+            throttle = -Input.Stick.y;
         }
-        let steer_keys = Input.axis("ArrowLeft", "ArrowRight");
+        let steer_keys = Input.Keyboard.axis("ArrowLeft", "ArrowRight");
         var steering = steer_keys;
-        if Stick.held && abs(Stick.x) > abs(steer_keys) {
-            steering = Stick.x;
+        if Input.Stick.held && abs(Input.Stick.x) > abs(steer_keys) {
+            steering = Input.Stick.x;
         }
         // Steering reverses with the crawler, like a tracked vehicle.
         if abs(throttle) > 0.01 {
@@ -82,7 +82,7 @@ script CrawlerDrive {
         }
         this.transform.world_position += this.transform.forward * throttle * speed * dt;
 
-        if Input.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
+        if Input.Keyboard.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
             this.transform.position = Vec3(0.0, 0.0, 0.0);
             this.transform.yaw = 0.0;
         }
@@ -91,16 +91,16 @@ script CrawlerDrive {
     }
 
     fn draw_stick() {
-        if Stick.held && !this.drawing {
-            this.drawing = !Pointer.over_ui;
-            this.anchor = Pointer.overlay;
+        if Input.Stick.held && !this.drawing {
+            this.drawing = !Input.Pointer.over_ui;
+            this.anchor = Input.Pointer.overlay;
         }
-        if !Stick.held { this.drawing = false; }
+        if !Input.Stick.held { this.drawing = false; }
         World.set_active(this.ring, this.drawing);
         World.set_active(this.knob, this.drawing);
         if this.drawing {
             this.ring.transform.position = Vec3(this.anchor.x, this.anchor.y, 0.0);
-            let push = Vec2(Stick.x, -Stick.y) * KNOB_TRAVEL;
+            let push = Vec2(Input.Stick.x, -Input.Stick.y) * KNOB_TRAVEL;
             this.knob.transform.position = Vec3(this.anchor.x + push.x, this.anchor.y + push.y, 0.0);
         }
     }
