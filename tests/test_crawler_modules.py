@@ -59,6 +59,19 @@ class CrawlerModuleTests(unittest.TestCase):
         )})
         self.assertEqual(struct.unpack_from("<I", cleaned, 8)[0], len(cleaned))
 
+    def test_floorplan_build_camera_mode(self):
+        scene = json.loads((ROOT / "poc.scene").read_text())
+        by_name = {e["name"]: e for e in scene["entities"]}
+        camera = by_name["Crawler floorplan camera"]
+        self.assertEqual(camera["components"]["sindri.camera"]["projection"], "orthographic")
+        self.assertEqual(camera["components"]["sindri.camera"]["fit"], "shorter")
+        self.assertTrue(camera["disabled"])
+        self.assertIn("sindri.ui.button", by_name["Toggle build mode"]["components"])
+        self.assertIn("World.set_parent(this.floorplan_camera, this.entity)", self.drive)
+        self.assertIn("World.set_active(this.gameplay_camera, !this.build_mode)", self.drive)
+        self.assertIn("World.set_active(this.floorplan_camera, this.build_mode)", self.drive)
+        self.assertIn("if this.build_mode {", self.drive)
+
     def test_touch_equipment_controls(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
         by_name = {entity["name"]: entity for entity in scene["entities"]}
