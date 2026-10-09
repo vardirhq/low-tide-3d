@@ -6,6 +6,10 @@ script CrawlerDrive {
     @export let speed: f32 = 2.0;
     @export let turn_speed: f32 = 1.6;
 
+    var build_button: Entity = null;
+    var gameplay_camera: Entity = null;
+    var floorplan_camera: Entity = null;
+    var build_mode: bool = false;
     var cargo_button: Entity = null;
     var tank_button: Entity = null;
     var antenna_button: Entity = null;
@@ -26,6 +30,14 @@ script CrawlerDrive {
         this.ring = World.find("Stick ring");
         this.knob = World.find("Stick knob");
         this.reset_button = World.find("Reset crawler");
+        this.build_button = World.find("Toggle build mode");
+        this.gameplay_camera = World.find("Three-quarter orthographic camera");
+        this.floorplan_camera = World.find("Crawler floorplan camera");
+        if this.floorplan_camera != null {
+            World.set_parent(this.floorplan_camera, this.entity);
+            this.floorplan_camera.transform.position = Vec3(0.0, 14.0, 0.0);
+            World.set_active(this.floorplan_camera, false);
+        }
         this.cargo_button = World.find("Toggle cargo");
         this.tank_button = World.find("Toggle tank");
         this.antenna_button = World.find("Toggle antenna");
@@ -51,6 +63,16 @@ script CrawlerDrive {
     }
 
     fn update(dt: f32) {
+        if Ui.is_pressed(this.build_button) || Input.just_pressed("KeyB") {
+            this.build_mode = !this.build_mode;
+            if this.gameplay_camera != null { World.set_active(this.gameplay_camera, !this.build_mode); }
+            if this.floorplan_camera != null { World.set_active(this.floorplan_camera, this.build_mode); }
+        }
+        if this.build_mode {
+            // Keep movement disabled while working on the crawler floorplan.
+            return;
+        }
+
         // Prototype install/remove: hide the attached model without destroying it.
         // This preserves its parent and local mount for reinstallation.
         if (Input.just_pressed("Digit1") || Ui.is_pressed(this.cargo_button)) {
