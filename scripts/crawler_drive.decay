@@ -52,6 +52,15 @@ script CrawlerDrive {
         attach_equipment("Crawler roof antenna", Vec3(-1.4, 3.48, -2.9));
         World.set_active(this.ring, false);
         World.set_active(this.knob, false);
+        sync_mode_controls();
+    }
+
+    fn sync_mode_controls() {
+        // Keep the build toggle accessible in either mode.
+        if this.reset_button != null { World.set_active(this.reset_button, !this.build_mode); }
+        if this.cargo_button != null { World.set_active(this.cargo_button, this.build_mode); }
+        if this.tank_button != null { World.set_active(this.tank_button, this.build_mode); }
+        if this.antenna_button != null { World.set_active(this.antenna_button, this.build_mode); }
     }
 
     fn attach_equipment(name: String, offset: Vec3) {
@@ -67,12 +76,8 @@ script CrawlerDrive {
             this.build_mode = !this.build_mode;
             if this.gameplay_camera != null { World.set_active(this.gameplay_camera, !this.build_mode); }
             if this.floorplan_camera != null { World.set_active(this.floorplan_camera, this.build_mode); }
+            sync_mode_controls();
         }
-        if this.build_mode {
-            // Keep movement disabled while working on the crawler floorplan.
-            return;
-        }
-
         // Prototype install/remove: hide the attached model without destroying it.
         // This preserves its parent and local mount for reinstallation.
         if (Input.just_pressed("Digit1") || Ui.is_pressed(this.cargo_button)) {
@@ -86,6 +91,14 @@ script CrawlerDrive {
         if (Input.just_pressed("Digit3") || Ui.is_pressed(this.antenna_button)) {
             this.antenna_installed = !this.antenna_installed;
             if this.antenna != null { World.set_active(this.antenna, this.antenna_installed); }
+        }
+
+        if this.build_mode {
+            // Equipment actions remain usable in floorplan mode; driving does not.
+            this.drawing = false;
+            World.set_active(this.ring, false);
+            World.set_active(this.knob, false);
+            return;
         }
 
         let keys = Input.axis("ArrowDown", "ArrowUp");
