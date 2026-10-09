@@ -567,9 +567,9 @@
       "name": "Crawler side cargo",
       "transform_3d": {
         "position": [
-          0,
-          0,
-          0
+          -1.03,
+          2.21,
+          2.55
         ],
         "rotation": [
           0,
@@ -595,9 +595,9 @@
       "name": "Crawler auxiliary tank",
       "transform_3d": {
         "position": [
-          0,
-          0,
-          0
+          1.86,
+          1.13,
+          -0.2
         ],
         "rotation": [
           0,
@@ -623,9 +623,9 @@
       "name": "Crawler roof antenna",
       "transform_3d": {
         "position": [
-          0,
-          0,
-          0
+          -1.4,
+          3.48,
+          -2.9
         ],
         "rotation": [
           0,
