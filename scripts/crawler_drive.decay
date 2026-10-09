@@ -1,0 +1,14 @@
+// Minimal 3D model movement proof: no physics or animation.
+// Hold Up/Down to drive along world Z; press Space to reset.
+script CrawlerDrive {
+    @export let speed: f32 = 2.0;
+
+    fn update(dt: f32) {
+        let throttle = Input.axis("ArrowDown", "ArrowUp");
+        this.transform.position.z += throttle * speed * dt;
+
+        if Input.just_pressed("Space") {
+            this.transform.position.z = 0.0;
+        }
+    }
+}
