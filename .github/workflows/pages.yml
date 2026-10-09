@@ -11,7 +11,7 @@ permissions:
   id-token: write
 concurrency:
   group: low-tide-pages-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,7 +45,14 @@ jobs:
       - name: Build current Sindri player
         working-directory: sindri-engine
         run: cargo build --release -p sindri-player --lib --target wasm32-unknown-unknown
+      - name: Cache wasm-bindgen CLI
+        id: wasm-bindgen-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/wasm-bindgen
+          key: wasm-bindgen-cli-${{ runner.os }}-${{ hashFiles('sindri-engine/Cargo.lock') }}
       - name: Install wasm-bindgen CLI matching Cargo.lock
+        if: steps.wasm-bindgen-cache.outputs.cache-hit != 'true'
         working-directory: sindri-engine
         shell: bash
         run: |
