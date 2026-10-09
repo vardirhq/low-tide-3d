@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Regression checks for Low Tide's modular crawler assembly and live equipment."""
+import json
+import math
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class CrawlerModuleTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.manifest = json.loads((ROOT / "Low_Tide_Kit/kit_manifest.json").read_text())
+        cls.scene = json.loads((ROOT / "poc.scene").read_text())
+        cls.drive = (ROOT / "scripts/crawler_drive.decay").read_text()
+        cls.assembly = {a["name"]: a for a in cls.manifest["assembly"]}
+
+    def test_module_assets_exist(self):
+        for item in self.manifest["assembly"]:
+            asset = ROOT / "Low_Tide_Kit/modules" / (item["asset"] + ".glb")
+            self.assertTrue(asset.is_file(), f"Missing {asset}")
+
+    def test_live_module_offsets_match_manifest(self):
+        # Each module's local transform is derived from the kit's Z-up source axes.
+        mounts = {
+            "fuel-module": "tank__123",
+            "antenna-module": "antenna__125",
+        }
+        entities = {e["id"]: e for e in self.scene["entities"]}
+        for entity_id, mount_name in mounts.items():
+            x, y, z = self.assembly[mount_name]["position"]
+            expected = [x, z, -y]
+            entity = entities[entity_id]
+            self.assertEqual(entity["transform_3d"]["position"], expected)
+            self.assertIn(f"Vec3({x}, {z}, {-y})", self.drive)
+
+    def test_attached_equipment_uses_local_transform(self):
+        self.assertIn("World.set_parent(part, this.entity)", self.drive)
+        self.assertIn("part.transform.position = offset", self.drive)
+
+    def test_crawler_steering_sign_regression(self):
+        self.assertIn("this.transform.yaw -= steering * turn_speed * dt * sign(throttle)", self.drive)
+
+    def test_static_builder_preserves_scene_and_uses_y_up(self):
+        import importlib.util
+        path = ROOT / "scripts/build_modular_crawler.py"
+        spec = importlib.util.spec_from_file_location("crawler_builder", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        layout = json.loads((ROOT / "crawler/layout.json").read_text())
+        result = module.build(self.manifest, self.scene, layout)
+        self.assertFalse(any(e["id"] == "crawler" for e in result["entities"]))
+        entities = {e["name"]: e for e in result["entities"]}
+        for name in ("tank__123", "antenna__125", "crate__119"):
+            item = self.assembly[name]
+            x, y, z = item["position"]
+            self.assertEqual(entities[f"Module: {name} ({item['asset']})"]["transform_3d"]["position"], [x, z, -y])
+        self.assertFalse(any(e["name"].startswith("Module: tank__124") for e in result["entities"]))
+
+
+if __name__ == "__main__":
+    unittest.main()
