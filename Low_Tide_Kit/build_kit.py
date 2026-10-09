@@ -327,6 +327,12 @@ if __name__=='__main__':
  stats.append(export(P/'starter_crawler_full.glb',A))
  cut=[a for a in A if a['group'] not in ['roof','upper_walls']]
  stats.append(export(P/'starter_crawler_cutaway.glb',cut))
+ # Base mesh for live modular equipment: exclude only the individually attached
+ # tank and antenna instances, retaining the rest of the cutaway crawler.
+ # Do not switch the playable scene until this GLB is generated and verified.
+ detachable={'tank__123','antenna__125'}
+ clean=[a for a in cut if a['name'] not in detachable]
+ stats.append(export(P/'starter_crawler_clean_base.glb',clean))
  catalog=[]
  for i,name in enumerate(K):catalog.append({'name':name,'asset':name,'position':[(i%6)*3.5,(i//6)*4,0],'yaw_degrees':0,'group':'catalog'})
  stats.append(export(P/'modular_kit_catalog.glb',catalog))
