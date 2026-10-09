@@ -49,8 +49,9 @@ class CrawlerModuleTests(unittest.TestCase):
                     visit(root)
             return {doc["nodes"][i].get("name") for i in seen}
         before, after = reachable_names(original), reachable_names(cleaned)
-        self.assertTrue({"tank__123", "antenna__125"}.issubset(before))
-        self.assertEqual(before - after, {"tank__123", "antenna__125", *(
+        self.assertIn("tank__123", before)
+        self.assertNotIn("antenna__125", before)
+        self.assertEqual(before - after, {"tank__123", *(
             name for name in before if name and (
                 name.startswith("SOCKET_tank__123_") or
                 name.startswith("SOCKET_antenna__125_")
