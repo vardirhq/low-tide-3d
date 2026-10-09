@@ -25,7 +25,7 @@ script CrawlerDrive {
         World.set_active(this.knob, false);
     }
 
-    fn attach_equipment(name: string, offset: Vec3) {
+    fn attach_equipment(name: String, offset: Vec3) {
         let part = World.find(name);
         if part != null {
             World.set_parent(part, this.entity);
