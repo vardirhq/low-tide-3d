@@ -1,36 +1,81 @@
-# Low Tide 3D: first isometric POC
+# Low Tide 3D: crawler rendering proof
 
-## Scope
+The actual committed `Low_Tide_Kit/starter_crawler_cutaway.glb` renders in
+Sindri's native offscreen project runtime and in the exported WebGPU browser
+runtime. Both 1200 × 1000 captures were visually inspected on 2026-10-09.
+Tracks, ramp, wood deck, bed, furniture and cabin are recognizable, correctly
+oriented and colored. This is the external model, with normal depth-tested
+geometry, rather than a baked preview or generated replacement.
 
-This is an **honest engine integration spike**, not yet a playable crawler. The first scene is intended to show the supplied Astra cutaway crawler on an empty plane from an orthographic, three-quarter view. The untouched kit lives in `Low_Tide_Kit/`.
+![Native Sindri crawler render](proof/crawler-native.png)
 
-## Current Sindri blocker
+![WebGPU Sindri crawler render](proof/crawler-browser.png)
 
-As of the Sindri version inspected on 2026-10-08, `sindri.mesh` supports `cube` and `surface` primitives only. `surface` geometry is inlined into the scene (`vertices`, `uvs`, and **u16 indices**), and the component has no imported mesh/GLB source field. See:
+## Engine requirement
 
-- https://github.com/vardirhq/sindri-engine/blob/main/crates/sindri-scene/src/components/mesh.rs
-- https://github.com/vardirhq/sindri-engine/blob/main/examples/cube/assets/demo.scene
-- https://github.com/vardirhq/sindri-engine/blob/main/docs/project-format.md
+Use Sindri's `feat/imported-glb-models` branch from
+[engine PR #504](https://github.com/vardirhq/sindri-engine/pull/504).
+Main did not support external model assets when this POC started.
 
-This means writing `"model": "Low_Tide_Kit/starter_crawler_cutaway.glb"` into the scene would *not* work. Do **not** fake the result with a static screenshot or a handcrafted cube that is claimed to be the crawler.
+`poc.scene` uses the general `sindri.model` component:
 
-### Minimum general engine capability to unblock this POC
+```json
+{ "sindri.model": { "asset": "Low_Tide_Kit/starter_crawler_cutaway.glb", "layer": 1 } }
+```
 
-1. Implement an asset-backed glTF 2.0 / GLB mesh resource and stable scene component reference (not game-specific code). Load it through the normal async asset pipeline on native and WebGPU.
-2. Preserve node hierarchy and local transforms, glTF materials/base colors, indices and normals. Correctly interpret Y-up GLB coordinates. Handle unsupported glTF features with visible diagnostics.
-3. Render the exact committed `Low_Tide_Kit/starter_crawler_cutaway.glb` with a depth-tested ortho world camera, rather than rendering a generated approximation.
-4. Test native and browser export, including resource packaging from the external project root. Add a real engine integration test for GLB loading and a headless/game smoke test.
-5. Follow Sindri's `AGENTS.md`, `CLAUDE.md`, dependency, parity/capability, and preflight policies. Fix missing capabilities generally in `vardirhq/sindri-engine`, not inside Low Tide.
-6. Only mark visual POC complete once an actual in-engine render capture exists and has been inspected.
+The model remains an external asset at its original location. Its SHA-256 is
+`de9a1ec5d3d99cd8e2ca47ebe7e48d9fb202ccd4fddd09be85b6ea4818730ec2`.
+The decoded model contains 177 nodes, 19 meshes, 85 primitives and 16 materials;
+this particular model has no base-color textures. The engine's deterministic
+fixture separately exercises embedded textures, multiple materials, both index
+widths and reuse.
 
-## POC scene
+The export carried exactly three assets: the scene, the unchanged 888,192-byte
+GLB and `textures/seabed.png`. Its manifest labels the GLB as `model`, verifies
+its hash and places it in the normal content-hashed asset directory. Browser
+smoke passed with WebGPU, a 1200 × 1000 canvas, loading screen completion and
+real HTTP requests for all three asset kinds.
 
-`poc.scene` contains a genuinely supported **orthographic three-quarter camera**, background/environment, flat cube-ground surface, and a placeholder marker to verify framing. It does **not** claim the crawler GLB renders yet.
+## Composition
 
-The main target asset is `Low_Tide_Kit/starter_crawler_cutaway.glb`, not `preview_cutaway.png`. Start with cutaway, then allow swapping to `starter_crawler_full.glb` to test hiding upper walls and roofs.
+The scene contains the crawler at identity transform, a flat solid-color seabed,
+an orthographic three-quarter camera with vertical size 12, ambient light and a
+warm directional sun. The original construction kit used Z-up, but the GLB is
+already Y-up. No extra axis conversion is applied. Node names, hierarchy and
+local transforms remain in the imported resource for future independent parts.
 
-Kit coordinates: source manifest uses Z-up; exported GLB already uses Y-up (X right, Y up, -Z forward). Do not convert twice.
+Imported-model shadows are not supported by this initial engine path and are
+disabled. Skinning, animation, morphs, glTF lights/cameras and model authoring UI
+are deferred. The kit's optional `KHR_lights_punctual` extension is reported as
+ignored; the scene's Sindri light supplies lighting.
 
-## After rendering works
+## Reproduce
 
-Character marker with WASD, then a physical crew controller; moving/rotating crawler root with persistent throttle; ramp hinge and boarding; modular floor and wall assets. Every added behavior must be authored in Decay, not a custom Rust game loop. Do not rewrite the original `games/low-tide` while this experiment is unproven.
+From the engine checkout, replace `../low-tide-3d` if the repositories are not
+siblings:
+
+```bash
+cargo run -p sindri-causeway --bin project-capture -- \
+  ../low-tide-3d ../low-tide-3d/docs/proof/crawler-native.png 1200 1000
+cargo run -p sindri-export --bin sindri-export -- \
+  ../low-tide-3d target/low-tide-web --base /
+cargo build -p sindri-causeway --lib --target wasm32-unknown-unknown
+wasm-bindgen target/wasm32-unknown-unknown/debug/sindri_causeway.wasm \
+  --target web --out-dir target/low-tide-web/pkg --out-name sindri_causeway
+cd scripts/browser
+npm ci
+cd ../..
+SINDRI_EXPECT_ASSETS=1 SINDRI_EXPECT_ASSET_KINDS=scene,model,texture \
+SINDRI_VIEWPORT_WIDTH=1200 SINDRI_VIEWPORT_HEIGHT=1000 \
+node scripts/browser/smoke.mjs target/low-tide-web \
+  ../low-tide-3d/docs/proof/crawler-browser.png
+```
+
+Install the repo's Rust toolchain/WASM target and a `wasm-bindgen` CLI version
+matching `Cargo.lock`. The inspected browser proof used Chrome headless shell
+155 with software Vulkan. Set `CHROME_PATH` when supplying a browser executable.
+The native proof used software Vulkan too; the capture is a real native GPU
+render, not a native interactive player window.
+
+This milestone introduces no tides, crafting, construction, diving, UI,
+character movement or driving. No gameplay expansion has started.
