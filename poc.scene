@@ -645,6 +645,126 @@
           "layer": 1
         }
       }
+    },
+    {
+      "id": "touch-cargo",
+      "name": "Toggle cargo",
+      "transform_3d": {
+        "position": [
+          -0.68,
+          0.83,
+          0
+        ],
+        "scale": [
+          0.4,
+          0.14,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.08,
+            0.14,
+            0.17,
+            0.82
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            1
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.button": {
+          "label": "CARGO"
+        }
+      }
+    },
+    {
+      "id": "touch-tank",
+      "name": "Toggle tank",
+      "transform_3d": {
+        "position": [
+          -0.22,
+          0.83,
+          0
+        ],
+        "scale": [
+          0.4,
+          0.14,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.08,
+            0.14,
+            0.17,
+            0.82
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            1
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.button": {
+          "label": "TANK"
+        }
+      }
+    },
+    {
+      "id": "touch-antenna",
+      "name": "Toggle antenna",
+      "transform_3d": {
+        "position": [
+          0.27,
+          0.83,
+          0
+        ],
+        "scale": [
+          0.4,
+          0.14,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.08,
+            0.14,
+            0.17,
+            0.82
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            1
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.button": {
+          "label": "ANTENNA"
+        }
+      }
     }
   ]
 }
