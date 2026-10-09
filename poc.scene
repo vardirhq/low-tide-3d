@@ -506,34 +506,6 @@
       }
     },
     {
-      "id": "wreckage-exhaust",
-      "name": "Scrap pipe protruding from salt",
-      "transform_3d": {
-        "position": [
-          -8,
-          0.02,
-          -5
-        ],
-        "rotation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "components": {
-        "sindri.model": {
-          "asset": "Low_Tide_Kit/modules/exhaust_stack.glb",
-          "layer": 1
-        }
-      }
-    },
-    {
       "id": "wreckage-post",
       "name": "Stranded support",
       "transform_3d": {
@@ -585,34 +557,6 @@
       "components": {
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/corner_post.glb",
-          "layer": 1
-        }
-      }
-    },
-    {
-      "id": "wreckage-tank",
-      "name": "Rusted tank in the mud",
-      "transform_3d": {
-        "position": [
-          -10,
-          0,
-          -1.5
-        ],
-        "rotation": [
-          0,
-          0,
-          0,
-          1
-        ],
-        "scale": [
-          1,
-          1,
-          1
-        ]
-      },
-      "components": {
-        "sindri.model": {
-          "asset": "Low_Tide_Kit/modules/tank.glb",
           "layer": 1
         }
       }
