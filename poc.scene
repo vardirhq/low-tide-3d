@@ -1,7 +1,7 @@
 {
   "format_version": 10,
   "metadata": {
-    "name": "Low Tide 3D — Astra cutaway crawler"
+    "name": "Low Tide 3D — The Last Signal (environment study)"
   },
   "entities": [
     {
@@ -10,9 +10,9 @@
       "components": {
         "sindri.environment": {
           "background": [
-            0.28,
+            0.22,
             0.24,
-            0.18,
+            0.23,
             1
           ],
           "shadows": {
@@ -72,9 +72,9 @@
           1
         ],
         "scale": [
-          36,
+          48,
           0.5,
-          36
+          48
         ]
       },
       "components": {
@@ -133,6 +133,487 @@
             0.86
           ],
           "intensity": 1.5
+        }
+      }
+    },
+    {
+      "id": "station-plinth",
+      "name": "Abandoned signal station foundation",
+      "transform_3d": {
+        "position": [
+          8,
+          -0.08,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          3.5,
+          0.5,
+          3.2
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "textures/seabed.png",
+          "layer": 0
+        }
+      }
+    },
+    {
+      "id": "station-roof",
+      "name": "Collapsed signal station roof",
+      "transform_3d": {
+        "position": [
+          8,
+          2.15,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          3.7,
+          0.22,
+          3.5
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "textures/seabed.png",
+          "layer": 0
+        }
+      }
+    },
+    {
+      "id": "station-core",
+      "name": "Signal station equipment housing",
+      "transform_3d": {
+        "position": [
+          8,
+          0.95,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1.4,
+          1.8,
+          1.3
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "textures/seabed.png",
+          "layer": 0
+        }
+      }
+    },
+    {
+      "id": "salt-shelf-west",
+      "name": "Low salt ridge",
+      "transform_3d": {
+        "position": [
+          -9,
+          -0.21,
+          -6
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          4,
+          0.22,
+          2
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "textures/seabed.png",
+          "layer": 0
+        }
+      }
+    },
+    {
+      "id": "salt-shelf-east",
+      "name": "Salt bank",
+      "transform_3d": {
+        "position": [
+          12,
+          -0.19,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          6,
+          0.24,
+          3
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "textures/seabed.png",
+          "layer": 0
+        }
+      }
+    },
+    {
+      "id": "signal-mast",
+      "name": "Stranded radio antenna",
+      "transform_3d": {
+        "position": [
+          8,
+          2.2,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/antenna.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "station-tank",
+      "name": "Forgotten water tank",
+      "transform_3d": {
+        "position": [
+          9,
+          -0.02,
+          -1.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/tank.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "station-crate-a",
+      "name": "Salvage crates by station",
+      "transform_3d": {
+        "position": [
+          6.1,
+          0,
+          -1.9
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/crate.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "station-crate-b",
+      "name": "Abandoned supply crate",
+      "transform_3d": {
+        "position": [
+          6.8,
+          0.02,
+          -1.8
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          0.8,
+          0.8,
+          0.8
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/crate.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "station-crate-c",
+      "name": "Cargo near crawler",
+      "transform_3d": {
+        "position": [
+          -5,
+          0,
+          3.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/crate.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "station-crate-d",
+      "name": "Cargo near crawler second",
+      "transform_3d": {
+        "position": [
+          -5.9,
+          0,
+          3.6
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          0.8,
+          0.8,
+          0.8
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/crate.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "station-vent",
+      "name": "Station ventilation stack",
+      "transform_3d": {
+        "position": [
+          7,
+          2.3,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/vent.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "marker-lamp",
+      "name": "Old signal beacon",
+      "transform_3d": {
+        "position": [
+          7.5,
+          2.4,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/lamp.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "wreckage-exhaust",
+      "name": "Scrap pipe protruding from salt",
+      "transform_3d": {
+        "position": [
+          -8,
+          0.02,
+          -5
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/exhaust_stack.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "wreckage-post",
+      "name": "Stranded support",
+      "transform_3d": {
+        "position": [
+          10,
+          0,
+          5
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/corner_post.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "wreckage-post-2",
+      "name": "Second stranded support",
+      "transform_3d": {
+        "position": [
+          10.9,
+          0,
+          5.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/corner_post.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "wreckage-tank",
+      "name": "Rusted tank in the mud",
+      "transform_3d": {
+        "position": [
+          -10,
+          0,
+          -1.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "Low_Tide_Kit/modules/tank.glb",
+          "layer": 1
         }
       }
     }
