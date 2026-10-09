@@ -95,11 +95,12 @@ class CrawlerModuleTests(unittest.TestCase):
         result = module.build(self.manifest, self.scene, layout)
         self.assertFalse(any(e["id"] == "crawler" for e in result["entities"]))
         entities = {e["name"]: e for e in result["entities"]}
-        for name in ("tank__123", "antenna__125", "crate__119"):
+        for name in ("tank__123", "crate__119"):
             item = self.assembly[name]
             x, y, z = item["position"]
             self.assertEqual(entities[f"Module: {name} ({item['asset']})"]["transform_3d"]["position"], [x, z, -y])
         self.assertFalse(any(e["name"].startswith("Module: tank__124") for e in result["entities"]))
+        self.assertFalse(any(e["name"].startswith("Module: antenna__125") for e in result["entities"]))
 
 
 if __name__ == "__main__":
