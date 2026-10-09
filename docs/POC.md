@@ -13,9 +13,7 @@ geometry, rather than a baked preview or generated replacement.
 
 ## Engine requirement
 
-Use Sindri's `feat/imported-glb-models` branch from
-[engine PR #504](https://github.com/vardirhq/sindri-engine/pull/504).
-Main did not support external model assets when this POC started.
+Use **Sindri main**. Imported GLB support from [engine PR #504](https://github.com/vardirhq/sindri-engine/pull/504) has been merged.
 
 `poc.scene` uses the general `sindri.model` component:
 
@@ -59,9 +57,9 @@ cargo run -p sindri-causeway --bin project-capture -- \
   ../low-tide-3d ../low-tide-3d/docs/proof/crawler-native.png 1200 1000
 cargo run -p sindri-export --bin sindri-export -- \
   ../low-tide-3d target/low-tide-web --base /
-cargo build -p sindri-causeway --lib --target wasm32-unknown-unknown
-wasm-bindgen target/wasm32-unknown-unknown/debug/sindri_causeway.wasm \
-  --target web --out-dir target/low-tide-web/pkg --out-name sindri_causeway
+cargo build -p sindri-player --lib --target wasm32-unknown-unknown
+wasm-bindgen target/wasm32-unknown-unknown/debug/sindri_player.wasm \
+  --target web --out-dir target/low-tide-web/pkg --out-name sindri_player
 cd scripts/browser
 npm ci
 cd ../..
@@ -79,3 +77,11 @@ render, not a native interactive player window.
 
 This milestone introduces no tides, crafting, construction, diving, UI,
 character movement or driving. No gameplay expansion has started.
+
+## The Last Signal environment pass (in progress)
+
+The scene now adds an abandoned signal-station silhouette, a mast, salvaged crates, discarded industrial parts and low salt banks around the original crawler. These use the kit's **actual individual GLB modules** and ordinary Sindri cube geometry; no engine edits or fake rendered image are involved. This is an initial composition pass, **not yet visually verified**. The scene remains static, with no crew or driving.
+
+A GitHub Actions workflow at `.github/workflows/pages.yml` exports the external project with Sindri main, builds `sindri-player` for WASM, generates browser bindings and uploads a preview artifact. On merge to main it attempts GitHub Pages deployment to `/low-tide-3d/`. This workflow is new and its first CI run must be inspected before declaring web deployment functional.
+
+The current environment pieces deliberately reuse the kit's modular assets. Next pass should inspect the actual browser screenshot for clipping, framing, overdraw and module origins, then refine lighting/composition and replace the simple station blockout with authored geometry. No shadows from imported models yet.
