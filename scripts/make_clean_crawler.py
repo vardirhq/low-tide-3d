@@ -11,7 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "Low_Tide_Kit/starter_crawler_cutaway.glb"
 OUTPUT = ROOT / "Low_Tide_Kit/starter_crawler_clean_base.glb"
-DETACHABLE = {"tank__123", "antenna__125"}
+DETACHABLE = {"tank__123"}
+# The antenna is in the roof group and absent from the cutaway GLB.
 
 
 def chunks(blob):
