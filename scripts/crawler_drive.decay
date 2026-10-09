@@ -6,6 +6,13 @@ script CrawlerDrive {
     @export let speed: f32 = 2.0;
     @export let turn_speed: f32 = 1.6;
 
+    var cargo: Entity = null;
+    var tank: Entity = null;
+    var antenna: Entity = null;
+    var cargo_installed: bool = true;
+    var tank_installed: bool = true;
+    var antenna_installed: bool = true;
+
     var ring: Entity = null;
     var knob: Entity = null;
     var reset_button: Entity = null;
@@ -19,8 +26,11 @@ script CrawlerDrive {
         // These independent GLB props ride the moving crawler root.
         // Offsets come from the kit manifest, converted from source Z-up to GLB Y-up.
         // Cargo is stacked above the rear crate; the other two match kit mounts.
+        this.cargo = World.find("Crawler side cargo");
         attach_equipment("Crawler side cargo", Vec3(-1.03, 2.21, 2.55));
+        this.tank = World.find("Crawler auxiliary tank");
         attach_equipment("Crawler auxiliary tank", Vec3(1.86, 1.13, -0.2));
+        this.antenna = World.find("Crawler roof antenna");
         attach_equipment("Crawler roof antenna", Vec3(-1.4, 3.48, -2.9));
         World.set_active(this.ring, false);
         World.set_active(this.knob, false);
@@ -35,6 +45,21 @@ script CrawlerDrive {
     }
 
     fn update(dt: f32) {
+        // Prototype install/remove: hide the attached model without destroying it.
+        // This preserves its parent and local mount for reinstallation.
+        if Input.just_pressed("Digit1") {
+            this.cargo_installed = !this.cargo_installed;
+            if this.cargo != null { World.set_active(this.cargo, this.cargo_installed); }
+        }
+        if Input.just_pressed("Digit2") {
+            this.tank_installed = !this.tank_installed;
+            if this.tank != null { World.set_active(this.tank, this.tank_installed); }
+        }
+        if Input.just_pressed("Digit3") {
+            this.antenna_installed = !this.antenna_installed;
+            if this.antenna != null { World.set_active(this.antenna, this.antenna_installed); }
+        }
+
         let keys = Input.axis("ArrowDown", "ArrowUp");
         var throttle = keys;
         if Stick.held && abs(Stick.y) > abs(keys) {
