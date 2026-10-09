@@ -1,7 +1,7 @@
 name: Low Tide 3D WebGPU preview
 on:
   push:
-    branches: [main, poc/isometric-crawler]
+    branches: [main, poc/isometric-crawler, integration/sindri-3d]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -20,11 +20,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: low-tide-3d
-      - name: Checkout Sindri main
+      - name: Checkout Sindri 3D PR #507
         uses: actions/checkout@v4
         with:
           repository: vardirhq/sindri-engine
-          ref: main
+          ref: ccr-4791a75f-7rfx8g
           path: sindri-engine
       - name: Identify Sindri revision
         id: sindri-revision
@@ -91,7 +91,7 @@ jobs:
       - name: Upload build preview
         uses: actions/upload-artifact@v4
         with:
-          name: low-tide-web-preview
+          name: low-tide-web-preview-${{ github.run_id }}
           path: ${{ runner.temp }}/low-tide-web
       - name: Configure Pages
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
