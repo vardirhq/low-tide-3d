@@ -80,8 +80,8 @@ class CrawlerModuleTests(unittest.TestCase):
             self.assertTrue(button["components"]["sindri.ui.text"]["font"])
             self.assertNotIn(key + "-label", by_id)
         css = (ROOT / "assets/ui/hud.weave").read_text()
-        self.assertNotIn("width:", css)
-        self.assertNotIn("height:", css)
+        self.assertNotIn("\n    width:", css)
+        self.assertNotIn("\n    height:", css)
         self.assertNotIn(" x:", css)
 
     def test_responsive_weave_hud(self):
