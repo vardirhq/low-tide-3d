@@ -107,7 +107,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "Low_Tide_Kit/starter_crawler_cutaway.glb",
+          "asset": "Low_Tide_Kit/starter_crawler_clean_base.glb",
           "layer": 1
         },
         "sindri.script": {
