@@ -109,6 +109,13 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/starter_crawler_cutaway.glb",
           "layer": 1
+        },
+        "sindri.script": {
+          "script": "CrawlerDrive",
+          "source": "scripts/crawler_drive.decay",
+          "properties": {
+            "speed": 2
+          }
         }
       }
     },
