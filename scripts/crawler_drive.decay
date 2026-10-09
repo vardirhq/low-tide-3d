@@ -1,26 +1,51 @@
-// Simple 3D movement proof. Keyboard and on-screen touch buttons share controls.
+// Keyboard and Sindri's native floating touch stick control the crawler.
+// Horizontal stick movement is reserved for steering once 3D yaw is exposed.
+const KNOB_TRAVEL: f32 = 0.11;
+
 script CrawlerDrive {
     @export let speed: f32 = 2.0;
 
-    var forward_button: Entity = null;
-    var reverse_button: Entity = null;
+    var ring: Entity = null;
+    var knob: Entity = null;
     var reset_button: Entity = null;
+    var drawing: bool = false;
+    var anchor: Vec2 = Vec2(0.0, 0.0);
 
     fn start() {
-        this.forward_button = World.find("Drive forward");
-        this.reverse_button = World.find("Drive reverse");
+        this.ring = World.find("Stick ring");
+        this.knob = World.find("Stick knob");
         this.reset_button = World.find("Reset crawler");
+        World.set_active(this.ring, false);
+        World.set_active(this.knob, false);
     }
 
     fn update(dt: f32) {
-        var throttle = Input.axis("ArrowDown", "ArrowUp");
-        if Ui.is_held(this.forward_button) { throttle += 1.0; }
-        if Ui.is_held(this.reverse_button) { throttle -= 1.0; }
-        throttle = clamp(throttle, -1.0, 1.0);
+        let keys = Input.axis("ArrowDown", "ArrowUp");
+        var throttle = keys;
+        if Stick.held && abs(Stick.y) > abs(keys) {
+            throttle = -Stick.y;
+        }
         this.transform.position.z -= throttle * speed * dt;
 
         if Input.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
             this.transform.position.z = 0.0;
+        }
+
+        draw_stick();
+    }
+
+    fn draw_stick() {
+        if Stick.held && !this.drawing {
+            this.drawing = !Pointer.over_ui;
+            this.anchor = Pointer.overlay;
+        }
+        if !Stick.held { this.drawing = false; }
+        World.set_active(this.ring, this.drawing);
+        World.set_active(this.knob, this.drawing);
+        if this.drawing {
+            this.ring.transform.position = Vec3(this.anchor.x, this.anchor.y, 0.0);
+            let push = Vec2(Stick.x, -Stick.y) * KNOB_TRAVEL;
+            this.knob.transform.position = Vec3(this.anchor.x + push.x, this.anchor.y + push.y, 0.0);
         }
     }
 }
