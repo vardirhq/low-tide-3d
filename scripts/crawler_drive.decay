@@ -21,15 +21,15 @@ script CrawlerDrive {
     }
 
     fn update(dt: f32) {
-        let keys = Input.Keyboard.axis("ArrowDown", "ArrowUp");
+        let keys = Input.axis("ArrowDown", "ArrowUp");
         var throttle = keys;
-        if Input.Stick.held && abs(Input.Stick.y) > abs(keys) {
-            throttle = -Input.Stick.y;
+        if Stick.held && abs(Stick.y) > abs(keys) {
+            throttle = -Stick.y;
         }
-        let steer_keys = Input.Keyboard.axis("ArrowLeft", "ArrowRight");
+        let steer_keys = Input.axis("ArrowLeft", "ArrowRight");
         var steering = steer_keys;
-        if Input.Stick.held && abs(Input.Stick.x) > abs(steer_keys) {
-            steering = Input.Stick.x;
+        if Stick.held && abs(Stick.x) > abs(steer_keys) {
+            steering = Stick.x;
         }
         // Steering reverses with the crawler, like a tracked vehicle.
         if abs(throttle) > 0.01 {
@@ -37,7 +37,7 @@ script CrawlerDrive {
         }
         this.transform.world_position += this.transform.forward * throttle * speed * dt;
 
-        if Input.Keyboard.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
+        if Input.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
             this.transform.position = Vec3(0.0, 0.0, 0.0);
             this.transform.yaw = 0.0;
         }
@@ -46,16 +46,16 @@ script CrawlerDrive {
     }
 
     fn draw_stick() {
-        if Input.Stick.held && !this.drawing {
-            this.drawing = !Input.Pointer.over_ui;
-            this.anchor = Input.Pointer.overlay;
+        if Stick.held && !this.drawing {
+            this.drawing = !Pointer.over_ui;
+            this.anchor = Pointer.overlay;
         }
-        if !Input.Stick.held { this.drawing = false; }
+        if !Stick.held { this.drawing = false; }
         World.set_active(this.ring, this.drawing);
         World.set_active(this.knob, this.drawing);
         if this.drawing {
             this.ring.transform.position = Vec3(this.anchor.x, this.anchor.y, 0.0);
-            let push = Vec2(Input.Stick.x, -Input.Stick.y) * KNOB_TRAVEL;
+            let push = Vec2(Stick.x, -Stick.y) * KNOB_TRAVEL;
             this.knob.transform.position = Vec3(this.anchor.x + push.x, this.anchor.y + push.y, 0.0);
         }
     }
