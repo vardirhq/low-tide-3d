@@ -462,6 +462,17 @@
         },
         "sindri.ui.button": {
           "label": "RESET"
+        },
+        "sindri.ui.text": {
+          "text": "RESET",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.055,
+          "bounds": [
+            0.38,
+            0.13
+          ],
+          "anchor": "center",
+          "layer": 21
         }
       }
     },
@@ -686,6 +697,17 @@
         },
         "sindri.ui.button": {
           "label": "CARGO"
+        },
+        "sindri.ui.text": {
+          "text": "CARGO",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.055,
+          "bounds": [
+            0.38,
+            0.13
+          ],
+          "anchor": "center",
+          "layer": 21
         }
       }
     },
@@ -726,6 +748,17 @@
         },
         "sindri.ui.button": {
           "label": "TANK"
+        },
+        "sindri.ui.text": {
+          "text": "TANK",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.055,
+          "bounds": [
+            0.38,
+            0.13
+          ],
+          "anchor": "center",
+          "layer": 21
         }
       }
     },
@@ -766,6 +799,17 @@
         },
         "sindri.ui.button": {
           "label": "ANTENNA"
+        },
+        "sindri.ui.text": {
+          "text": "ANTENNA",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.055,
+          "bounds": [
+            0.38,
+            0.13
+          ],
+          "anchor": "center",
+          "layer": 21
         }
       }
     }
