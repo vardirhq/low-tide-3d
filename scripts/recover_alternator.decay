@@ -1,0 +1,18 @@
+// First Last Signal salvage interaction slice.
+// Walk the explorer near the alternator and press E to recover it.
+// The explorer currently uses a placeholder mesh and keyboard movement.
+script RecoverAlternator {
+    var recovered: bool = false;
+    fn update(dt: f32) {
+        if this.recovered { return; }
+        let explorer = World.find("Explorer");
+        if explorer == null { return; }
+        let distance = this.transform.world_position.distance(explorer.transform.world_position);
+        if distance <= 1.8 && Input.Keyboard.just_pressed("E") {
+            this.recovered = true;
+            World.set_active(this.entity, false);
+            World.send_signal(explorer, "take_alternator", 1.0);
+            print("Recovered replacement alternator.");
+        }
+    }
+}
