@@ -17,3 +17,8 @@ wreck pieces. It includes editable source, sockets, collision proposals, a
 combined diorama and a separate `salvage-catalog.scene` for inspection.
 
 ![Last Signal asset study](assets/salvage/preview_diorama.png)
+
+The [Keeper character](assets/characters/keeper/README.md) includes a static
+player mesh and a separate 17-joint rigged GLB with five animation clips. The
+rigged version awaits Sindri's skeletal-animation pipeline; neither version
+is wired into the playable scene yet.
