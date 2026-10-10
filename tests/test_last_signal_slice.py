@@ -15,6 +15,14 @@ class LastSignalSlice(unittest.TestCase):
                 asset = entities[entity_id]["components"]["sindri.model"]["asset"]
                 self.assertTrue((ROOT / asset).is_file(), asset)
 
+    def test_explorer_can_recover_and_install_alternator(self):
+        scene = json.loads((ROOT / "poc.scene").read_text())
+        explorer = next(e for e in scene["entities"] if e["id"] == "explorer")
+        self.assertEqual(explorer["components"]["sindri.script"]["script"], "Explorer")
+        source = (ROOT / explorer["components"]["sindri.script"]["source"]).read_text()
+        self.assertIn('World.take_signal("take_alternator")', source)
+        self.assertIn('World.send_signal(crawler, "repair_engine", 1.0)', source)
+
     def test_alternator_recovery_is_connected(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
         alternator = next(e for e in scene["entities"] if e["id"] == "signal-alternator")
