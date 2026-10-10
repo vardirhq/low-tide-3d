@@ -928,6 +928,41 @@
           "layer": 1
         }
       }
+    },
+    {
+      "id": "explorer",
+      "name": "Explorer",
+      "transform_3d": {
+        "position": [
+          2,
+          0,
+          -1
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          0.45,
+          0.8,
+          0.45
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/salvage_locker.glb",
+          "layer": 1
+        },
+        "sindri.script": {
+          "script": "Explorer",
+          "source": "scripts/explorer.decay",
+          "properties": {
+            "walk_speed": 2.5
+          }
+        }
+      }
     }
   ]
 }
