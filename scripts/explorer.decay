@@ -1,0 +1,32 @@
+// Temporary visible on-foot proxy until a dedicated rigged character is available.
+// Arrow keys drive the crawler; WASD moves the explorer.
+// E picks up the alternator and installs it beside the crawler.
+script Explorer {
+    var carrying_alternator: bool = false;
+    var repaired: bool = false;
+    @export var walk_speed: f32 = 2.5;
+
+    fn update(dt: f32) {
+        let sideways = Input.Keyboard.axis("A", "D");
+        let forward = Input.Keyboard.axis("S", "W");
+        let motion = Vec3(sideways, 0.0, -forward);
+        if motion.length() > 0.01 {
+            this.transform.world_position += motion.normalized() * walk_speed * dt;
+        }
+
+        if World.take_signal("take_alternator") > 0.0 {
+            this.carrying_alternator = true;
+            print("Alternator recovered. Return to the crawler and press E to install.");
+        }
+
+        if this.carrying_alternator && !this.repaired && Input.Keyboard.just_pressed("E") {
+            let crawler = World.find("Astra starter crawler cutaway");
+            if crawler != null && this.transform.world_position.distance(crawler.transform.world_position) < 3.0 {
+                this.repaired = true;
+                this.carrying_alternator = false;
+                World.send_signal(crawler, "repair_engine", 1.0);
+                print("Alternator installed.");
+            }
+        }
+    }
+}
