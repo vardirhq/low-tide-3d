@@ -1,12 +1,12 @@
-// Third-person camera prototype on Sindri PR #507.
-// Keep camera input separate from the proven crawler movement script.
-// First touch remains the floating driving stick; the second, right-side touch orbits.
+// Third-person camera. A right-side touch can orbit without driving first.
+// The touch that starts the camera gesture keeps ownership until release.
 script CrawlerCamera {
     var yaw: f32 = 0.0;
     var pitch: f32 = 0.35;
     var previous_x: f32 = 0.0;
     var previous_y: f32 = 0.0;
-    var tracking: bool = false;
+    var camera_finger: f32 = -1.0;
+    var previous_count: f32 = 0.0;
     @export var sensitivity: f32 = 0.005;
 
     fn start() {
@@ -15,29 +15,46 @@ script CrawlerCamera {
         Camera.orbit(this.entity, crawler, yaw, pitch, 12.0);
         Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
         Camera.orbit_smoothing(this.entity, 8.0);
+        // Pull in against registered 3D colliders (the GLB seabed has none yet).
+        Camera.orbit_collision(this.entity, 1.0, 0.25);
     }
 
     fn update(dt: f32) {
-        // The second finger must be to the right of the movement finger.
-        // Track its own previous position so the first camera frame cannot jump.
-        let camera_touch = Input.Touch.count > 1.0 && Input.Touch.x(1.0) > Input.Touch.x(0.0);
-        if camera_touch {
-            let x = Input.Touch.x(1.0);
-            let y = Input.Touch.y(1.0);
-            if this.tracking {
-                yaw -= (x - this.previous_x) * sensitivity;
-                pitch = clamp(pitch + (y - this.previous_y) * sensitivity, -0.9, 1.1);
+        let count = Input.Touch.count;
+        if count == 0.0 {
+            this.camera_finger = -1.0;
+        } else {
+            // The first finger can immediately orbit when it begins on the
+            // right side. Pointer.overlay is centered, with positive X right.
+            if this.previous_count == 0.0 && Input.Pointer.overlay.x > 0.0 && !Input.Pointer.over_ui {
+                this.camera_finger = 0.0;
+                this.previous_x = Input.Touch.x(0.0);
+                this.previous_y = Input.Touch.y(0.0);
             }
-            this.previous_x = x;
-            this.previous_y = y;
+            // A second finger can orbit while the first finger steers.
+            if count > 1.0 && this.previous_count < 2.0 && this.camera_finger < 0.0 {
+                this.camera_finger = 1.0;
+                this.previous_x = Input.Touch.x(1.0);
+                this.previous_y = Input.Touch.y(1.0);
+            }
+            // If a finger disappears, reset ownership rather than jumping.
+            if count < this.previous_count { this.camera_finger = -1.0; }
+            if this.camera_finger >= 0.0 && this.camera_finger < count {
+                let x = Input.Touch.x(this.camera_finger);
+                let y = Input.Touch.y(this.camera_finger);
+                yaw -= (x - this.previous_x) * sensitivity;
+                pitch = clamp(pitch + (y - this.previous_y) * sensitivity, 0.18, 1.1);
+                this.previous_x = x;
+                this.previous_y = y;
+            }
         }
-        this.tracking = camera_touch;
-
+        this.previous_count = count;
         if Input.Pointer.is_down("Right") && !Input.Pointer.over_ui {
             let delta = Input.Pointer.delta;
             yaw -= delta.x * sensitivity;
-            pitch = clamp(pitch + delta.y * sensitivity, -0.9, 1.1);
+            pitch = clamp(pitch + delta.y * sensitivity, 0.18, 1.1);
         }
+        // Positive pitch keeps the orbit above the flat seabed reference.
         Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), yaw, pitch, 12.0);
     }
 }
