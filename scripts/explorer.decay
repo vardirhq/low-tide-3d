@@ -4,9 +4,24 @@
 script Explorer {
     var carrying_alternator: bool = false;
     var repaired: bool = false;
+    var aboard: bool = true;
     @export var walk_speed: f32 = 2.5;
 
     fn update(dt: f32) {
+        let crawler = World.find("Astra starter crawler cutaway");
+        if crawler == null { return; }
+        if this.aboard {
+            this.transform.world_position = crawler.transform.world_position + Vec3(2.0, 0.0, -1.0);
+        }
+        if Input.Keyboard.just_pressed("F") && this.transform.world_position.distance(crawler.transform.world_position) < 3.5 {
+            this.aboard = !this.aboard;
+            if this.aboard { print("Boarded crawler. Arrow keys or touch stick to drive."); }
+            else { print("Left crawler. WASD to walk, E to interact, F to board."); }
+            World.send_signal(crawler, "toggle_helm", 1.0);
+            let camera = World.find("Third-person crawler camera");
+            if camera != null { World.send_signal(camera, "toggle_follow", 1.0); }
+        }
+        if this.aboard { return; }
         let sideways = Input.Keyboard.axis("A", "D");
         let forward = Input.Keyboard.axis("S", "W");
         let motion = Vec3(sideways, 0.0, -forward);
@@ -20,8 +35,7 @@ script Explorer {
         }
 
         if this.carrying_alternator && !this.repaired && Input.Keyboard.just_pressed("E") {
-            let crawler = World.find("Astra starter crawler cutaway");
-            if crawler != null && this.transform.world_position.distance(crawler.transform.world_position) < 3.0 {
+            if this.transform.world_position.distance(crawler.transform.world_position) < 3.0 {
                 this.repaired = true;
                 this.carrying_alternator = false;
                 World.send_signal(crawler, "repair_engine", 1.0);
