@@ -10,8 +10,8 @@ script Explorer {
         let sideways = Input.Keyboard.axis("A", "D");
         let forward = Input.Keyboard.axis("S", "W");
         let motion = Vec3(sideways, 0.0, -forward);
-        if motion.length() > 0.01 {
-            this.transform.world_position += motion.normalized() * walk_speed * dt;
+        if motion.length > 0.01 {
+            this.transform.world_position += motion.normalized * walk_speed * dt;
         }
 
         if World.take_signal("take_alternator") > 0.0 {
