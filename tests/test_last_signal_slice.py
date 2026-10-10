@@ -23,6 +23,16 @@ class LastSignalSlice(unittest.TestCase):
         self.assertIn('World.take_signal("take_alternator")', source)
         self.assertIn('World.send_signal(crawler, "repair_engine", 1.0)', source)
 
+    def test_boarding_switches_drive_and_camera(self):
+        explorer = (ROOT / "scripts/explorer.decay").read_text()
+        drive = (ROOT / "scripts/crawler_drive.decay").read_text()
+        camera = (ROOT / "scripts/crawler_camera.decay").read_text()
+        self.assertIn('Input.Keyboard.just_pressed("F")', explorer)
+        self.assertIn('World.send_signal(crawler, "toggle_helm", 1.0)', explorer)
+        self.assertIn('World.take_signal("toggle_helm")', drive)
+        self.assertIn('World.take_signal("toggle_follow")', camera)
+        self.assertIn('World.find("Explorer")', camera)
+
     def test_alternator_recovery_is_connected(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
         alternator = next(e for e in scene["entities"] if e["id"] == "signal-alternator")
