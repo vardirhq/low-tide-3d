@@ -6,6 +6,7 @@ script CrawlerDrive {
     @export let speed: f32 = 2.0;
     @export let turn_speed: f32 = 1.6;
 
+    var at_helm: bool = true;
     var engine_repaired: bool = false;
     var repair_requested: bool = false;
 
@@ -56,6 +57,7 @@ script CrawlerDrive {
     }
 
     fn update(dt: f32) {
+        if World.take_signal("toggle_helm") > 0.0 { this.at_helm = !this.at_helm; }
         if World.take_signal("repair_engine") > 0.0 {
             this.engine_repaired = true;
             print("Engine repaired. The crawler is ready to travel.");
@@ -84,14 +86,16 @@ script CrawlerDrive {
             this.had_touch = true;
             this.right_touch_camera = Input.Pointer.overlay.x > 0.0 && !Input.Pointer.over_ui;
         }
-        let stick_drives = Input.Stick.held && !this.right_touch_camera;
+        let stick_drives = this.at_helm && Input.Stick.held && !this.right_touch_camera;
         let keys = Input.Keyboard.axis("ArrowDown", "ArrowUp");
-        var throttle = keys;
+        var throttle = 0.0;
+        if this.at_helm { throttle = keys; }
         if stick_drives && abs(Input.Stick.y) > abs(keys) {
             throttle = -Input.Stick.y;
         }
         let steer_keys = Input.Keyboard.axis("ArrowLeft", "ArrowRight");
-        var steering = steer_keys;
+        var steering = 0.0;
+        if this.at_helm { steering = steer_keys; }
         if stick_drives && abs(Input.Stick.x) > abs(steer_keys) {
             steering = Input.Stick.x;
         }
@@ -101,7 +105,7 @@ script CrawlerDrive {
         }
         this.transform.world_position += this.transform.forward * throttle * speed * dt;
 
-        if Input.Keyboard.just_pressed("Space") || Ui.is_pressed(this.reset_button) {
+        if this.at_helm && (Input.Keyboard.just_pressed("Space") || Ui.is_pressed(this.reset_button)) {
             this.transform.position = Vec3(0.0, 0.0, 0.0);
             this.transform.yaw = 0.0;
         }
@@ -110,7 +114,7 @@ script CrawlerDrive {
     }
 
     fn draw_stick() {
-        let stick_drives = Input.Stick.held && !this.right_touch_camera;
+        let stick_drives = this.at_helm && Input.Stick.held && !this.right_touch_camera;
         if stick_drives && !this.drawing {
             this.drawing = !Input.Pointer.over_ui;
             this.anchor = Input.Pointer.overlay;
