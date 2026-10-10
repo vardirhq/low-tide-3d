@@ -1,0 +1,474 @@
+{
+  "format_version": 10,
+  "metadata": {
+    "name": "Low Tide \u2014 Last Signal asset catalog (static)"
+  },
+  "entities": [
+    {
+      "id": "environment",
+      "name": "Seabed haze",
+      "components": {
+        "sindri.environment": {
+          "background": [
+            0.22,
+            0.24,
+            0.23,
+            1
+          ],
+          "shadows": {
+            "enabled": false,
+            "map_size": 1024,
+            "distance": 64,
+            "bias": 0.002
+          },
+          "ambient_intensity": 0.28
+        }
+      }
+    },
+    {
+      "id": "sun",
+      "name": "Warm seabed sunlight",
+      "transform_3d": {
+        "rotation": [
+          -0.4598918101016466,
+          -0.27658623790810527,
+          -0.15329727003388222,
+          0.8297587137243158
+        ]
+      },
+      "components": {
+        "sindri.light": {
+          "kind": "directional",
+          "color": [
+            1,
+            0.95,
+            0.86
+          ],
+          "intensity": 1.5
+        }
+      }
+    },
+    {
+      "id": "camera",
+      "name": "Static salvage catalog camera",
+      "transform_3d": {
+        "position": [
+          12.0,
+          13.0,
+          18.0
+        ],
+        "rotation": [
+          -0.23977530473009442,
+          0.2805429836711139,
+          0.07259812080203769,
+          0.9265705318056
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.camera": {
+          "projection": "perspective",
+          "vertical_fov_degrees": 45,
+          "near": 0.1,
+          "far": 120
+        }
+      }
+    },
+    {
+      "id": "radio-desk",
+      "name": "radio_desk",
+      "transform_3d": {
+        "position": [
+          -4.5,
+          0.0,
+          5.25
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/radio_desk.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "tide-gauge",
+      "name": "tide_gauge",
+      "transform_3d": {
+        "position": [
+          -1.5,
+          0.0,
+          5.25
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/tide_gauge.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "signal-beacon",
+      "name": "signal_beacon",
+      "transform_3d": {
+        "position": [
+          1.5,
+          0.0,
+          5.25
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/signal_beacon.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "salvage-winch",
+      "name": "salvage_winch",
+      "transform_3d": {
+        "position": [
+          4.5,
+          0.0,
+          5.25
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/salvage_winch.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "fuel-drum",
+      "name": "fuel_drum",
+      "transform_3d": {
+        "position": [
+          -4.5,
+          0.0,
+          1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/fuel_drum.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "battery-pack",
+      "name": "battery_pack",
+      "transform_3d": {
+        "position": [
+          -1.5,
+          0.0,
+          1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/battery_pack.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "water-pump",
+      "name": "water_pump",
+      "transform_3d": {
+        "position": [
+          1.5,
+          0.0,
+          1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/water_pump.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "replacement-alternator",
+      "name": "replacement_alternator",
+      "transform_3d": {
+        "position": [
+          4.5,
+          0.0,
+          1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/replacement_alternator.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "salvage-locker",
+      "name": "salvage_locker",
+      "transform_3d": {
+        "position": [
+          -4.5,
+          0.0,
+          -1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/salvage_locker.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "cargo-pallet",
+      "name": "cargo_pallet",
+      "transform_3d": {
+        "position": [
+          -1.5,
+          0.0,
+          -1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/cargo_pallet.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "wreck-rib-2m",
+      "name": "wreck_rib_2m",
+      "transform_3d": {
+        "position": [
+          1.5,
+          0.0,
+          -1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/wreck_rib_2m.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "wreck-bulkhead-2m",
+      "name": "wreck_bulkhead_2m",
+      "transform_3d": {
+        "position": [
+          4.5,
+          0.0,
+          -1.75
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/wreck_bulkhead_2m.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "supply-shelf",
+      "name": "supply_shelf",
+      "transform_3d": {
+        "position": [
+          -4.5,
+          0.0,
+          -5.25
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/supply_shelf.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "floodlight",
+      "name": "floodlight",
+      "transform_3d": {
+        "position": [
+          -1.5,
+          0.0,
+          -5.25
+        ],
+        "rotation": [
+          0,
+          0.0,
+          0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/floodlight.glb",
+          "layer": 1
+        }
+      }
+    }
+  ]
+}
