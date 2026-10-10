@@ -812,6 +812,118 @@
           "layer": 21
         }
       }
+    },
+    {
+      "id": "signal-radio",
+      "name": "Last Signal radio",
+      "transform_3d": {
+        "position": [
+          8,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/radio_desk.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "signal-beacon",
+      "name": "Last Signal beacon",
+      "transform_3d": {
+        "position": [
+          10,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/signal_beacon.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "signal-alternator",
+      "name": "Replacement alternator",
+      "transform_3d": {
+        "position": [
+          7,
+          0,
+          -2
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/replacement_alternator.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "signal-gauge",
+      "name": "Tide gauge",
+      "transform_3d": {
+        "position": [
+          9,
+          0,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "assets/salvage/modules/tide_gauge.glb",
+          "layer": 1
+        }
+      }
     }
   ]
 }
