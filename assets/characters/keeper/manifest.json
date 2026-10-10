@@ -1,0 +1,66 @@
+{
+  "version": "0.1",
+  "units": "meters",
+  "gltf_axes": "Y up, -Z forward, X right",
+  "source_axes": "Z up, +Y forward, X right",
+  "pivot": "ground center between feet",
+  "bounds_source_m": [
+    [
+      -0.385,
+      -0.41300000000000003,
+      0.0
+    ],
+    [
+      0.385,
+      0.2535,
+      1.87
+    ]
+  ],
+  "triangles": 3276,
+  "joints": 17,
+  "weighting": "Rigid 1.0 to one joint per vertex; segmented low-poly design, not smooth skin.",
+  "clips": [
+    {
+      "name": "idle",
+      "duration_seconds": 2.0,
+      "loop_hint": true,
+      "root_motion": false
+    },
+    {
+      "name": "walk",
+      "duration_seconds": 1.0,
+      "loop_hint": true,
+      "root_motion": false
+    },
+    {
+      "name": "run",
+      "duration_seconds": 0.7,
+      "loop_hint": true,
+      "root_motion": false
+    },
+    {
+      "name": "carry_idle",
+      "duration_seconds": 2.0,
+      "loop_hint": true,
+      "root_motion": false
+    },
+    {
+      "name": "interact",
+      "duration_seconds": 1.2,
+      "loop_hint": false,
+      "root_motion": false
+    }
+  ],
+  "engine_status": "PR #507 slice 6b unimplemented at c50e6b20; use static model for current Sindri.",
+  "controller_proposal": {
+    "type": "capsule",
+    "height_total_m": 1.87,
+    "radius_m": 0.24,
+    "center_gltf": [
+      0,
+      0.935,
+      0
+    ],
+    "status": "not configured in engine; excludes arm/backpack protrusions"
+  }
+}

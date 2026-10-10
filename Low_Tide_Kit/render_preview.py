@@ -8,10 +8,10 @@ def world(instances):
   for p in K[a['asset']]['parts']:
    out.append(((p['v']@R.T+a['position'])[p['f']],p['mat']))
  return out
-def render(instances,path,w=1500,h=1250,eye=(8,-11,11),scale=105):
- geom=world(instances);eye=np.array(eye,float);eye/=np.linalg.norm(eye);right=np.cross([0,0,1],eye);right/=np.linalg.norm(right);up=np.cross(eye,right);basis=np.array([right,up,eye]);target=np.array([0,-.6,1.2])
+def render(instances,path,w=1500,h=1250,eye=(8,-11,11),scale=105,target=(0,-.6,1.2),light=(-3,-4,8)):
+ geom=world(instances);eye=np.array(eye,float);eye/=np.linalg.norm(eye);right=np.cross([0,0,1],eye);right/=np.linalg.norm(right);up=np.cross(eye,right);basis=np.array([right,up,eye]);target=np.array(target,float)
  bg=np.array([34,45,49],float);rgb=np.zeros((h,w,3))+bg;depth=np.full((h,w),-1e10)
- light=np.array([-3,-4,8.]);light/=np.linalg.norm(light)
+ light=np.array(light,float);light/=np.linalg.norm(light)
  def drawtri(tri,color):
   q=(tri-target)@basis.T;q[:,:2]*=scale;q[:,0]+=w/2;q[:,1]=h/2-q[:,1]
   x0=max(0,int(np.floor(q[:,0].min())));x1=min(w-1,int(np.ceil(q[:,0].max())));y0=max(0,int(np.floor(q[:,1].min())));y1=min(h-1,int(np.ceil(q[:,1].max())))
