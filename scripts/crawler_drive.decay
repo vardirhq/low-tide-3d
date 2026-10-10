@@ -6,6 +6,9 @@ script CrawlerDrive {
     @export let speed: f32 = 2.0;
     @export let turn_speed: f32 = 1.6;
 
+    var engine_repaired: bool = false;
+    var repair_requested: bool = false;
+
     var cargo_button: Entity = null;
     var tank_button: Entity = null;
     var antenna_button: Entity = null;
@@ -53,6 +56,10 @@ script CrawlerDrive {
     }
 
     fn update(dt: f32) {
+        if World.take_signal("repair_engine") > 0.0 {
+            this.engine_repaired = true;
+            print("Engine repaired. The crawler is ready to travel.");
+        }
         // Prototype install/remove: hide the attached model without destroying it.
         // This preserves its parent and local mount for reinstallation.
         if (Input.Keyboard.just_pressed("Digit1") || Ui.is_pressed(this.cargo_button)) {
