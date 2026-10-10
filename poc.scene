@@ -945,14 +945,14 @@
           1
         ],
         "scale": [
-          0.45,
-          0.8,
-          0.45
+          1,
+          1,
+          1
         ]
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/salvage_locker.glb",
+          "asset": "assets/characters/keeper/keeper_static.glb",
           "layer": 1
         },
         "sindri.script": {
