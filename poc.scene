@@ -27,18 +27,18 @@
     },
     {
       "id": "camera",
-      "name": "Three-quarter orthographic camera",
+      "name": "Third-person crawler camera",
       "transform_3d": {
         "position": [
-          12.8,
-          18.8,
-          18.2
+          0,
+          5,
+          12
         ],
         "rotation": [
-          -0.3171606937915804,
-          0.29153905665000895,
-          0.10313552392860863,
-          0.8965361880399684
+          0,
+          0,
+          0,
+          1
         ],
         "scale": [
           1,
@@ -48,11 +48,14 @@
       },
       "components": {
         "sindri.camera": {
-          "projection": "orthographic",
-          "vertical_size": 12,
+          "projection": "perspective",
+          "vertical_fov_degrees": 65,
           "near": 0.1,
-          "far": 120,
-          "fit": "height"
+          "far": 120
+        },
+        "sindri.script": {
+          "source": "scripts/crawler_camera.decay",
+          "script": "CrawlerCamera"
         }
       }
     },
