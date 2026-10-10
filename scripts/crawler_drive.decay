@@ -20,6 +20,8 @@ script CrawlerDrive {
     var knob: Entity = null;
     var reset_button: Entity = null;
     var drawing: bool = false;
+    var right_touch_camera: bool = false;
+    var had_touch: bool = false;
     var anchor: Vec2 = Vec2(0.0, 0.0);
 
     fn start() {
@@ -66,14 +68,24 @@ script CrawlerDrive {
             if this.antenna != null { World.set_active(this.antenna, this.antenna_installed); }
         }
 
+        // The first right-side finger belongs to the camera, not the stick.
+        // Preserve keyboard and left-side floating-stick driving.
+        if Input.Touch.count == 0.0 {
+            this.had_touch = false;
+            this.right_touch_camera = false;
+        } else if !this.had_touch {
+            this.had_touch = true;
+            this.right_touch_camera = Input.Pointer.overlay.x > 0.0 && !Input.Pointer.over_ui;
+        }
+        let stick_drives = Input.Stick.held && !this.right_touch_camera;
         let keys = Input.Keyboard.axis("ArrowDown", "ArrowUp");
         var throttle = keys;
-        if Input.Stick.held && abs(Input.Stick.y) > abs(keys) {
+        if stick_drives && abs(Input.Stick.y) > abs(keys) {
             throttle = -Input.Stick.y;
         }
         let steer_keys = Input.Keyboard.axis("ArrowLeft", "ArrowRight");
         var steering = steer_keys;
-        if Input.Stick.held && abs(Input.Stick.x) > abs(steer_keys) {
+        if stick_drives && abs(Input.Stick.x) > abs(steer_keys) {
             steering = Input.Stick.x;
         }
         // Steering reverses with the crawler, like a tracked vehicle.
@@ -91,11 +103,11 @@ script CrawlerDrive {
     }
 
     fn draw_stick() {
-        if Input.Stick.held && !this.drawing {
+        if stick_drives && !this.drawing {
             this.drawing = !Input.Pointer.over_ui;
             this.anchor = Input.Pointer.overlay;
         }
-        if !Input.Stick.held { this.drawing = false; }
+        if !stick_drives { this.drawing = false; }
         World.set_active(this.ring, this.drawing);
         World.set_active(this.knob, this.drawing);
         if this.drawing {
