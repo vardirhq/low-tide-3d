@@ -1,0 +1,17 @@
+// First Last Signal salvage interaction slice.
+// Move the crawler near the alternator and press E to recover it.
+// The full on-foot interaction will replace the crawler-proximity shortcut.
+script RecoverAlternator {
+    var recovered: bool = false;
+    fn update(dt: f32) {
+        if this.recovered { return; }
+        let crawler = World.find("Astra starter crawler cutaway");
+        if crawler == null { return; }
+        let distance = this.transform.world_position.distance(crawler.transform.world_position);
+        if distance <= 5.0 && Input.Keyboard.just_pressed("E") {
+            this.recovered = true;
+            World.set_active(this.entity, false);
+            print("Recovered replacement alternator. Return to the crawler for repairs.");
+        }
+    }
+}
