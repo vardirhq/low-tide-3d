@@ -1,6 +1,7 @@
 // Third-person camera. A right-side touch can orbit without driving first.
 // The touch that starts the camera gesture keeps ownership until release.
 script CrawlerCamera {
+    var following_explorer: bool = false;
     var yaw: f32 = 0.0;
     var pitch: f32 = 0.35;
     var previous_x: f32 = 0.0;
@@ -20,6 +21,7 @@ script CrawlerCamera {
     }
 
     fn update(dt: f32) {
+        if World.take_signal("toggle_follow") > 0.0 { this.following_explorer = !this.following_explorer; }
         let count = Input.Touch.count;
         if count == 0.0 {
             this.camera_finger = -1.0;
@@ -55,6 +57,12 @@ script CrawlerCamera {
             pitch = clamp(pitch + delta.y * sensitivity, 0.18, 1.1);
         }
         // Positive pitch keeps the orbit above the flat seabed reference.
-        Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), yaw, pitch, 12.0);
+        if this.following_explorer {
+            Camera.orbit_offset(this.entity, Vec3(0.0, 0.9, 0.0));
+            Camera.orbit(this.entity, World.find("Explorer"), yaw, pitch, 5.0);
+        } else {
+            Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
+            Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), yaw, pitch, 12.0);
+        }
     }
 }
