@@ -1,0 +1,43 @@
+// Third-person camera prototype on Sindri PR #507.
+// Keep camera input separate from the proven crawler movement script.
+// First touch remains the floating driving stick; the second, right-side touch orbits.
+script CrawlerCamera {
+    var yaw: f32 = 0.0;
+    var pitch: f32 = 0.35;
+    var previous_x: f32 = 0.0;
+    var previous_y: f32 = 0.0;
+    var tracking: bool = false;
+    @export var sensitivity: f32 = 0.005;
+
+    fn start() {
+        let crawler = World.find("Astra starter crawler cutaway");
+        Camera.perspective_fov(this.entity, 65.0);
+        Camera.orbit(this.entity, crawler, yaw, pitch, 12.0);
+        Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
+        Camera.orbit_smoothing(this.entity, 8.0);
+    }
+
+    fn update(dt: f32) {
+        // The second finger must be to the right of the movement finger.
+        // Track its own previous position so the first camera frame cannot jump.
+        let camera_touch = Input.Touch.count > 1.0 && Input.Touch.x(1.0) > Input.Touch.x(0.0);
+        if camera_touch {
+            let x = Input.Touch.x(1.0);
+            let y = Input.Touch.y(1.0);
+            if this.tracking {
+                yaw -= (x - this.previous_x) * sensitivity;
+                pitch = clamp(pitch + (y - this.previous_y) * sensitivity, -0.9, 1.1);
+            }
+            this.previous_x = x;
+            this.previous_y = y;
+        }
+        this.tracking = camera_touch;
+
+        if Input.Pointer.is_down("Right") && !Input.Pointer.over_ui {
+            let delta = Input.Pointer.delta;
+            yaw -= delta.x * sensitivity;
+            pitch = clamp(pitch + delta.y * sensitivity, -0.9, 1.1);
+        }
+        Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), yaw, pitch, 12.0);
+    }
+}

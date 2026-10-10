@@ -20,11 +20,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: low-tide-3d
-      - name: Checkout Sindri main with unified input API
+      - name: Checkout Sindri 3D orbit camera patch
         uses: actions/checkout@v4
         with:
           repository: vardirhq/sindri-engine
-          ref: 125986865733ebd5966fa4d4b440d5b83c72325c
+          ref: 5a336684929144de52cfa1fc49697460aaf58d0f
           path: sindri-engine
       - name: Identify Sindri revision
         id: sindri-revision
