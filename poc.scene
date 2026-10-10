@@ -894,6 +894,10 @@
         "sindri.model": {
           "asset": "assets/salvage/modules/replacement_alternator.glb",
           "layer": 1
+        },
+        "sindri.script": {
+          "source": "scripts/recover_alternator.decay",
+          "script": "RecoverAlternator"
         }
       }
     },
