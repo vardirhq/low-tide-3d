@@ -52,6 +52,52 @@ No faction is wholly heroic or villainous. Quests should include towing a strand
 
 The crawler is a physical, persistent vehicle rather than a teleporting base. Steer manually, set persistent throttle, then leave the helm to walk, cook, repair, or organize inventory while it keeps moving. Navigation upgrades can come later. Terrain, traction, fuel, mass, weather, and breakdowns provide decisions. The player must be able to move safely between crawler-local and world frames while boarding, exiting, and riding a turning vehicle.
 
+### Courier work
+
+Inspired by *Death Stranding*: the Keeper is also a courier. Stations of the
+Anchorage, Drifters and Sounders post orders such as a pump, a battery or
+water. Each order moves physical cargo from one place to another across a
+seabed that the tide keeps reshaping.
+
+- **The route is the challenge,** not combat. Distance, terrain, water depth
+  and the tide clock decide how a delivery goes.
+- **Cargo is physical.** It has weight, takes damage, and is carried on the
+  Keeper's back or in the crawler's hold. Condition on arrival matters.
+- **Deliveries connect the world.** A served station comes online: its beacon
+  lights, it shares forecasts and it posts new orders. This grows a network,
+  echoing *The Last Signal*.
+- **Survival is logistics.** Fuel, water and parts are cargo too, so every
+  trip weighs what to deliver against what to keep.
+
+### Crawler and Keeper: division of labour
+
+The crawler is not a faster Keeper; speed is at most a later upgrade. It does
+what one person on foot cannot: heavy, long-range and sustained work. The
+Keeper does what it cannot: squeeze into wrecks, climb, handle small things
+and dive. Play alternates between the two: park the crawler as a base camp,
+work on foot, return to it.
+
+What only the crawler offers:
+
+- **Hauling:** bulk and oversized cargo, several items in a slotted hold,
+  sealed storage that keeps cargo dry and intact, special racks for fragile
+  or powered cargo, and a winch or crane for salvage no person can lift.
+- **A workshop on tracks:** the workbench travels with you to refine
+  salvage into parts, repair cargo before handing it over, and maintain the
+  Keeper's gear.
+- **Home and survival:** a bed to rest, save and wait out the tide; a
+  kitchen, purifier and tanks; light and warmth at night. Its deck stands
+  above the water, so high tide is waited out inside, not fled.
+- **Reach:** crossing deep mud, channels and long distances; carrying and
+  deploying relays, bridges, ladders and pumps that open routes; an antenna
+  mast that receives distant orders and forecasts; mounted lights and
+  deterrents that guard it while the Keeper is away.
+- **Job board:** orders arrive by radio on the crawler, so choosing work,
+  packing the hold and planning the route all happen at home.
+
+Each module mounted on the deck changes what the crawler can do. The
+crawler's growth is the game's progression.
+
 ### Exploration and physical salvage
 
 Inspect wrecks, discover paths, operate mechanisms, and recover specific parts. Small items are carried; heavy generators or engines may need a winch, crane, stabilization, or towing. Salvaged objects should retain identity when installed in the crawler. Avoid reducing every discovery to anonymous scrap.
@@ -122,10 +168,16 @@ Keep scope intentionally small:
 
 - `Low_Tide_Kit/` contains real modular GLB assets. The starter deck is **3 × 6 m**, with 1 m construction cells, cutaway/full models and mount conventions.
 - `docs/POC.md` documents verified native/WebGPU imported-model rendering, with important limitations.
-- `scripts/crawler_drive.decay` currently implements direct-transform prototype driving and equipment visibility toggles, **not** terrain physics, persistent helm throttle, survival or combat.
+- `scripts/crawler_drive.decay` currently implements direct-transform prototype driving and equipment visibility toggles, **not** terrain physics, persistent helm throttle, walking a *moving* deck, survival or combat.
 - `scripts/crawler_camera.decay` is an experimental third-person camera script; its interaction and collision behavior need validation.
 - `crawler/BUILD_MODE.md`, `crawler/LIVE_MODULES.md`, and `crawler/README.md` document partial/prototype construction, parenting, and known mesh-overlap constraints.
-- This vision is **not a claim** that tides, diving, walkable interior, salvage, inventory, persistence, factions, or auto-attack exist in this repository.
+- Prototyped on Sindri PR #507 and covered by headless tests:
+  - the Keeper as a physics character;
+  - a walkable crawler deck with helm boarding;
+  - one alternator repair;
+  - one courier order (`scripts/courier.decay`) with a single carried cargo
+    item, a one-slot cargo bay and a uniform rising tide plane.
+- This vision is **not a claim** that diving, terrain-aware tides, inventory, persistence, factions, a multi-slot hold, crafting or auto-attack exist in this repository.
 - Coordinate conventions, moving-base character behavior, camera collision, runtime model assembly, performance, and save/load are engineering gates, not assumed solved problems.
 - Consult Sindri engine's `AGENTS.md`, `CLAUDE.md` and relevant architecture/capability docs before implementation in the engine.
 
