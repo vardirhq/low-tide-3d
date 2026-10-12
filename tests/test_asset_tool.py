@@ -51,6 +51,28 @@ class AssetToolChecks(unittest.TestCase):
         self.assertIn("'balloon' floats", warnings)
         self.assertIn("'wing' reaches outside", warnings)
 
+    def test_a_group_floating_together_is_caught(self):
+        # A tank with its hoop touches only itself, hovering over the base.
+        _, warnings = self.run_spec(
+            "box('base', (0, 0, .05), (.8, .8, .1), 'rust')\n"
+            "cyl('tank', (0, 0, .5), (0, 0, 1.0), .3, 'teal', 16)\n"
+            "cyl('hoop', (0, 0, .6), (0, 0, .63), .31, 'edge', 16)\n")
+        self.assertIn("a group of 2 parts ('hoop', 'tank') floats together", warnings)
+
+    def test_a_near_miss_above_the_surface_is_caught(self):
+        # Joined to the base by a pipe, so connected, but hovering 4 cm over it.
+        _, warnings = self.run_spec(
+            "box('base', (0, 0, .055), (.8, .8, .11), 'rust')\n"
+            "cyl('tank', (0, 0, .15), (0, 0, .9), .25, 'teal', 16)\n"
+            "pipe('stay', [(.2, 0, .1), (.2, 0, .3)], .02, 'edge')\n")
+        self.assertIn("'tank' hovers 0.040 m above 'base' under it; seat it at z=0.110", warnings)
+
+    def test_wall_mounted_parts_are_not_near_misses(self):
+        _, warnings = self.run_spec(
+            "box('wall', (0, 0, .5), (.8, .1, 1.0), 'steel')\n"
+            "box('shelf', (0, -.15, .6), (.6, .2, .03), 'wood')\n")
+        self.assertEqual(warnings, "")
+
     def test_flush_faces_flicker(self):
         _, warnings = self.run_spec(
             "box('body', (0, 0, .2), (.5, .5, .4), 'teal')\n"

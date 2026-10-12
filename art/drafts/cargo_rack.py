@@ -9,7 +9,7 @@ box('top_rail', (0, .25, .76), (1.0, .06, .06), 'steel')
 # Structure: slot dividers, back panel, shelf floor slats.
 for x in [-.16, .16]:
     box('divider', (x, .04, .34), (.04, .48, .52), 'edge', .008)
-box('back_panel', (0, .27, .42), (.88, .03, .64), 'teal', .01)
+box('back_panel', (0, .27, .41), (.88, .03, .66), 'teal', .01)
 for y in [-.18, -.06, .06, .18]:
     box('floor_slat', (0, y, .1), (.88, .09, .03), 'woodlight', .004)
 
