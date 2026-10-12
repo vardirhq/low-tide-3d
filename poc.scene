@@ -1260,6 +1260,374 @@
           "script": "Hud"
         }
       }
+    },
+    {
+      "id": "wreck-rib-a",
+      "name": "Wreck rib fore",
+      "transform_3d": {
+        "position": [
+          -16,
+          -0.46,
+          -17.5
+        ],
+        "rotation": [
+          0,
+          0.13052619222005157,
+          0,
+          0.9914448613738104
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/wreck_rib_2m.glb",
+          "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/wreck_rib_2m.glb"
+        }
+      }
+    },
+    {
+      "id": "wreck-rib-b",
+      "name": "Wreck rib aft",
+      "transform_3d": {
+        "position": [
+          -17.2,
+          -0.5,
+          -14.6
+        ],
+        "rotation": [
+          0,
+          -0.08715574274765817,
+          0,
+          0.9961946980917455
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/wreck_rib_2m.glb",
+          "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/wreck_rib_2m.glb"
+        }
+      }
+    },
+    {
+      "id": "wreck-bulkhead",
+      "name": "Wreck bulkhead",
+      "transform_3d": {
+        "position": [
+          -18.4,
+          -0.5,
+          -16.2
+        ],
+        "rotation": [
+          0,
+          0.6427876096865393,
+          0,
+          0.766044443118978
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/wreck_bulkhead_2m.glb",
+          "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/wreck_bulkhead_2m.glb"
+        }
+      }
+    },
+    {
+      "id": "wreck-shelf",
+      "name": "Wreck supply shelf",
+      "transform_3d": {
+        "position": [
+          -15.2,
+          -0.45,
+          -15.8
+        ],
+        "rotation": [
+          0,
+          0.766044443118978,
+          0,
+          0.6427876096865394
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/supply_shelf.glb",
+          "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/supply_shelf.glb"
+        }
+      }
+    },
+    {
+      "id": "wreck-drum",
+      "name": "Spilled fuel drum",
+      "transform_3d": {
+        "position": [
+          -13.8,
+          -0.42,
+          -17.0
+        ],
+        "rotation": [
+          0,
+          0.25881904510252074,
+          0,
+          0.9659258262890683
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/fuel_drum.glb",
+          "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/fuel_drum.glb"
+        }
+      }
+    },
+    {
+      "id": "wreck-pallet",
+      "name": "Wreck cargo pallet",
+      "transform_3d": {
+        "position": [
+          -14.6,
+          -0.43,
+          -14.2
+        ],
+        "rotation": [
+          0,
+          0.17364817766693033,
+          0,
+          0.984807753012208
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/cargo_pallet.glb",
+          "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/cargo_pallet.glb"
+        }
+      }
+    },
+    {
+      "id": "wreck-floodlight",
+      "name": "Dead floodlight",
+      "transform_3d": {
+        "position": [
+          -12.6,
+          -0.4,
+          -15.2
+        ],
+        "rotation": [
+          0,
+          -0.3420201433256687,
+          0,
+          0.9396926207859084
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/floodlight.glb",
+          "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/floodlight.glb"
+        }
+      }
+    },
+    {
+      "id": "cargo-battery",
+      "name": "Battery pack",
+      "transform_3d": {
+        "position": [
+          -14.6,
+          -0.2,
+          -14.2
+        ],
+        "rotation": [
+          0,
+          0.17364817766693033,
+          0,
+          0.984807753012208
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/battery_pack.glb",
+          "layer": 1
+        },
+        "sindri.script": {
+          "source": "scripts/courier.decay",
+          "script": "Cargo"
+        }
+      }
+    },
+    {
+      "id": "order-battery",
+      "name": "Delivery order",
+      "components": {
+        "sindri.script": {
+          "source": "scripts/courier.decay",
+          "script": "Order",
+          "properties": {
+            "cargo_name": "Battery pack",
+            "destination_name": "Last Signal beacon",
+            "tide_seconds": 120.0
+          }
+        }
+      }
+    },
+    {
+      "id": "tide-water",
+      "name": "Tide water",
+      "transform_3d": {
+        "position": [
+          0,
+          -0.9,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          60,
+          0.04,
+          60
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "textures/tide_water.png"
+        }
+      }
+    },
+    {
+      "id": "signal-beam",
+      "name": "Signal beam",
+      "transform_3d": {
+        "position": [
+          10,
+          6.5,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          0.18,
+          12,
+          0.18
+        ]
+      },
+      "components": {
+        "sindri.mesh": {
+          "primitive": "cube",
+          "texture": "textures/signal_beam.png"
+        }
+      }
+    },
+    {
+      "id": "hud-status",
+      "name": "Status",
+      "transform_3d": {
+        "position": [
+          0,
+          0.78,
+          0
+        ],
+        "scale": [
+          0.86,
+          0.08,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.04,
+            0.08,
+            0.1,
+            0.6
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            0.6
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.text": {
+          "text": "",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.038,
+          "bounds": [
+            0.84,
+            0.07
+          ],
+          "anchor": "center",
+          "layer": 21
+        }
+      }
     }
   ]
 }

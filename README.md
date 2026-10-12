@@ -17,6 +17,26 @@ ramp. **E** picks up the alternator by the station and installs it at the
 crawler. Back at the helm, **F** takes it again. Hold the right mouse button
 to orbit the camera.
 
+### The first delivery
+
+Low Tide is heading toward a courier game: you move cargo between stations
+across a hostile, tidal seabed, and the crawler is your hauler and home. The
+first delivery runs once the engine is repaired:
+
+1. **Answer the radio** at the signal station (**ACCEPT**). The tide starts
+   rising, and a timer shows under the objective.
+2. **Fetch the battery pack** from the wreck in the north-west hollow, which
+   floods first (**PICK UP**). It rides on the Keeper's back and slows them down.
+3. **Haul it.** Carry it on foot, or put it on the crawler's rear deck
+   (**LOAD** / **UNLOAD** at the cargo bay) and drive. Wading through deep
+   water wears it down, and so do hard landings. On the deck it stays dry.
+4. **Deliver it** to the beacon (**DELIVER**) to light the signal. The HUD
+   reports the cargo's condition. If the tide reaches its peak first, the
+   route floods and the order fails. The water drains and the order reopens.
+
+Orders are data on their scene entity (cargo, destination, tide time).
+`scripts/courier.decay` holds the `Order` and `Cargo` scripts.
+
 On a phone, the screen is split. The **left half** is a floating stick that
 drives the crawler or walks the Keeper, and the **right half** turns the
 camera. The buttons appear only when they apply:

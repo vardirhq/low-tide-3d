@@ -104,6 +104,8 @@ script CrawlerDrive {
         if stick_drives && abs(Input.Stick.x) > abs(steer_keys) {
             steering = Input.Stick.x;
         }
+        // A dead engine goes nowhere until the alternator is installed.
+        if !this.engine_repaired { throttle = 0.0; }
         // Steering reverses with the crawler, like a tracked vehicle.
         if abs(throttle) > 0.01 {
             this.transform.yaw -= steering * turn_speed * dt * sign(throttle);

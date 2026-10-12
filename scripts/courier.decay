@@ -1,0 +1,181 @@
+// Courier deliveries: one order moves one piece of cargo to a destination
+// before the tide closes the route. An order is data on its scene entity:
+// which cargo, where it goes and how long the tide takes. The Keeper's
+// Explorer script decides what E or the action button does and signals the
+// cargo and the order. They report their state on the shared board so the
+// HUD and the Keeper can read it.
+//
+// Board values:
+//   order_state     0 locked, 1 offered, 2 accepted, 3 delivered, 4 failed
+//   cargo_state     0 on the ground, 1 carried, 2 loaded on the crawler, 3 delivered
+//   cargo_condition 0..100
+//   tide_level      world height of the water surface
+
+const LOW_TIDE: f32 = -0.9;
+const HIGH_TIDE: f32 = 0.35;
+const RETRY_SECONDS: f32 = 6.0;
+const WADE_DEPTH: f32 = 0.1;
+
+script Order {
+    @export var cargo_name: String = "Battery pack";
+    @export var destination_name: String = "Last Signal beacon";
+    @export var tide_seconds: f32 = 120.0;
+
+    var state: f32 = 0.0;
+    var elapsed: f32 = 0.0;
+    var failed_for: f32 = 0.0;
+    var water: Entity = null;
+    var status: Entity = null;
+    var beam: Entity = null;
+
+    fn start() {
+        this.water = World.find("Tide water");
+        this.status = World.find("Status");
+        this.beam = World.find("Signal beam");
+        if this.beam != null { World.set_active(this.beam, false); }
+        Game.set("order_state", 0.0);
+        set_tide(LOW_TIDE);
+    }
+
+    fn update(dt: f32) {
+        if this.state == 0.0 && Game.get("engine_repaired", 0.0) > 0.0 {
+            this.state = 1.0;
+            print("Radio: incoming order at the signal station.");
+        }
+        if World.take_signal("accept") > 0.0 && this.state == 1.0 {
+            this.state = 2.0;
+            this.elapsed = 0.0;
+            print("Order accepted: " + this.cargo_name + " to the " + this.destination_name + ".");
+        }
+        if this.state == 2.0 {
+            this.elapsed += dt;
+            let t = clamp(this.elapsed / this.tide_seconds, 0.0, 1.0);
+            set_tide(lerp(LOW_TIDE, HIGH_TIDE, t));
+            if Game.get("cargo_state", 0.0) == 3.0 {
+                this.state = 3.0;
+                if this.beam != null { World.set_active(this.beam, true); }
+                let condition = round(Game.get("cargo_condition", 100.0));
+                let spare = round(this.tide_seconds - this.elapsed);
+                print("Delivered with " + condition + "% condition and " + spare + " s to spare.");
+                print("Signal restored.");
+            } else if t >= 1.0 {
+                this.state = 4.0;
+                this.failed_for = 0.0;
+                print("The tide closed the route. Order failed.");
+            }
+        } else if this.state == 4.0 {
+            // The water drains away and the order can be taken again.
+            this.failed_for += dt;
+            let t = clamp(this.failed_for / RETRY_SECONDS, 0.0, 1.0);
+            set_tide(lerp(HIGH_TIDE, LOW_TIDE, t));
+            if t >= 1.0 {
+                let cargo = World.find(this.cargo_name);
+                if cargo != null { World.send_signal(cargo, "reset", 1.0); }
+                this.state = 1.0;
+                print("The tide has turned. The order is open again.");
+            }
+        } else if this.state == 3.0 {
+            // After delivery the tide goes out again.
+            let level = max(Game.get("tide_level", LOW_TIDE) - dt * 0.05, LOW_TIDE);
+            set_tide(level);
+        }
+        Game.set("order_state", this.state);
+        show_status();
+    }
+
+    fn set_tide(level: f32) {
+        Game.set("tide_level", level);
+        if this.water != null {
+            let at = this.water.transform.world_position;
+            this.water.transform.world_position = Vec3(at.x, level, at.z);
+        }
+    }
+
+    fn show_status() {
+        if this.status == null { return; }
+        var text = "";
+        if this.state == 2.0 {
+            let left = max(this.tide_seconds - this.elapsed, 0.0);
+            let minutes = floor(left / 60.0);
+            let seconds = floor(left - minutes * 60.0);
+            var pad = "";
+            if seconds < 10.0 { pad = "0"; }
+            text = "Tide " + minutes + ":" + pad + seconds + "   Cargo " + round(Game.get("cargo_condition", 100.0)) + "%";
+        } else if this.state == 3.0 {
+            text = "Delivered  " + round(Game.get("cargo_condition", 100.0)) + "% condition";
+        } else if this.state == 4.0 {
+            text = "Route flooded. Wait for the tide";
+        }
+        World.set_active(this.status, text != "");
+        Ui.set_text(this.status, text);
+    }
+}
+
+// A piece of cargo. Carried, it rides the Keeper's back; loaded, it rides the
+// crawler's cargo bay; delivered, it is set down at the destination.
+// Wading with it, or landing hard, wears down its condition.
+script Cargo {
+    // Condition lost per second carried through water deeper than WADE_DEPTH.
+    @export var wade_wear: f32 = 1.5;
+    var state: f32 = 0.0;
+    var condition: f32 = 100.0;
+    var home: Vec3 = Vec3(0.0, 0.0, 0.0);
+    var home_yaw: f32 = 0.0;
+
+    fn start() {
+        this.home = this.transform.world_position;
+        this.home_yaw = this.transform.yaw;
+        publish();
+    }
+
+    fn update(dt: f32) {
+        let keeper = World.find("Explorer");
+        let crawler = World.find("Astra starter crawler cutaway");
+        if World.take_signal("carry") > 0.0 && keeper != null && (this.state == 0.0 || this.state == 2.0) {
+            World.set_parent(this.entity, keeper);
+            // On the Keeper's back: behind (+Z is backwards) and up.
+            this.transform.position = Vec3(0.0, 0.95, 0.32);
+            this.transform.yaw = 0.0;
+            this.state = 1.0;
+            print("Cargo picked up.");
+        }
+        if World.take_signal("load") > 0.0 && crawler != null && this.state == 1.0 {
+            World.set_parent(this.entity, crawler);
+            this.transform.position = Vec3(-0.7, 1.28, 2.1);
+            this.transform.yaw = 0.0;
+            this.state = 2.0;
+            print("Cargo loaded on the crawler.");
+        }
+        if World.take_signal("deliver") > 0.0 && this.state == 1.0 && keeper != null {
+            let at = keeper.transform.world_position + keeper.transform.forward * 0.8;
+            World.set_parent(this.entity, null);
+            this.transform.world_position = at;
+            this.state = 3.0;
+            print("Cargo delivered.");
+        }
+        let jolt = World.take_signal("jolt");
+        if jolt > 0.0 && this.state == 1.0 {
+            this.condition = max(this.condition - jolt, 0.0);
+            print("Cargo jolted.");
+        }
+        if World.take_signal("reset") > 0.0 {
+            World.set_parent(this.entity, null);
+            this.transform.world_position = this.home;
+            this.transform.yaw = this.home_yaw;
+            this.state = 0.0;
+            this.condition = 100.0;
+        }
+        // Carried through water, it gets wet; on the crawler's deck it stays dry.
+        if this.state == 1.0 && keeper != null {
+            if keeper.transform.world_position.y + WADE_DEPTH < Game.get("tide_level", -10.0) {
+                this.condition = max(this.condition - this.wade_wear * dt, 0.0);
+            }
+        }
+        publish();
+    }
+
+    fn publish() {
+        Game.set("cargo_state", this.state);
+        Game.set("cargo_condition", this.condition);
+    }
+}
