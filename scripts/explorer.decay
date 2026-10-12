@@ -1,28 +1,57 @@
 // The Keeper on foot: a physics character on the imported seabed.
-// Arrow keys drive the crawler; F leaves or boards it. On foot, WASD walks
-// relative to the camera, Space jumps and E picks up or installs the alternator.
+// Keyboard: arrow keys drive the crawler; F leaves or boards it. On foot,
+// WASD walks relative to the camera, Space jumps and E picks up or installs
+// the alternator. Touch: the left thumb's stick drives or walks, and the
+// buttons do the same as F, Space and E. Buttons appear only when they apply.
 // The engine's 3D character controller clips movement against the seabed and
 // salvage colliders; this script owns gravity, jumping and interaction.
+const REACH_CRAWLER: f32 = 3.0;
+const REACH_BOARD: f32 = 3.5;
+const REACH_ALTERNATOR: f32 = 1.8;
+
 script Explorer {
     var carrying_alternator: bool = false;
     var repaired: bool = false;
     var aboard: bool = true;
     var fall_speed: f32 = 0.0;
     var airborne: f32 = 0.0;
+    var had_touch: bool = false;
+    var stick_touch: bool = false;
     @export var walk_speed: f32 = 3.0;
     @export var jump_speed: f32 = 5.0;
     @export var gravity: f32 = 18.0;
 
+    var board_button: Entity = null;
+    var jump_button: Entity = null;
+    var action_button: Entity = null;
+    var objective: Entity = null;
+    var crawler_buttons: List<Entity> = [];
+    var last_objective: String = "";
+
+    fn start() {
+        this.board_button = World.find("Board button");
+        this.jump_button = World.find("Jump button");
+        this.action_button = World.find("Action button");
+        this.objective = World.find("Objective");
+        for name in ["Reset crawler", "Toggle cargo", "Toggle tank", "Toggle antenna"] {
+            let button = World.find(name);
+            if button != null { this.crawler_buttons.push(button); }
+        }
+    }
+
     fn update(dt: f32) {
         let crawler = World.find("Astra starter crawler cutaway");
         if crawler == null { return; }
+        track_touch();
         if this.aboard {
             // Riding: the Keeper waits at the crawler's side, lifted clear of
             // the seabed so stepping off never starts inside the terrain.
             this.transform.world_position = crawler.transform.world_position + Vec3(2.0, 0.3, -1.0);
             this.fall_speed = 0.0;
         }
-        if Input.Keyboard.just_pressed("F") && this.transform.world_position.distance(crawler.transform.world_position) < 3.5 {
+        let to_crawler = this.transform.world_position.distance(crawler.transform.world_position);
+        let board = Input.Keyboard.just_pressed("F") || pressed(this.board_button);
+        if board && to_crawler < REACH_BOARD {
             this.aboard = !this.aboard;
             if this.aboard { print("Boarded crawler. Arrow keys or touch stick to drive."); }
             else { print("Left crawler. WASD to walk, Space to jump, E to interact, F to board."); }
@@ -30,22 +59,82 @@ script Explorer {
             let camera = World.find("Third-person crawler camera");
             if camera != null { World.send_signal(camera, "toggle_follow", 1.0); }
         }
-        if this.aboard { return; }
 
-        walk(dt);
-
-        if World.take_signal("take_alternator") > 0.0 {
-            this.carrying_alternator = true;
-            print("Alternator recovered. Return to the crawler and press E to install.");
+        if !this.aboard {
+            walk(dt);
+            if World.take_signal("take_alternator") > 0.0 {
+                this.carrying_alternator = true;
+                print("Alternator recovered. Return to the crawler and press E to install.");
+            }
         }
 
-        if this.carrying_alternator && !this.repaired && Input.Keyboard.just_pressed("E") {
-            if this.transform.world_position.distance(crawler.transform.world_position) < 3.0 {
+        // What E or the action button would do from here, if anything.
+        let alternator = World.find("Replacement alternator");
+        var near_alternator = false;
+        if alternator != null && !this.carrying_alternator && !this.repaired {
+            near_alternator = this.transform.world_position.distance(alternator.transform.world_position) <= REACH_ALTERNATOR;
+        }
+        let can_install = this.carrying_alternator && !this.repaired && to_crawler < REACH_CRAWLER;
+        let interact = Input.Keyboard.just_pressed("E") || pressed(this.action_button);
+        if !this.aboard && interact {
+            if near_alternator {
+                World.send_signal(alternator, "pick_up", 1.0);
+            } else if can_install {
                 this.repaired = true;
                 this.carrying_alternator = false;
                 World.send_signal(crawler, "repair_engine", 1.0);
                 print("Alternator installed.");
             }
+        }
+
+        show_controls(to_crawler, near_alternator, can_install);
+    }
+
+    fn pressed(button: Entity) -> bool {
+        return button != null && Ui.is_pressed(button);
+    }
+
+    // A touch that begins on the left half, away from buttons, is the stick;
+    // one that begins on the right half belongs to the camera.
+    fn track_touch() {
+        if Input.Touch.count == 0.0 {
+            this.had_touch = false;
+            this.stick_touch = false;
+        } else if !this.had_touch {
+            this.had_touch = true;
+            this.stick_touch = Input.Pointer.overlay_x <= 0.0 && !Input.Pointer.over_ui;
+        }
+    }
+
+    fn show_controls(to_crawler: f32, near_alternator: bool, can_install: bool) {
+        for button in this.crawler_buttons { World.set_active(button, this.aboard); }
+        if this.board_button != null {
+            World.set_active(this.board_button, this.aboard || to_crawler < REACH_BOARD);
+            if this.aboard { Ui.set_text(this.board_button, "STEP OFF"); }
+            else { Ui.set_text(this.board_button, "BOARD"); }
+        }
+        if this.jump_button != null { World.set_active(this.jump_button, !this.aboard); }
+        if this.action_button != null {
+            World.set_active(this.action_button, !this.aboard && (near_alternator || can_install));
+            if near_alternator { Ui.set_text(this.action_button, "PICK UP"); }
+            else { Ui.set_text(this.action_button, "INSTALL"); }
+        }
+        var goal = "Engine repaired. Board and drive";
+        if !this.repaired {
+            if this.carrying_alternator {
+                goal = "Bring the alternator to the crawler";
+                if can_install { goal = "Install the alternator"; }
+            } else if this.aboard {
+                goal = "Engine dead. Step off to find an alternator";
+            } else if near_alternator {
+                goal = "Pick up the alternator";
+            } else {
+                goal = "Find the alternator by the radio station";
+            }
+        }
+        if this.objective != null && goal != this.last_objective {
+            this.last_objective = goal;
+            Ui.set_text(this.objective, goal);
         }
     }
 
@@ -71,7 +160,13 @@ script Explorer {
             if abs(look.x) + abs(look.z) > 0.01 { ahead = Vec3(look.x, 0.0, look.z).normalized; }
         }
         let side = Vec3(-ahead.z, 0.0, ahead.x);
-        var direction = ahead * Input.Keyboard.axis("S", "W") + side * Input.Keyboard.axis("A", "D");
+        var forward_input = Input.Keyboard.axis("S", "W");
+        var side_input = Input.Keyboard.axis("A", "D");
+        if this.stick_touch && Input.Stick.held {
+            forward_input = -Input.Stick.y;
+            side_input = Input.Stick.x;
+        }
+        var direction = ahead * forward_input + side * side_input;
         if direction.length > 1.0 { direction = direction.normalized; }
         if direction.length > 0.01 {
             this.transform.yaw = atan2(-direction.x, -direction.z);
@@ -79,7 +174,7 @@ script Explorer {
 
         if grounded {
             this.fall_speed = 4.0;
-            if Input.Keyboard.just_pressed("Space") {
+            if Input.Keyboard.just_pressed("Space") || pressed(this.jump_button) {
                 this.fall_speed = -this.jump_speed;
                 this.airborne = 0.1;
                 print("Keeper jumped");

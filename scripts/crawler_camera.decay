@@ -1,5 +1,6 @@
-// Third-person camera. A right-side touch can orbit without driving first.
-// The touch that starts the camera gesture keeps ownership until release.
+// Third-person camera. A finger that lands on the right half of the screen
+// orbits it, alongside a left-thumb stick; that finger keeps ownership until
+// release. On desktop, hold the right mouse button and drag.
 script CrawlerCamera {
     var following_explorer: bool = false;
     var yaw: f32 = 0.0;
@@ -8,6 +9,7 @@ script CrawlerCamera {
     var previous_y: f32 = 0.0;
     var camera_finger: f32 = -1.0;
     var previous_count: f32 = 0.0;
+    var screen_middle: f32 = 100000.0;
     @export var sensitivity: f32 = 0.005;
 
     fn start() {
@@ -26,18 +28,26 @@ script CrawlerCamera {
         if count == 0.0 {
             this.camera_finger = -1.0;
         } else {
-            // The first finger can immediately orbit when it begins on the
-            // right side. Pointer.overlay is centered, with positive X right.
-            if this.previous_count == 0.0 && Input.Pointer.overlay.x > 0.0 && !Input.Pointer.over_ui {
-                this.camera_finger = 0.0;
-                this.previous_x = Input.Touch.x(0.0);
-                this.previous_y = Input.Touch.y(0.0);
+            // Moving and looking use different halves of the screen: only a
+            // finger that lands on the right half (off the buttons) turns the
+            // camera, first finger or not; the left half is the move stick.
+            if this.previous_count == 0.0 {
+                // The first finger is the pointer, which locates the screen's
+                // middle in the pixels Touch reports.
+                let rise = 1.0 - Input.Pointer.overlay_y;
+                if rise > 0.05 {
+                    let half_height = Input.Pointer.y / rise;
+                    this.screen_middle = Input.Pointer.x - Input.Pointer.overlay_x * half_height;
+                }
             }
-            // A second finger can orbit while the first finger steers.
-            if count > 1.0 && this.previous_count < 2.0 && this.camera_finger < 0.0 {
-                this.camera_finger = 1.0;
-                this.previous_x = Input.Touch.x(1.0);
-                this.previous_y = Input.Touch.y(1.0);
+            if count > this.previous_count && this.camera_finger < 0.0 {
+                let newest = count - 1.0;
+                let clear = newest > 0.0 || !Input.Pointer.over_ui;
+                if clear && Input.Touch.x(newest) > this.screen_middle {
+                    this.camera_finger = newest;
+                    this.previous_x = Input.Touch.x(newest);
+                    this.previous_y = Input.Touch.y(newest);
+                }
             }
             // If a finger disappears, reset ownership rather than jumping.
             if count < this.previous_count { this.camera_finger = -1.0; }
