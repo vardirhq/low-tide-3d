@@ -5,20 +5,34 @@ committed Astra cutaway GLB as an external model asset in native and WebGPU
 Sindri runtimes.
 
 See [the proof, limitations and reproduction commands](docs/POC.md). Requires
-[engine PR #504](https://github.com/vardirhq/sindri-engine/pull/504).
+[engine PR #507](https://github.com/vardirhq/sindri-engine/pull/507) (the 3D
+update), pinned in `.github/workflows/pages.yml`.
+
+## Playing
+
+Arrow keys drive the crawler. **F** steps off as the Keeper: **WASD** walks
+relative to the camera, **Space** jumps, **E** picks up the alternator by the
+station and installs it beside the crawler, and **F** boards again. Hold the
+right mouse button to orbit the camera.
+
+On foot the Keeper is a physics character (PR #507's 3D character
+controller). It stands on the imported seabed and is blocked by the salvage
+props, which use their own GLBs as model colliders. The camera also pulls in
+against them. `tests/headless/low_tide_plays.rs` plays this loop headless on
+the engine in CI.
 
 ![Crawler in Sindri](docs/proof/crawler-browser.png)
 
 ## 3D assets
 
-The [Last Signal salvage pack](assets/salvage/README.md) adds 14 reusable GLB
+The [Last Signal salvage pack](art/salvage/README.md) adds 14 reusable GLB
 models: radio and tide equipment, recoverable machinery, storage and modular
 wreck pieces. It includes editable source, sockets, collision proposals, a
 combined diorama and a separate `salvage-catalog.scene` for inspection.
 
-![Last Signal asset study](assets/salvage/preview_diorama.png)
+![Last Signal asset study](art/salvage/preview_diorama.png)
 
-The [Keeper character](assets/characters/keeper/README.md) includes a static
+The [Keeper character](art/characters/keeper/README.md) includes a static
 player mesh and a separate 17-joint rigged GLB with five animation clips. The
 rigged version awaits Sindri's skeletal-animation pipeline; neither version
 is wired into the playable scene yet.

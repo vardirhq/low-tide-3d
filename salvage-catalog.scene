@@ -101,7 +101,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/radio_desk.glb",
+          "asset": "art/salvage/modules/radio_desk.glb",
           "layer": 1
         }
       }
@@ -129,7 +129,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/tide_gauge.glb",
+          "asset": "art/salvage/modules/tide_gauge.glb",
           "layer": 1
         }
       }
@@ -157,7 +157,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/signal_beacon.glb",
+          "asset": "art/salvage/modules/signal_beacon.glb",
           "layer": 1
         }
       }
@@ -185,7 +185,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/salvage_winch.glb",
+          "asset": "art/salvage/modules/salvage_winch.glb",
           "layer": 1
         }
       }
@@ -213,7 +213,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/fuel_drum.glb",
+          "asset": "art/salvage/modules/fuel_drum.glb",
           "layer": 1
         }
       }
@@ -241,7 +241,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/battery_pack.glb",
+          "asset": "art/salvage/modules/battery_pack.glb",
           "layer": 1
         }
       }
@@ -269,7 +269,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/water_pump.glb",
+          "asset": "art/salvage/modules/water_pump.glb",
           "layer": 1
         }
       }
@@ -297,7 +297,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/replacement_alternator.glb",
+          "asset": "art/salvage/modules/replacement_alternator.glb",
           "layer": 1
         }
       }
@@ -325,7 +325,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/salvage_locker.glb",
+          "asset": "art/salvage/modules/salvage_locker.glb",
           "layer": 1
         }
       }
@@ -353,7 +353,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/cargo_pallet.glb",
+          "asset": "art/salvage/modules/cargo_pallet.glb",
           "layer": 1
         }
       }
@@ -381,7 +381,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/wreck_rib_2m.glb",
+          "asset": "art/salvage/modules/wreck_rib_2m.glb",
           "layer": 1
         }
       }
@@ -409,7 +409,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/wreck_bulkhead_2m.glb",
+          "asset": "art/salvage/modules/wreck_bulkhead_2m.glb",
           "layer": 1
         }
       }
@@ -437,7 +437,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/supply_shelf.glb",
+          "asset": "art/salvage/modules/supply_shelf.glb",
           "layer": 1
         }
       }
@@ -465,7 +465,7 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/floodlight.glb",
+          "asset": "art/salvage/modules/floodlight.glb",
           "layer": 1
         }
       }

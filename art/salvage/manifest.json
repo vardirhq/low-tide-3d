@@ -63,7 +63,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/radio_desk.glb",
+      "path": "art/salvage/modules/radio_desk.glb",
       "bounds_source_m": [
         [
           -0.625,
@@ -526,7 +526,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/tide_gauge.glb",
+      "path": "art/salvage/modules/tide_gauge.glb",
       "bounds_source_m": [
         [
           -0.25,
@@ -877,7 +877,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/signal_beacon.glb",
+      "path": "art/salvage/modules/signal_beacon.glb",
       "bounds_source_m": [
         [
           -0.5,
@@ -1117,7 +1117,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/salvage_winch.glb",
+      "path": "art/salvage/modules/salvage_winch.glb",
       "bounds_source_m": [
         [
           -0.5,
@@ -1468,7 +1468,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/fuel_drum.glb",
+      "path": "art/salvage/modules/fuel_drum.glb",
       "bounds_source_m": [
         [
           -0.294,
@@ -1638,7 +1638,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/battery_pack.glb",
+      "path": "art/salvage/modules/battery_pack.glb",
       "bounds_source_m": [
         [
           -0.235,
@@ -1865,7 +1865,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/water_pump.glb",
+      "path": "art/salvage/modules/water_pump.glb",
       "bounds_source_m": [
         [
           -0.475,
@@ -2091,7 +2091,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/replacement_alternator.glb",
+      "path": "art/salvage/modules/replacement_alternator.glb",
       "bounds_source_m": [
         [
           -0.2,
@@ -2288,7 +2288,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/salvage_locker.glb",
+      "path": "art/salvage/modules/salvage_locker.glb",
       "bounds_source_m": [
         [
           -0.35,
@@ -2513,7 +2513,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/cargo_pallet.glb",
+      "path": "art/salvage/modules/cargo_pallet.glb",
       "bounds_source_m": [
         [
           -0.585,
@@ -2752,7 +2752,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/wreck_rib_2m.glb",
+      "path": "art/salvage/modules/wreck_rib_2m.glb",
       "bounds_source_m": [
         [
           -1.0140450213259766,
@@ -3075,7 +3075,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/wreck_bulkhead_2m.glb",
+      "path": "art/salvage/modules/wreck_bulkhead_2m.glb",
       "bounds_source_m": [
         [
           -1.0,
@@ -3230,7 +3230,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/supply_shelf.glb",
+      "path": "art/salvage/modules/supply_shelf.glb",
       "bounds_source_m": [
         [
           -0.62,
@@ -3581,7 +3581,7 @@
           "load_rating": "prototype_unrated"
         }
       ],
-      "path": "assets/salvage/modules/floodlight.glb",
+      "path": "art/salvage/modules/floodlight.glb",
       "bounds_source_m": [
         [
           -0.275,

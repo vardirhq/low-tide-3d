@@ -26,6 +26,19 @@
       }
     },
     {
+      "id": "physics",
+      "name": "Seabed physics",
+      "components": {
+        "sindri.physics3d.world": {
+          "gravity": [
+            0,
+            -9.81,
+            0
+          ]
+        }
+      }
+    },
+    {
       "id": "camera",
       "name": "Third-person crawler camera",
       "transform_3d": {
@@ -84,6 +97,9 @@
         "sindri.model": {
           "asset": "low_tide_besiege_ground.glb",
           "layer": 0
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "low_tide_besiege_ground.glb"
         }
       }
     },
@@ -198,6 +214,9 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/tank.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/modules/tank.glb"
         }
       }
     },
@@ -226,6 +245,9 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/crate.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/modules/crate.glb"
         }
       }
     },
@@ -254,6 +276,9 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/crate.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/modules/crate.glb"
         }
       }
     },
@@ -282,6 +307,9 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/crate.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/modules/crate.glb"
         }
       }
     },
@@ -310,6 +338,9 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/crate.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/modules/crate.glb"
         }
       }
     },
@@ -394,6 +425,9 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/corner_post.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/modules/corner_post.glb"
         }
       }
     },
@@ -422,6 +456,9 @@
         "sindri.model": {
           "asset": "Low_Tide_Kit/modules/corner_post.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/modules/corner_post.glb"
         }
       }
     },
@@ -836,8 +873,11 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/radio_desk.glb",
+          "asset": "art/salvage/modules/radio_desk.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/radio_desk.glb"
         }
       }
     },
@@ -864,8 +904,11 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/signal_beacon.glb",
+          "asset": "art/salvage/modules/signal_beacon.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/signal_beacon.glb"
         }
       }
     },
@@ -892,12 +935,15 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/replacement_alternator.glb",
+          "asset": "art/salvage/modules/replacement_alternator.glb",
           "layer": 1
         },
         "sindri.script": {
           "source": "scripts/recover_alternator.decay",
           "script": "RecoverAlternator"
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/replacement_alternator.glb"
         }
       }
     },
@@ -924,8 +970,11 @@
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/tide_gauge.glb",
+          "asset": "art/salvage/modules/tide_gauge.glb",
           "layer": 1
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "art/salvage/modules/tide_gauge.glb"
         }
       }
     },
@@ -935,7 +984,7 @@
       "transform_3d": {
         "position": [
           2,
-          0,
+          0.3,
           -1
         ],
         "rotation": [
@@ -945,14 +994,14 @@
           1
         ],
         "scale": [
-          0.45,
-          0.8,
-          0.45
+          1,
+          1,
+          1
         ]
       },
       "components": {
         "sindri.model": {
-          "asset": "assets/salvage/modules/salvage_locker.glb",
+          "asset": "art/characters/keeper/keeper_static.glb",
           "layer": 1
         },
         "sindri.script": {
@@ -961,6 +1010,38 @@
           "properties": {
             "walk_speed": 2.5
           }
+        },
+        "sindri.physics3d.collider": {
+          "pieces": [
+            {
+              "shape": {
+                "shape": "capsule",
+                "half_height": 0.695,
+                "radius": 0.24
+              },
+              "offset": [
+                0,
+                0.935,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0,
+                1
+              ],
+              "sensor": false,
+              "layers": {
+                "memberships": 1,
+                "filter": 4294967295
+              },
+              "friction": 0.5,
+              "restitution": 0
+            }
+          ]
+        },
+        "sindri.physics3d.character": {
+          "snap_distance": 0.2
         }
       }
     }

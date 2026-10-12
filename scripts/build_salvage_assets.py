@@ -8,7 +8,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 from salvage_shapes import ROOT, ASSETS, kit
 
-OUT = ROOT / 'assets/salvage'
+OUT = ROOT / 'art/salvage'
 
 
 def instance(asset, position=(0, 0, 0), yaw=0, name=None):
@@ -75,7 +75,7 @@ def build_scene():
                                           'rotation': [0, float(np.sin(yaw/2)), 0, float(np.cos(yaw/2))],
                                           'scale': [1, 1, 1]},
                          'components': {'sindri.model': {
-                             'asset': f'assets/salvage/modules/{item["asset"]}.glb', 'layer': 1}}})
+                             'asset': f'art/salvage/modules/{item["asset"]}.glb', 'layer': 1}}})
     scene = {'format_version': base['format_version'],
              'metadata': {'name': 'Low Tide — Last Signal asset catalog (static)'}, 'entities': entities}
     (ROOT / 'salvage-catalog.scene').write_text(json.dumps(scene, indent=2)+'\n')
@@ -97,7 +97,7 @@ def build():
             collision.append({'part': part['name'], 'type': 'box',
                               'center': ((lo+hi)/2).tolist(), 'size': (hi-lo).tolist()})
         assets.append({k: v for k, v in definition.items() if k != 'parts'} | {
-            'path': f'assets/salvage/modules/{name}.glb',
+            'path': f'art/salvage/modules/{name}.glb',
             'bounds_source_m': [vertices.min(0).tolist(), vertices.max(0).tolist()],
             'triangles': stats['triangles_instanced'], 'bytes': stats['bytes'],
             'material_primitives': len({p['mat'] for p in definition['parts']}),

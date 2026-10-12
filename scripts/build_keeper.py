@@ -14,7 +14,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 from keeper_shapes import ROOT, JOINTS, NAMES, PARTS, kit
 
-OUT = ROOT / 'assets/characters/keeper'
+OUT = ROOT / 'art/characters/keeper'
 BIND = np.array([joint[2] for joint in JOINTS], float)
 PARENTS = [None if j[1] is None else NAMES.index(j[1]) for j in JOINTS]
 CLIPS = {'idle': (2.0, True), 'walk': (1.0, True), 'run': (.7, True),
