@@ -40,6 +40,8 @@ TRIANGLE_BUDGET = 4000
 TOUCH = 0.006      # parts closer than this count as joined
 OVERHANG = 0.03    # allowed reach past the stated footprint
 GROUNDED = 0.03    # a part this close to z=0 stands on the ground
+NEAR_MISS_MIN = 0.008  # a part this far above the surface under it
+NEAR_MISS_MAX = 0.08   # ...but no further was meant to sit on it
 VIEW = 360         # pixels per view
 
 
@@ -103,15 +105,63 @@ def check(a: dict) -> tuple[list[str], list[str]]:
             warnings.append(f"'{names[i]}' reaches outside the {a['footprint_m']} m footprint "
                             f"(x {lo[i, 0]:.2f}..{hi[i, 0]:.2f}, y {lo[i, 1]:.2f}..{hi[i, 1]:.2f})")
 
-    # Floating parts: not on the ground and not touching any other part.
-    for i in range(len(parts)):
-        if lo[i, 2] <= GROUNDED:
+    # Floating: every part must reach the ground through parts that touch.
+    # A group can float as a whole (a tank with its hoops and lid), so follow
+    # touching parts outward from the ones standing on the ground.
+    gaps = np.stack([np.maximum(np.maximum(lo - hi[i], lo[i] - hi), 0).max(axis=1)
+                     for i in range(len(parts))])
+    touching = gaps <= TOUCH
+    grounded = set(np.where(lo[:, 2] <= GROUNDED)[0].tolist())
+    frontier = list(grounded)
+    while frontier:
+        i = frontier.pop()
+        for j in np.where(touching[i])[0].tolist():
+            if j not in grounded:
+                grounded.add(j)
+                frontier.append(j)
+    loose = [i for i in range(len(parts)) if i not in grounded]
+    seen: set[int] = set()
+    for i in loose:
+        if i in seen:
             continue
-        gap = np.maximum(np.maximum(lo - hi[i], lo[i] - hi), 0).max(axis=1)
-        gap[i] = np.inf
-        if gap.min() > TOUCH:
-            warnings.append(f"'{names[i]}' floats: it touches neither the ground nor another part "
-                            f"(nearest gap {gap.min():.3f} m)")
+        group, stack = [], [i]
+        seen.add(i)
+        while stack:
+            k = stack.pop()
+            group.append(k)
+            for j in np.where(touching[k])[0].tolist():
+                if j in loose and j not in seen:
+                    seen.add(j)
+                    stack.append(j)
+        nearest = min(gaps[k][list(grounded)].min() for k in group) if grounded else float("inf")
+        members = sorted({names[k] for k in group})
+        if len(group) == 1:
+            what = f"'{members[0]}' floats"
+        else:
+            listed = ", ".join(f"'{m}'" for m in members[:5]) + (", ..." if len(members) > 5 else "")
+            what = f"a group of {len(group)} parts ({listed}) floats together"
+        warnings.append(f"{what}: it is not connected to the ground through touching parts "
+                        f"(nearest gap {nearest:.3f} m, lowest point z={min(lo[k, 2] for k in group):.3f})")
+
+    # Near misses: a sizeable part that sits just above the surface under its
+    # centre was almost certainly meant to rest on it. (Bigger gaps are left
+    # alone: wall-mounted parts have open air below them.)
+    for i in range(len(parts)):
+        footprint = (hi[i, 0] - lo[i, 0]) * (hi[i, 1] - lo[i, 1])
+        if lo[i, 2] <= GROUNDED or footprint < 0.01:
+            continue
+        cx, cy = (lo[i, 0] + hi[i, 0]) / 2, (lo[i, 1] + hi[i, 1]) / 2
+        under = [j for j in range(len(parts)) if j != i
+                 and lo[j, 0] <= cx <= hi[j, 0] and lo[j, 1] <= cy <= hi[j, 1]
+                 and lo[j, 2] < lo[i, 2] + TOUCH]
+        if any(hi[j, 2] >= lo[i, 2] - TOUCH for j in under):
+            continue  # resting on (or sunk into) something
+        top = max([hi[j, 2] for j in under], default=0.0)
+        gap = lo[i, 2] - top
+        if NEAR_MISS_MIN < gap < NEAR_MISS_MAX:
+            below = max(under, key=lambda j: hi[j, 2])
+            warnings.append(f"'{names[i]}' hovers {gap:.3f} m above '{names[below]}' under it; "
+                            f"seat it at z={top:.3f}")
 
     flicker: dict[tuple[str, str], int] = {}
     for i, j in _coplanar_pairs(parts):
@@ -142,8 +192,8 @@ def _faces(part):
     faces = {}
     for t, normal in zip(tri, n):
         key = (tuple(np.round(normal, 2)), round(float(normal @ t[0]), 3))
-        if key[0] == (0.0, 0.0, -1.0) and abs(key[1]) < 0.002:
-            continue  # resting on the ground: never seen
+        if key[0] == (0.0, 0.0, -1.0):
+            continue  # an underside: resting on something, never seen from above
         lo, hi = t.min(0), t.max(0)
         if key in faces:
             faces[key] = (np.minimum(faces[key][0], lo), np.maximum(faces[key][1], hi))

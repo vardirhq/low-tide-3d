@@ -97,6 +97,10 @@ A finished prop has **10–35 parts and 300–1,500 triangles**. Hard limit: 4,0
   stands about 5 mm proud of its surface.
 - **Layering:** details overlap the surface they sit on by a few millimetres,
   so nothing floats and nothing z-fights.
+- **Seat things on what they stand on.** A tank on a skid starts at the
+  skid's top (z = 0.11 on a 0.11 m skid), not a few centimetres above. Every
+  part must reach the ground through parts that touch, and the report flags
+  groups that float together and near misses that hover just above a surface.
 - **Human scale:** the Keeper is 1.87 m. A door is about 2 m, a desk 0.8 m,
   a handle at waist height about 1 m, a carryable item at most about 0.5 m.
 - **Chunky:** slightly oversized bolts, knobs and handles read better from the
