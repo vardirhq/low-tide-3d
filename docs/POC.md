@@ -85,3 +85,37 @@ The scene now adds an abandoned signal-station silhouette, a mast, salvaged crat
 A GitHub Actions workflow at `.github/workflows/pages.yml` exports the external project with Sindri main, builds `sindri-player` for WASM, generates browser bindings and uploads a preview artifact. On merge to main it attempts GitHub Pages deployment to `/low-tide-3d/`. This workflow is new and its first CI run must be inspected before declaring web deployment functional.
 
 The current environment pieces deliberately reuse the kit's modular assets. Next pass should inspect the actual browser screenshot for clipping, framing, overdraw and module origins, then refine lighting/composition and replace the simple station blockout with authored geometry. No shadows from imported models yet.
+
+## Sindri PR #507 adoption
+
+CI pins engine PR #507 (`7b48017`) and plays the scene headless before
+exporting it. The Decay scripts pass `decay-lsp --check` against that engine,
+and `tests/headless/low_tide_plays.rs` runs in the engine's own runtime, with
+keyboard input delivered as a host would:
+
+- The crawler drives, and the Keeper rides beside it.
+- The Keeper steps off, settles onto the imported seabed and jumps.
+- The salvage crates block the Keeper, and the controller reports the hit.
+- The Keeper recovers the alternator by the station and installs it in the crawler.
+- The Keeper boards again.
+
+Removing the crate or seabed colliders makes the test fail.
+
+What changed:
+
+- **Character:** the Keeper (`art/characters/keeper/keeper_static.glb`)
+  replaces the locker proxy. It uses the manifest's proposed capsule (1.87 m
+  tall, 0.24 m radius) and `sindri.physics3d.character`.
+- **Movement:** walking is camera-relative. Gravity, jumping and landing are
+  Decay gameplay, and the engine clips the movement.
+- **Colliders:** the seabed and the grounded salvage props carry
+  `sindri.physics3d.model_collider` built from their own GLBs. The roof
+  modules, the moving crawler and its equipment are render-only for now.
+- **Asset root:** the art packs moved from `assets/` to `art/`. Sindri treats a
+  project's `assets/` directory, when present, as its asset root. Low Tide keeps
+  its scenes at the project root, so the old name made the engine look for
+  `assets/poc.scene`.
+
+Still open: the crawler has no collider (the Keeper rides beside it rather than
+walking its deck), the rigged Keeper waits on skeletal animation, and browser
+and mobile appearance have not been visually inspected for this pass.

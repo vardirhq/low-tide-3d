@@ -1,33 +1,38 @@
-// Temporary visible on-foot proxy until a dedicated rigged character is available.
-// Arrow keys drive the crawler; WASD moves the explorer.
-// E picks up the alternator and installs it beside the crawler.
+// The Keeper on foot: a physics character on the imported seabed.
+// Arrow keys drive the crawler; F leaves or boards it. On foot, WASD walks
+// relative to the camera, Space jumps and E picks up or installs the alternator.
+// The engine's 3D character controller clips movement against the seabed and
+// salvage colliders; this script owns gravity, jumping and interaction.
 script Explorer {
     var carrying_alternator: bool = false;
     var repaired: bool = false;
     var aboard: bool = true;
-    @export var walk_speed: f32 = 2.5;
+    var fall_speed: f32 = 0.0;
+    var airborne: f32 = 0.0;
+    @export var walk_speed: f32 = 3.0;
+    @export var jump_speed: f32 = 5.0;
+    @export var gravity: f32 = 18.0;
 
     fn update(dt: f32) {
         let crawler = World.find("Astra starter crawler cutaway");
         if crawler == null { return; }
         if this.aboard {
-            this.transform.world_position = crawler.transform.world_position + Vec3(2.0, 0.0, -1.0);
+            // Riding: the Keeper waits at the crawler's side, lifted clear of
+            // the seabed so stepping off never starts inside the terrain.
+            this.transform.world_position = crawler.transform.world_position + Vec3(2.0, 0.3, -1.0);
+            this.fall_speed = 0.0;
         }
         if Input.Keyboard.just_pressed("F") && this.transform.world_position.distance(crawler.transform.world_position) < 3.5 {
             this.aboard = !this.aboard;
             if this.aboard { print("Boarded crawler. Arrow keys or touch stick to drive."); }
-            else { print("Left crawler. WASD to walk, E to interact, F to board."); }
+            else { print("Left crawler. WASD to walk, Space to jump, E to interact, F to board."); }
             World.send_signal(crawler, "toggle_helm", 1.0);
             let camera = World.find("Third-person crawler camera");
             if camera != null { World.send_signal(camera, "toggle_follow", 1.0); }
         }
         if this.aboard { return; }
-        let sideways = Input.Keyboard.axis("A", "D");
-        let forward = Input.Keyboard.axis("S", "W");
-        let motion = Vec3(sideways, 0.0, -forward);
-        if motion.length > 0.01 {
-            this.transform.world_position += motion.normalized * walk_speed * dt;
-        }
+
+        walk(dt);
 
         if World.take_signal("take_alternator") > 0.0 {
             this.carrying_alternator = true;
@@ -41,6 +46,57 @@ script Explorer {
                 World.send_signal(crawler, "repair_engine", 1.0);
                 print("Alternator installed.");
             }
+        }
+    }
+
+    fn walk(dt: f32) {
+        // Support can drop out for a step on uneven imported triangles, so a
+        // short grace period keeps walking and jumping steady.
+        let motion = Physics3d.character_motion(this.entity);
+        var supported = false;
+        if motion != null { supported = motion.grounded; }
+        if supported {
+            if this.airborne > 0.25 { print("Keeper landed"); }
+            this.airborne = 0.0;
+        } else {
+            this.airborne += dt;
+        }
+        let grounded = this.airborne < 0.1 && this.fall_speed >= 0.0;
+
+        // Movement is relative to where the camera looks, flattened onto the ground.
+        var ahead = Vec3(0.0, 0.0, -1.0);
+        let camera = World.find("Third-person crawler camera");
+        if camera != null {
+            let look = camera.transform.forward;
+            if abs(look.x) + abs(look.z) > 0.01 { ahead = Vec3(look.x, 0.0, look.z).normalized; }
+        }
+        let side = Vec3(-ahead.z, 0.0, ahead.x);
+        var direction = ahead * Input.Keyboard.axis("S", "W") + side * Input.Keyboard.axis("A", "D");
+        if direction.length > 1.0 { direction = direction.normalized; }
+        if direction.length > 0.01 {
+            this.transform.yaw = atan2(-direction.x, -direction.z);
+        }
+
+        if grounded {
+            this.fall_speed = 4.0;
+            if Input.Keyboard.just_pressed("Space") {
+                this.fall_speed = -this.jump_speed;
+                this.airborne = 0.1;
+                print("Keeper jumped");
+            }
+        } else {
+            this.fall_speed += this.gravity * dt;
+        }
+        let step = direction * this.walk_speed * dt + Vec3(0.0, -this.fall_speed * dt, 0.0);
+        Physics3d.move_character(this.entity, step, grounded && this.fall_speed > 0.0);
+
+        // Lost below the seabed: put the Keeper back beside the crawler.
+        if this.transform.world_position.y < -10.0 {
+            let crawler = World.find("Astra starter crawler cutaway");
+            this.transform.world_position = crawler.transform.world_position + Vec3(2.0, 0.3, -1.0);
+            this.fall_speed = 0.0;
+            this.airborne = 0.0;
+            print("Keeper recovered beside the crawler");
         }
     }
 }

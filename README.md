@@ -5,7 +5,21 @@ committed Astra cutaway GLB as an external model asset in native and WebGPU
 Sindri runtimes.
 
 See [the proof, limitations and reproduction commands](docs/POC.md). Requires
-[engine PR #504](https://github.com/vardirhq/sindri-engine/pull/504).
+[engine PR #507](https://github.com/vardirhq/sindri-engine/pull/507) (the 3D
+update), pinned in `.github/workflows/pages.yml`.
+
+## Playing
+
+Arrow keys drive the crawler. **F** steps off as the Keeper: **WASD** walks
+relative to the camera, **Space** jumps, **E** picks up the alternator by the
+station and installs it beside the crawler, and **F** boards again. Hold the
+right mouse button to orbit the camera.
+
+On foot the Keeper is a physics character (PR #507's 3D character
+controller). It stands on the imported seabed and is blocked by the salvage
+props, which use their own GLBs as model colliders. The camera also pulls in
+against them. `tests/headless/low_tide_plays.rs` plays this loop headless on
+the engine in CI.
 
 ![Crawler in Sindri](docs/proof/crawler-browser.png)
 

@@ -20,11 +20,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: low-tide-3d
-      - name: Checkout Sindri 3D orbit camera patch
+      # Engine PR #507 (3D update): character controller, model collision and
+      # orbit camera. Bump this pin deliberately when adopting a newer head.
+      - name: Checkout Sindri engine PR #507
         uses: actions/checkout@v4
         with:
           repository: vardirhq/sindri-engine
-          ref: 5a336684929144de52cfa1fc49697460aaf58d0f
+          ref: 7b480171be04270ab515cf5a8ebcfaefa2af7eaa
           path: sindri-engine
       - name: Identify Sindri revision
         id: sindri-revision
@@ -64,6 +66,16 @@ jobs:
       - name: Validate Keeper character assets
         working-directory: low-tide-3d
         run: python3 -m unittest discover -s tests -p 'test_keeper_asset.py'
+      - name: Check Decay scripts against the engine
+        working-directory: sindri-engine
+        run: cargo run --quiet -p decay-lsp -- --check ../low-tide-3d
+      - name: Play Low Tide headless
+        working-directory: sindri-engine
+        env:
+          LOW_TIDE_PROJECT: ${{ github.workspace }}/low-tide-3d
+        run: |
+          cp ../low-tide-3d/tests/headless/low_tide_plays.rs crates/sindri-runtime/tests/low_tide_plays.rs
+          cargo test -p sindri-runtime --test low_tide_plays -- --nocapture
       - name: Export Low Tide scene
         working-directory: sindri-engine
         run: cargo run -p sindri-export --bin sindri-export -- ../low-tide-3d "$RUNNER_TEMP/low-tide-web" --base /low-tide-3d/
