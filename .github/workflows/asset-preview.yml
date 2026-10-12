@@ -1,9 +1,10 @@
 name: Asset preview
 
 # Edit or add a spec in art/drafts/ (from the GitHub app or website, or by an
-# agent) and open a pull request. This builds each changed spec, commits its
-# preview sheet to the pull request and posts the previews and reports as a
-# comment, so assets can be reviewed from a phone.
+# agent) and open a pull request. This builds each changed spec and comments
+# with its preview sheet and report, so assets can be reviewed from a phone.
+# The images are pushed to the separate `asset-previews` branch, never to the
+# pull request, so its head and checks stay the author's.
 on:
   pull_request:
     paths: ["art/drafts/*.py"]
@@ -18,14 +19,13 @@ concurrency:
 
 jobs:
   preview:
-    # Specs are Python, and this job can push: only branches of this
-    # repository, whose authors already have write access, are built.
+    # Specs are Python, and this job can push the previews branch: only
+    # branches of this repository, whose authors already have write access.
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -37,7 +37,7 @@ jobs:
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
         run: |
-          mkdir -p art/drafts/previews
+          mkdir -p "$RUNNER_TEMP/png"
           changed=$(git diff --name-only --diff-filter=AM "$BASE"...HEAD -- 'art/drafts/*.py')
           echo "Specs: $changed"
           : > "$RUNNER_TEMP/comment.md"
@@ -51,8 +51,8 @@ jobs:
               echo
               echo "#### \`$spec\` — $status"
               if [ -n "$name" ] && [ -f "art/drafts/out/${name}_preview.png" ]; then
-                cp "art/drafts/out/${name}_preview.png" "art/drafts/previews/${name}.png"
-                echo "![${name}](PREVIEW_URL/art/drafts/previews/${name}.png)"
+                cp "art/drafts/out/${name}_preview.png" "$RUNNER_TEMP/png/${name}.png"
+                echo "![${name}](PREVIEW_URL/${name}.png)"
               fi
               echo
               echo '```'
@@ -61,24 +61,38 @@ jobs:
             } >> "$RUNNER_TEMP/comment.md"
           done
           echo "failed=$failed" >> "$GITHUB_OUTPUT"
-      - name: Commit previews to the pull request
+      - name: Publish previews on the asset-previews branch
         id: commit
+        env:
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          git add art/drafts/previews
-          if git diff --cached --quiet; then
-            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Asset previews"
-          git push
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          dir="$RUNNER_TEMP/previews"
+          for attempt in 1 2 3; do
+            rm -rf "$dir"; git worktree prune
+            if git fetch -q origin asset-previews 2>/dev/null; then
+              git worktree add -q --detach "$dir" FETCH_HEAD
+            else
+              git worktree add -q --detach "$dir"
+              (cd "$dir" && git checkout -q --orphan asset-previews && git rm -rfq . && git clean -fdq)
+            fi
+            mkdir -p "$dir/pr-$PR"
+            cp "$RUNNER_TEMP"/png/*.png "$dir/pr-$PR/" 2>/dev/null || true
+            (cd "$dir" && git add -A && { git diff --cached --quiet || git commit -qm "Asset previews for #$PR"; })
+            if (cd "$dir" && git push -q origin HEAD:refs/heads/asset-previews); then
+              echo "sha=$(cd "$dir" && git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Could not push the previews branch"
+          exit 1
       - name: Post previews
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
-          URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.commit.outputs.sha }}
+          URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.commit.outputs.sha }}/pr-${{ github.event.pull_request.number }}
         run: |
           sed -i "s#PREVIEW_URL#$URL#g" "$RUNNER_TEMP/comment.md"
           gh pr comment "$PR" --repo "${{ github.repository }}" --body-file "$RUNNER_TEMP/comment.md"
