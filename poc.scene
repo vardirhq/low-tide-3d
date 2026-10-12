@@ -109,7 +109,7 @@
       "transform_3d": {
         "position": [
           0,
-          0,
+          -0.22,
           0
         ],
         "rotation": [
@@ -135,6 +135,9 @@
           "properties": {
             "speed": 2
           }
+        },
+        "sindri.physics3d.model_collider": {
+          "asset": "Low_Tide_Kit/starter_crawler_clean_base.glb"
         }
       }
     },
@@ -1016,12 +1019,12 @@
             {
               "shape": {
                 "shape": "capsule",
-                "half_height": 0.695,
+                "half_height": 0.635,
                 "radius": 0.24
               },
               "offset": [
                 0,
-                0.935,
+                0.875,
                 0
               ],
               "rotation": [
@@ -1041,7 +1044,9 @@
           ]
         },
         "sindri.physics3d.character": {
-          "snap_distance": 0.2
+          "snap_distance": 0.2,
+          "step_height": 0.12,
+          "step_min_width": 0.1
         }
       }
     },
@@ -1081,12 +1086,12 @@
           "layer": 20
         },
         "sindri.ui.button": {
-          "label": "STEP OFF"
+          "label": "LEAVE HELM"
         },
         "sindri.ui.text": {
-          "text": "STEP OFF",
+          "text": "LEAVE HELM",
           "font": "fonts/ChakraPetch-Regular.ttf",
-          "font_size": 0.06,
+          "font_size": 0.05,
           "bounds": [
             0.32,
             0.13999999999999999
@@ -1234,7 +1239,7 @@
           "layer": 20
         },
         "sindri.ui.text": {
-          "text": "Engine dead. Step off to find an alternator",
+          "text": "Engine dead. Leave the helm, find an alternator",
           "font": "fonts/ChakraPetch-Regular.ttf",
           "font_size": 0.04,
           "bounds": [

@@ -93,7 +93,7 @@ exporting it. The Decay scripts pass `decay-lsp --check` against that engine,
 and `tests/headless/low_tide_plays.rs` runs in the engine's own runtime, with
 keyboard input delivered as a host would:
 
-- The crawler drives, and the Keeper rides beside it.
+- The crawler drives and turns, and the Keeper stays at the helm in the crawler's frame.
 - The Keeper steps off, settles onto the imported seabed and jumps.
 - The salvage crates block the Keeper, and the controller reports the hit.
 - The Keeper recovers the alternator by the station and installs it in the crawler.
@@ -116,6 +116,14 @@ What changed:
   its scenes at the project root, so the old name made the engine look for
   `assets/poc.scene`.
 
-Still open: the crawler has no collider (the Keeper rides beside it rather than
-walking its deck), the rigged Keeper waits on skeletal animation, and browser
-and mobile appearance have not been visually inspected for this pass.
+The crawler is solid too. Its own clean-base GLB is its model collider, and
+the scene sets it down on the seabed (y = −0.22) so the ramp meets the
+ground. The Keeper walks from the helm along the deck, through the rear
+doorway (a 1.75 m capsule with 0.12 m steps fits under its lintel), and
+down the ramp. While driving, the Keeper is placed at the helm in the
+crawler's frame each step, not carried by physics. Walking the deck of a
+*moving* crawler would need #507's platform carry on a moving body. It is
+not used yet, because the crawler only moves with someone at the helm.
+
+Still open: the rigged Keeper waits on skeletal animation, and browser and
+mobile appearance have not been visually inspected for this pass.

@@ -27,8 +27,13 @@ script CrawlerDrive {
     var right_touch_camera: bool = false;
     var had_touch: bool = false;
     var anchor: Vec2 = Vec2(0.0, 0.0);
+    var spawn: Vec3 = Vec3(0.0, 0.0, 0.0);
+    var spawn_yaw: f32 = 0.0;
 
     fn start() {
+        // Reset returns here: the scene sets the crawler down on the seabed.
+        this.spawn = this.transform.position;
+        this.spawn_yaw = this.transform.yaw;
         this.ring = World.find("Stick ring");
         this.knob = World.find("Stick knob");
         this.reset_button = World.find("Reset crawler");
@@ -84,7 +89,7 @@ script CrawlerDrive {
             this.right_touch_camera = false;
         } else if !this.had_touch {
             this.had_touch = true;
-            this.right_touch_camera = Input.Pointer.overlay_x > 0.0 || Input.Pointer.over_ui;
+            this.right_touch_camera = Input.Pointer.overlay_x > 0.0 || on_button();
         }
         let stick_drives = this.at_helm && Input.Stick.held && !this.right_touch_camera;
         let keys = Input.Keyboard.axis("ArrowDown", "ArrowUp");
@@ -106,18 +111,26 @@ script CrawlerDrive {
         this.transform.world_position += this.transform.forward * throttle * speed * dt;
 
         if this.at_helm && (Input.Keyboard.just_pressed("Space") || Ui.is_pressed(this.reset_button)) {
-            this.transform.position = Vec3(0.0, 0.0, 0.0);
-            this.transform.yaw = 0.0;
+            this.transform.position = this.spawn;
+            this.transform.yaw = this.spawn_yaw;
         }
 
         draw_stick();
     }
 
     // Drawn whenever the stick is in use: driving at the helm or walking on foot.
+    // The stick's ring is UI too, so ask the buttons rather than over_ui.
+    fn on_button() -> bool {
+        for button in [this.reset_button, this.cargo_button, this.tank_button, this.antenna_button] {
+            if button != null && World.is_active(button) && Ui.is_hovered(button) { return true; }
+        }
+        return false;
+    }
+
     fn draw_stick() {
         let stick_drives = Input.Stick.held && !this.right_touch_camera;
         if stick_drives && !this.drawing {
-            this.drawing = !Input.Pointer.over_ui;
+            this.drawing = !on_button();
             this.anchor = Input.Pointer.overlay;
         }
         if !stick_drives { this.drawing = false; }
