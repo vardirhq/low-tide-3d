@@ -1,12 +1,18 @@
 // The Keeper on foot: a physics character on the imported seabed.
-// Keyboard: arrow keys drive the crawler; F leaves or boards it. On foot,
+// Keyboard: arrow keys drive the crawler; F leaves or takes the helm. The
+// crawler is solid: walk its deck, out the rear doorway and down the ramp. On foot,
 // WASD walks relative to the camera, Space jumps and E picks up or installs
 // the alternator. Touch: the left thumb's stick drives or walks, and the
 // buttons do the same as F, Space and E. Buttons appear only when they apply.
 // The engine's 3D character controller clips movement against the seabed and
 // salvage colliders; this script owns gravity, jumping and interaction.
-const REACH_CRAWLER: f32 = 3.0;
-const REACH_BOARD: f32 = 3.5;
+const REACH_CRAWLER: f32 = 3.5;
+const REACH_HELM: f32 = 1.4;
+// Where the Keeper stands to drive, in the crawler's own frame: on the deck
+// (1.25 m up) just behind the helm console at the front. The helm is reached
+// on foot through the rear doorway and up the ramp.
+const HELM_UP: f32 = 1.3;
+const HELM_AHEAD: f32 = 0.9;
 const REACH_ALTERNATOR: f32 = 1.8;
 
 script Explorer {
@@ -43,18 +49,25 @@ script Explorer {
         let crawler = World.find("Astra starter crawler cutaway");
         if crawler == null { return; }
         track_touch();
+        let helm = helm_stand(crawler);
         if this.aboard {
-            // Riding: the Keeper waits at the crawler's side, lifted clear of
-            // the seabed so stepping off never starts inside the terrain.
-            this.transform.world_position = crawler.transform.world_position + Vec3(2.0, 0.3, -1.0);
+            // Driving: the Keeper stands at the helm and turns with the crawler.
+            this.transform.world_position = helm;
+            this.transform.yaw = crawler.transform.yaw;
             this.fall_speed = 0.0;
+            this.airborne = 0.0;
         }
-        let to_crawler = this.transform.world_position.distance(crawler.transform.world_position);
+        // Install range is measured on the ground: the tracks keep the Keeper
+        // a little way out, and the deck is above the seabed.
+        var offset = this.transform.world_position - crawler.transform.world_position;
+        offset.y = 0.0;
+        let to_crawler = offset.length;
+        let at_helm = this.transform.world_position.distance(helm) < REACH_HELM;
         let board = Input.Keyboard.just_pressed("F") || pressed(this.board_button);
-        if board && to_crawler < REACH_BOARD {
+        if board && (this.aboard || at_helm) {
             this.aboard = !this.aboard;
-            if this.aboard { print("Boarded crawler. Arrow keys or touch stick to drive."); }
-            else { print("Left crawler. WASD to walk, Space to jump, E to interact, F to board."); }
+            if this.aboard { print("Took the helm. Arrow keys or touch stick to drive."); }
+            else { print("Left the helm. WASD to walk, Space to jump, E to interact, F at the helm to drive."); }
             World.send_signal(crawler, "toggle_helm", 1.0);
             let camera = World.find("Third-person crawler camera");
             if camera != null { World.send_signal(camera, "toggle_follow", 1.0); }
@@ -87,7 +100,11 @@ script Explorer {
             }
         }
 
-        show_controls(to_crawler, near_alternator, can_install);
+        show_controls(at_helm, near_alternator, can_install);
+    }
+
+    fn helm_stand(crawler: Entity) -> Vec3 {
+        return crawler.transform.world_position + Vec3(0.0, HELM_UP, 0.0) + crawler.transform.forward * HELM_AHEAD;
     }
 
     fn pressed(button: Entity) -> bool {
@@ -102,16 +119,28 @@ script Explorer {
             this.stick_touch = false;
         } else if !this.had_touch {
             this.had_touch = true;
-            this.stick_touch = Input.Pointer.overlay_x <= 0.0 && !Input.Pointer.over_ui;
+            this.stick_touch = Input.Pointer.overlay_x <= 0.0 && !on_button();
         }
     }
 
-    fn show_controls(to_crawler: f32, near_alternator: bool, can_install: bool) {
+    // Buttons, not any interface: the stick's own ring is UI too, and a thumb
+    // landing where the stick was last drawn must still be the stick.
+    fn on_button() -> bool {
+        for button in this.crawler_buttons {
+            if World.is_active(button) && Ui.is_hovered(button) { return true; }
+        }
+        for button in [this.board_button, this.jump_button, this.action_button] {
+            if button != null && World.is_active(button) && Ui.is_hovered(button) { return true; }
+        }
+        return false;
+    }
+
+    fn show_controls(at_helm: bool, near_alternator: bool, can_install: bool) {
         for button in this.crawler_buttons { World.set_active(button, this.aboard); }
         if this.board_button != null {
-            World.set_active(this.board_button, this.aboard || to_crawler < REACH_BOARD);
-            if this.aboard { Ui.set_text(this.board_button, "STEP OFF"); }
-            else { Ui.set_text(this.board_button, "BOARD"); }
+            World.set_active(this.board_button, this.aboard || at_helm);
+            if this.aboard { Ui.set_text(this.board_button, "LEAVE HELM"); }
+            else { Ui.set_text(this.board_button, "TAKE HELM"); }
         }
         if this.jump_button != null { World.set_active(this.jump_button, !this.aboard); }
         if this.action_button != null {
@@ -119,13 +148,13 @@ script Explorer {
             if near_alternator { Ui.set_text(this.action_button, "PICK UP"); }
             else { Ui.set_text(this.action_button, "INSTALL"); }
         }
-        var goal = "Engine repaired. Board and drive";
+        var goal = "Engine repaired. Take the helm and drive";
         if !this.repaired {
             if this.carrying_alternator {
                 goal = "Bring the alternator to the crawler";
                 if can_install { goal = "Install the alternator"; }
             } else if this.aboard {
-                goal = "Engine dead. Step off to find an alternator";
+                goal = "Engine dead. Leave the helm, find an alternator";
             } else if near_alternator {
                 goal = "Pick up the alternator";
             } else {
@@ -173,7 +202,9 @@ script Explorer {
         }
 
         if grounded {
-            this.fall_speed = 4.0;
+            // No downward push on the ground: the controller's snap keeps the
+            // Keeper attached, and pushing down would fight thresholds and slopes.
+            this.fall_speed = 0.0;
             if Input.Keyboard.just_pressed("Space") || pressed(this.jump_button) {
                 this.fall_speed = -this.jump_speed;
                 this.airborne = 0.1;
@@ -183,15 +214,15 @@ script Explorer {
             this.fall_speed += this.gravity * dt;
         }
         let step = direction * this.walk_speed * dt + Vec3(0.0, -this.fall_speed * dt, 0.0);
-        Physics3d.move_character(this.entity, step, grounded && this.fall_speed > 0.0);
+        Physics3d.move_character(this.entity, step, grounded && this.fall_speed >= 0.0);
 
         // Lost below the seabed: put the Keeper back beside the crawler.
         if this.transform.world_position.y < -10.0 {
             let crawler = World.find("Astra starter crawler cutaway");
-            this.transform.world_position = crawler.transform.world_position + Vec3(2.0, 0.3, -1.0);
+            this.transform.world_position = helm_stand(crawler);
             this.fall_speed = 0.0;
             this.airborne = 0.0;
-            print("Keeper recovered beside the crawler");
+            print("Keeper recovered at the helm");
         }
     }
 }

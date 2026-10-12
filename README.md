@@ -10,15 +10,17 @@ update), pinned in `.github/workflows/pages.yml`.
 
 ## Playing
 
-Arrow keys drive the crawler. **F** steps off as the Keeper: **WASD** walks
-relative to the camera, **Space** jumps, **E** picks up the alternator by the
-station and installs it beside the crawler, and **F** boards again. Hold the
-right mouse button to orbit the camera.
+The Keeper drives standing at the crawler's helm and turns with it; arrow keys
+drive. **F** leaves the helm. On foot, **WASD** walks relative to the camera
+and **Space** jumps. Walk the deck, out through the rear doorway and down the
+ramp. **E** picks up the alternator by the station and installs it at the
+crawler. Back at the helm, **F** takes it again. Hold the right mouse button
+to orbit the camera.
 
 On a phone, the screen is split. The **left half** is a floating stick that
 drives the crawler or walks the Keeper, and the **right half** turns the
 camera. The buttons appear only when they apply:
-- **STEP OFF / BOARD** next to the crawler.
+- **LEAVE HELM / TAKE HELM** at the helm.
 - **JUMP** on foot.
 - **PICK UP / INSTALL** beside the alternator and back at the crawler.
 - The crawler's module toggles and **RESET** at the helm.

@@ -67,6 +67,8 @@ impl Game {
     fn stick_to(&mut self, x: f32, z: f32, limit: usize) -> f32 {
         let anchor = [self.run.size[0] * 0.25, self.run.size[1] * 0.8];
         self.run.input.apply(InputEvent::TouchStarted { id: 1, x: anchor[0], y: anchor[1] });
+        // A thumb lands for at least a frame before it drags.
+        self.step();
         let mut closest = f32::MAX;
         for _ in 0..limit {
             let [px, _, pz] = self.at("explorer");
@@ -76,7 +78,7 @@ impl Game {
                 break;
             }
             // Screen right is +X and screen down is +Z for the starting camera.
-            let push = |d: f32| if d.abs() > 0.1 { 60.0 * d.signum() } else { 0.0 };
+            let push = |d: f32| if d.abs() > 0.1 { 120.0 * d.signum() } else { 0.0 };
             self.run.input.apply(InputEvent::TouchMoved {
                 id: 1,
                 x: anchor[0] + push(dx),
@@ -158,6 +160,40 @@ impl Game {
         closest
     }
 
+    fn walk_route(&mut self, points: &[(f32, f32)]) {
+        for &(x, z) in points {
+            self.walk_to(x, z, 300);
+        }
+    }
+
+    fn stick_route(&mut self, points: &[(f32, f32)]) {
+        for &(x, z) in points {
+            self.stick_to(x, z, 300);
+        }
+    }
+
+    /// The Keeper stands at the helm in the crawler's own frame: 1.3 m up and
+    /// 0.9 m ahead of its origin, facing the way it faces.
+    fn assert_keeper_at_helm(&self) {
+        let crawler = self.run.entity("crawler").unwrap();
+        let keeper = self.run.entity("explorer").unwrap();
+        let c = self.run.world.world_transform(crawler).unwrap();
+        let k = self.run.world.world_transform(keeper).unwrap();
+        let [x, y, z, w] = c.rotation;
+        // The crawler's forward, -Z rotated by its quaternion.
+        let forward = [-(2.0 * (x * z + w * y)), -(2.0 * (y * z - w * x)), -(1.0 - 2.0 * (x * x + y * y))];
+        let expected = [
+            c.position[0] + forward[0] * 0.9,
+            c.position[1] + 1.3 + forward[1] * 0.9,
+            c.position[2] + forward[2] * 0.9,
+        ];
+        for axis in 0..3 {
+            assert!((k.position[axis] - expected[axis]).abs() < 0.02, "helm: {:?} vs {expected:?}", k.position);
+        }
+        let dot: f32 = (0..4).map(|i| c.rotation[i] * k.rotation[i]).sum();
+        assert!(dot.abs() > 0.999, "the Keeper faces the crawler's way");
+    }
+
     fn keeper_collided_with(&self, ids: &[&str]) -> bool {
         let keeper = self.run.entity("explorer").unwrap();
         let wanted: Vec<_> = ids.iter().filter_map(|id| self.run.entity(id)).collect();
@@ -180,27 +216,38 @@ fn the_keeper_walks_the_seabed_recovers_the_alternator_and_repairs_the_crawler()
     let mut game = Game::open();
     game.steps(30);
 
-    // Driving still carries the Keeper, who waits beside the crawler.
+    // Driving: the Keeper stands at the helm and turns with the crawler.
+    game.assert_keeper_at_helm();
     let start = game.at("crawler");
-    game.hold(Key::ArrowUp, 45);
+    game.run.input.apply(InputEvent::KeyPressed(Key::ArrowLeft));
+    game.hold(Key::ArrowUp, 60);
+    game.run.input.apply(InputEvent::KeyReleased(Key::ArrowLeft));
+    game.step();
     let driven = game.at("crawler");
-    assert!(driven[2] < start[2] - 1.0, "crawler drove forward: {driven:?}");
-    let keeper = game.at("explorer");
-    assert!((keeper[0] - driven[0] - 2.0).abs() < 0.01, "Keeper rides along");
+    assert!((driven[0] - start[0]).hypot(driven[2] - start[2]) > 1.0, "crawler drove: {driven:?}");
+    game.assert_keeper_at_helm();
     game.tap(Key::Space); // the crawler's reset to its starting place
     game.steps(2);
+    game.assert_keeper_at_helm();
 
-    // Stepping off hands the Keeper to the physics character, which settles
-    // onto the imported seabed instead of hovering or sinking.
+    // Leaving the helm hands the Keeper to the physics character, standing
+    // on the crawler's deck, which is the crawler's own model as a collider.
     game.tap(Key::F);
-    assert!(game.said("Left crawler. WASD to walk, Space to jump, E to interact, F to board."));
-    game.steps(60);
-    let standing = game.at("explorer")[1];
-    assert!((-1.0..0.5).contains(&standing), "on the seabed: {standing}");
+    assert!(game.said("Left the helm. WASD to walk, Space to jump, E to interact, F at the helm to drive."));
+    game.steps(30);
     let keeper = game.run.entity("explorer").unwrap();
+    let deck = game.at("explorer")[1] - game.at("crawler")[1];
+    assert!((1.15..1.45).contains(&deck), "on the deck: {deck} above the crawler's base");
     assert!(game.run.session.physics3d().character_motion(keeper).unwrap().grounded);
 
+    // Out through the rear doorway and down the ramp onto the seabed.
+    game.walk_route(&[(0.0, 6.5)]);
+    let standing = game.at("explorer")[1];
+    assert!((-1.0..0.5).contains(&standing), "down the ramp: {:?}", game.at("explorer"));
+    assert!(game.at("explorer")[2] > 6.0, "left the crawler: {:?}", game.at("explorer"));
+
     // A jump leaves the ground and lands again.
+    game.steps(10);
     game.tap(Key::Space);
     game.steps(3);
     assert!(game.at("explorer")[1] > standing + 0.2, "jumped");
@@ -209,8 +256,7 @@ fn the_keeper_walks_the_seabed_recovers_the_alternator_and_repairs_the_crawler()
     assert!((game.at("explorer")[1] - standing).abs() < 0.3);
 
     // The salvage crates are solid: walking into them stops the Keeper.
-    game.walk_to(2.0, 3.3, 180);
-    game.walk_to(-7.0, 3.3, 240);
+    game.walk_route(&[(-3.2, 6.5), (-3.2, 3.3), (-7.0, 3.3)]);
     let blocked = game.at("explorer");
     assert!(blocked[0] > -5.5, "crates block the Keeper: {blocked:?}");
     game.hold(Key::A, 10);
@@ -219,10 +265,8 @@ fn the_keeper_walks_the_seabed_recovers_the_alternator_and_repairs_the_crawler()
         "the controller reports the crate hit"
     );
 
-    // Walk to the alternator by the station, recover it, bring it back.
-    game.walk_to(2.0, 1.0, 240);
-    game.walk_to(5.6, 0.0, 240);
-    game.walk_to(6.4, -1.0, 120);
+    // Around the crawler to the alternator by the station, and back.
+    game.walk_route(&[(-3.2, 6.5), (5.6, 6.5), (5.6, 0.0), (6.4, -1.0)]);
     let alternator = game.at("signal-alternator");
     let here = game.at("explorer");
     let reach = (here[0] - alternator[0]).hypot(here[2] - alternator[2]);
@@ -232,16 +276,19 @@ fn the_keeper_walks_the_seabed_recovers_the_alternator_and_repairs_the_crawler()
     assert!(game.said("Recovered replacement alternator."), "{:?}", game.said);
     assert!(game.said("Alternator recovered. Return to the crawler and press E to install."));
 
-    game.walk_to(2.0, 0.5, 300);
+    game.walk_route(&[(2.9, 0.0)]);
     game.tap(Key::E);
     game.steps(2);
-    assert!(game.said("Alternator installed."), "{:?}", game.said);
+    assert!(game.said("Alternator installed."), "{:?} at {:?}", game.said, game.at("explorer"));
     assert!(game.said("Engine repaired. The crawler is ready to travel."));
 
-    // Boarding returns control to the crawler.
+    // Back up the ramp, through the doorway, to the helm.
+    game.walk_route(&[(2.9, 6.5), (0.0, 6.5), (0.0, -0.9)]);
     game.tap(Key::F);
-    assert!(game.said("Boarded crawler. Arrow keys or touch stick to drive."));
-    assert!(!game.said("Keeper recovered beside the crawler"), "never fell through");
+    assert!(game.said("Took the helm. Arrow keys or touch stick to drive."), "{:?}", game.at("explorer"));
+    game.step();
+    game.assert_keeper_at_helm();
+    assert!(!game.said("Keeper recovered at the helm"), "never fell through");
 }
 
 #[test]
@@ -249,7 +296,7 @@ fn a_phone_held_upright_plays_the_whole_loop_by_touch() {
     let mut game = Game::open_on([390.0, 844.0]);
     game.steps(10);
 
-    // At the helm: crawler controls and STEP OFF fit the narrow screen;
+    // At the helm: crawler controls and LEAVE HELM fit the narrow screen;
     // on-foot buttons are hidden.
     for id in ["touch-cargo", "touch-tank", "touch-antenna", "touch-reset"] {
         assert!(game.active(id), "{id} shown at the helm");
@@ -260,7 +307,7 @@ fn a_phone_held_upright_plays_the_whole_loop_by_touch() {
     assert!(!game.active("touch-jump") && !game.active("touch-action"));
 
     game.tap_control("touch-board");
-    assert!(game.said("Left crawler. WASD to walk, Space to jump, E to interact, F to board."));
+    assert!(game.said("Left the helm. WASD to walk, Space to jump, E to interact, F at the helm to drive."));
     game.steps(40);
     assert!(!game.active("touch-cargo"), "crawler controls hide on foot");
     game.on_screen("touch-jump", [0.17, 0.075]);
@@ -273,17 +320,16 @@ fn a_phone_held_upright_plays_the_whole_loop_by_touch() {
     // The left-half stick moves the Keeper without turning the camera.
     let start = game.at("explorer");
     let view = game.camera_yaw();
-    game.stick_to(2.0, 1.0, 120);
-    assert!(game.at("explorer")[2] > start[2] + 1.0, "the stick walks the Keeper");
+    game.stick_route(&[(0.0, 6.5)]);
+    assert!(game.at("explorer")[2] > start[2] + 5.0, "the stick walks the Keeper off the crawler: {:?} from {start:?}", game.at("explorer"));
     assert!((game.camera_yaw() - view).abs() < 0.01, "the stick does not turn the camera");
-    game.stick_to(5.6, 0.0, 240);
-    game.stick_to(6.4, -1.0, 120);
-    assert!(game.active("touch-action"), "PICK UP appears beside the alternator");
+    game.stick_route(&[(5.6, 6.5), (5.6, 0.0), (6.4, -1.0)]);
+    assert!(game.active("touch-action"), "PICK UP appears beside the alternator: {:?}", game.at("explorer"));
     game.on_screen("touch-action", [0.17, 0.075]);
     game.tap_control("touch-action");
     assert!(game.said("Recovered replacement alternator."), "{:?}", game.said);
 
-    game.stick_to(2.0, 0.5, 300);
+    game.stick_route(&[(2.9, 0.0)]);
     assert!(game.active("touch-action"), "INSTALL appears at the crawler");
     game.tap_control("touch-action");
     assert!(game.said("Engine repaired. The crawler is ready to travel."));
@@ -305,9 +351,14 @@ fn a_phone_held_upright_plays_the_whole_loop_by_touch() {
     let moved = game.at("explorer");
     assert!((moved[0] - here[0]).hypot(moved[2] - here[2]) < 0.05, "and does not walk");
 
+    // TAKE HELM shows only at the helm, reached up the ramp.
+    assert!(!game.active("touch-board"), "no helm button away from the helm");
+    game.stick_route(&[(2.9, 6.5), (0.0, 6.5), (0.0, -0.9)]);
     game.tap_control("touch-board");
-    assert!(game.said("Boarded crawler. Arrow keys or touch stick to drive."));
+    assert!(game.said("Took the helm. Arrow keys or touch stick to drive."));
     assert!(game.active("touch-cargo"));
+    game.step();
+    game.assert_keeper_at_helm();
 }
 
 #[test]
