@@ -6,7 +6,7 @@ import struct
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-PACK = ROOT/'assets/characters/keeper'
+PACK = ROOT/'art/characters/keeper'
 
 
 def load(name):

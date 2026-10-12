@@ -6,7 +6,7 @@ import struct
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-PACK = ROOT / 'assets/salvage'
+PACK = ROOT / 'art/salvage'
 MANIFEST = json.loads((PACK / 'manifest.json').read_text())
 
 

@@ -18,9 +18,9 @@ class LastSignalSlice(unittest.TestCase):
     def test_keeper_static_mesh_is_the_playable_explorer(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
         explorer = next(e for e in scene["entities"] if e["id"] == "explorer")
-        self.assertEqual(explorer["components"]["sindri.model"]["asset"], "assets/characters/keeper/keeper_static.glb")
+        self.assertEqual(explorer["components"]["sindri.model"]["asset"], "art/characters/keeper/keeper_static.glb")
         self.assertEqual(explorer["transform_3d"]["scale"], [1, 1, 1])
-        self.assertTrue((ROOT / "assets/characters/keeper/keeper_static.glb").is_file())
+        self.assertTrue((ROOT / "art/characters/keeper/keeper_static.glb").is_file())
 
     def test_explorer_can_recover_and_install_alternator(self):
         scene = json.loads((ROOT / "poc.scene").read_text())
