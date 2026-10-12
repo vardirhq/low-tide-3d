@@ -162,7 +162,8 @@ impl Game {
 
     fn walk_route(&mut self, points: &[(f32, f32)]) {
         for &(x, z) in points {
-            self.walk_to(x, z, 300);
+            // Loaded and wading, the Keeper is down to about 1 m/s.
+            self.walk_to(x, z, 1500);
         }
     }
 
@@ -194,6 +195,22 @@ impl Game {
         assert!(dot.abs() > 0.999, "the Keeper faces the crawler's way");
     }
 
+    /// Leaves the helm, recovers the alternator and installs it.
+    fn repair_engine(&mut self) {
+        self.tap(Key::F);
+        self.steps(20);
+        self.walk_route(&[(0.0, 6.5), (5.6, 6.5), (5.6, 0.0), (6.4, -1.0)]);
+        self.tap(Key::E);
+        self.walk_route(&[(2.9, 0.0)]);
+        self.tap(Key::E);
+        self.steps(2);
+        assert!(self.said("Engine repaired. The crawler is ready to travel."), "{:?}", self.said);
+    }
+
+    fn board(&self, name: &str) -> f32 {
+        self.run.board(name)
+    }
+
     fn keeper_collided_with(&self, ids: &[&str]) -> bool {
         let keeper = self.run.entity("explorer").unwrap();
         let wanted: Vec<_> = ids.iter().filter_map(|id| self.run.entity(id)).collect();
@@ -216,19 +233,11 @@ fn the_keeper_walks_the_seabed_recovers_the_alternator_and_repairs_the_crawler()
     let mut game = Game::open();
     game.steps(30);
 
-    // Driving: the Keeper stands at the helm and turns with the crawler.
+    // The engine is dead until the alternator is installed.
     game.assert_keeper_at_helm();
     let start = game.at("crawler");
-    game.run.input.apply(InputEvent::KeyPressed(Key::ArrowLeft));
-    game.hold(Key::ArrowUp, 60);
-    game.run.input.apply(InputEvent::KeyReleased(Key::ArrowLeft));
-    game.step();
-    let driven = game.at("crawler");
-    assert!((driven[0] - start[0]).hypot(driven[2] - start[2]) > 1.0, "crawler drove: {driven:?}");
-    game.assert_keeper_at_helm();
-    game.tap(Key::Space); // the crawler's reset to its starting place
-    game.steps(2);
-    game.assert_keeper_at_helm();
+    game.hold(Key::ArrowUp, 30);
+    assert_eq!(game.at("crawler"), start, "a dead engine does not drive");
 
     // Leaving the helm hands the Keeper to the physics character, standing
     // on the crawler's deck, which is the crawler's own model as a collider.
@@ -289,6 +298,19 @@ fn the_keeper_walks_the_seabed_recovers_the_alternator_and_repairs_the_crawler()
     game.step();
     game.assert_keeper_at_helm();
     assert!(!game.said("Keeper recovered at the helm"), "never fell through");
+
+    // Repaired, it drives and turns, and the Keeper stays at the helm.
+    let start = game.at("crawler");
+    game.run.input.apply(InputEvent::KeyPressed(Key::ArrowLeft));
+    game.hold(Key::ArrowUp, 60);
+    game.run.input.apply(InputEvent::KeyReleased(Key::ArrowLeft));
+    game.step();
+    let driven = game.at("crawler");
+    assert!((driven[0] - start[0]).hypot(driven[2] - start[2]) > 1.0, "crawler drove: {driven:?}");
+    game.assert_keeper_at_helm();
+    game.tap(Key::Space); // the crawler's reset to its starting place
+    game.steps(2);
+    game.assert_keeper_at_helm();
 }
 
 #[test]
@@ -375,4 +397,81 @@ fn every_control_fits_landscape_phones_and_tablets() {
         game.steps(5);
         game.on_screen("touch-jump", [0.17, 0.075]);
     }
+}
+
+/// The first delivery: answer the radio, fetch the battery pack from the
+/// flooded wreck, load it on the crawler and back off, then deliver it to the
+/// beacon before the tide closes the route.
+#[test]
+fn the_first_delivery_restores_the_signal() {
+    let mut game = Game::open();
+    game.steps(10);
+    assert_eq!(game.board("order_state"), 0.0, "no order before the repair");
+    game.repair_engine();
+    game.steps(2);
+    assert_eq!(game.board("order_state"), 1.0, "the radio offers an order");
+    assert!(!game.active("hud-status"));
+
+    game.walk_route(&[(4.5, 0.0), (4.5, -2.9), (7.2, -2.9)]);
+    assert!(game.active("touch-action"), "ACCEPT at the radio: {:?}", game.at("explorer"));
+    game.tap(Key::E);
+    assert_eq!(game.board("order_state"), 2.0, "order accepted");
+    assert!(game.active("hud-status"), "the tide timer shows");
+    let tide = game.at("tide-water")[1];
+
+    // Out to the wreck in the north-west hollow.
+    game.walk_route(&[(4.5, -2.9), (4.5, -8.0), (-13.0, -8.0), (-13.0, -13.5), (-13.6, -13.9)]);
+    assert!(game.at("tide-water")[1] > tide, "the tide is rising");
+    game.tap(Key::E);
+    assert_eq!(game.board("cargo_state"), 1.0, "picked up: {:?}", game.at("explorer"));
+    let back = game.at("cargo-battery");
+    let keeper = game.at("explorer");
+    assert!((back[1] - keeper[1] - 0.95).abs() < 0.05, "the cargo rides the Keeper's back");
+
+    // Carrying is slower than walking empty-handed.
+    let before = game.at("explorer");
+    game.hold(Key::D, 60);
+    let loaded_pace = game.at("explorer")[0] - before[0];
+    assert!(loaded_pace < 2.6, "loaded pace over a second: {loaded_pace}");
+
+    // Load it on the crawler's rear deck, and take it back off.
+    game.walk_route(&[(-13.0, -8.0), (-3.2, -8.0), (-3.2, 6.5), (0.0, 6.5), (0.0, 2.3), (-0.7, 2.1)]);
+    assert!(game.active("touch-action"), "LOAD at the cargo bay: {:?}", game.at("explorer"));
+    game.tap(Key::E);
+    assert_eq!(game.board("cargo_state"), 2.0, "loaded");
+    game.tap(Key::E);
+    assert_eq!(game.board("cargo_state"), 1.0, "unloaded into the Keeper's arms");
+
+    // Deliver it to the beacon.
+    game.walk_route(&[(0.0, 2.3), (0.0, 6.5), (4.5, 6.5), (4.5, -8.0), (9.0, -8.0), (9.0, -5.6)]);
+    assert!(game.active("touch-action"), "DELIVER at the beacon: {:?}", game.at("explorer"));
+    game.tap(Key::E);
+    game.steps(2);
+    assert_eq!(game.board("cargo_state"), 3.0);
+    assert_eq!(game.board("order_state"), 3.0, "{:?}", game.said);
+    assert!(game.said("Signal restored."), "{:?}", game.said);
+    assert!(game.active("signal-beam"), "the beacon's signal is lit");
+    let condition = game.board("cargo_condition");
+    eprintln!("delivered at {condition}% condition, tide {}", game.board("tide_level"));
+    assert!(condition > 0.0 && condition < 100.0, "wading wore it down, but not out: {condition}");
+}
+
+/// Waiting out the tide fails the order; the water drains and it reopens
+/// with the cargo back at the wreck.
+#[test]
+fn a_flooded_route_fails_the_order_and_it_reopens() {
+    let mut game = Game::open();
+    game.steps(10);
+    game.repair_engine();
+    game.walk_route(&[(4.5, 0.0), (4.5, -2.9), (7.2, -2.9)]);
+    game.tap(Key::E);
+    assert_eq!(game.board("order_state"), 2.0);
+    game.steps(60 * 121);
+    assert_eq!(game.board("order_state"), 4.0, "{:?}", game.said);
+    assert!(game.said("The tide closed the route. Order failed."));
+    assert!(game.at("tide-water")[1] > 0.0, "the route is flooded");
+    game.steps(60 * 7);
+    assert_eq!(game.board("order_state"), 1.0, "open again");
+    assert!(game.at("tide-water")[1] < -0.8, "the water drained");
+    assert_eq!(game.board("cargo_state"), 0.0);
 }

@@ -14,6 +14,14 @@ const REACH_HELM: f32 = 1.4;
 const HELM_UP: f32 = 1.3;
 const HELM_AHEAD: f32 = 0.9;
 const REACH_ALTERNATOR: f32 = 1.8;
+const REACH_STATION: f32 = 2.2;
+const REACH_CARGO: f32 = 1.6;
+const REACH_BAY: f32 = 1.3;
+// Carrying cargo and wading both slow the Keeper.
+const LOADED_PACE: f32 = 0.65;
+const WADING_PACE: f32 = 0.55;
+const HARD_LANDING: f32 = 0.6;
+const JOLT_WEAR: f32 = 20.0;
 
 script Explorer {
     var carrying_alternator: bool = false;
@@ -88,19 +96,72 @@ script Explorer {
             near_alternator = this.transform.world_position.distance(alternator.transform.world_position) <= REACH_ALTERNATOR;
         }
         let can_install = this.carrying_alternator && !this.repaired && to_crawler < REACH_CRAWLER;
+        var action = "";
+        if !this.aboard {
+            if near_alternator { action = "PICK UP"; }
+            else if can_install { action = "INSTALL"; }
+            else { action = courier_action(crawler); }
+        }
         let interact = Input.Keyboard.just_pressed("E") || pressed(this.action_button);
-        if !this.aboard && interact {
-            if near_alternator {
-                World.send_signal(alternator, "pick_up", 1.0);
-            } else if can_install {
+        if interact && action != "" {
+            if action == "INSTALL" {
                 this.repaired = true;
                 this.carrying_alternator = false;
                 World.send_signal(crawler, "repair_engine", 1.0);
+                Game.set("engine_repaired", 1.0);
                 print("Alternator installed.");
+            } else if action == "PICK UP" && near_alternator {
+                World.send_signal(alternator, "pick_up", 1.0);
+            } else if action == "ACCEPT" {
+                send_to("Delivery order", "accept");
+            } else if action == "PICK UP" || action == "UNLOAD" {
+                send_to("Battery pack", "carry");
+            } else if action == "LOAD" {
+                send_to("Battery pack", "load");
+            } else if action == "DELIVER" {
+                send_to("Battery pack", "deliver");
             }
         }
 
-        show_controls(at_helm, near_alternator, can_install);
+        show_controls(at_helm, action);
+    }
+
+    // The courier's context action: answer the radio, pick up the cargo, load
+    // or unload it at the crawler's cargo bay, or deliver it.
+    fn courier_action(crawler: Entity) -> String {
+        let order = Game.get("order_state", 0.0);
+        let cargo_state = Game.get("cargo_state", 0.0);
+        let here = this.transform.world_position;
+        if order == 1.0 && near("Last Signal radio", here, REACH_STATION) { return "ACCEPT"; }
+        if order != 2.0 { return ""; }
+        let bay = cargo_bay(crawler);
+        if cargo_state == 0.0 && near("Battery pack", here, REACH_CARGO) { return "PICK UP"; }
+        if cargo_state == 1.0 {
+            if near("Last Signal beacon", here, REACH_STATION) { return "DELIVER"; }
+            if here.distance(bay) < REACH_BAY { return "LOAD"; }
+        }
+        if cargo_state == 2.0 && here.distance(bay) < REACH_BAY { return "UNLOAD"; }
+        return "";
+    }
+
+    fn near(name: String, here: Vec3, reach: f32) -> bool {
+        let thing = World.find(name);
+        if thing == null { return false; }
+        var offset = thing.transform.world_position - here;
+        offset.y = 0.0;
+        return offset.length <= reach;
+    }
+
+    fn send_to(name: String, signal: String) {
+        let thing = World.find(name);
+        if thing != null { World.send_signal(thing, signal, 1.0); }
+    }
+
+    // Where cargo rides on the crawler: the rear deck, port side, standing
+    // height for the Keeper beside it.
+    fn cargo_bay(crawler: Entity) -> Vec3 {
+        return crawler.transform.world_position + Vec3(0.0, 1.28, 0.0)
+            - crawler.transform.right * 0.7 - crawler.transform.forward * 2.1;
     }
 
     fn helm_stand(crawler: Entity) -> Vec3 {
@@ -135,7 +196,7 @@ script Explorer {
         return false;
     }
 
-    fn show_controls(at_helm: bool, near_alternator: bool, can_install: bool) {
+    fn show_controls(at_helm: bool, action: String) {
         for button in this.crawler_buttons { World.set_active(button, this.aboard); }
         if this.board_button != null {
             World.set_active(this.board_button, this.aboard || at_helm);
@@ -144,27 +205,40 @@ script Explorer {
         }
         if this.jump_button != null { World.set_active(this.jump_button, !this.aboard); }
         if this.action_button != null {
-            World.set_active(this.action_button, !this.aboard && (near_alternator || can_install));
-            if near_alternator { Ui.set_text(this.action_button, "PICK UP"); }
-            else { Ui.set_text(this.action_button, "INSTALL"); }
+            World.set_active(this.action_button, action != "");
+            if action != "" { Ui.set_text(this.action_button, action); }
         }
-        var goal = "Engine repaired. Take the helm and drive";
+        var goal = "";
         if !this.repaired {
             if this.carrying_alternator {
                 goal = "Bring the alternator to the crawler";
-                if can_install { goal = "Install the alternator"; }
+                if action == "INSTALL" { goal = "Install the alternator"; }
             } else if this.aboard {
                 goal = "Engine dead. Leave the helm, find an alternator";
-            } else if near_alternator {
+            } else if action == "PICK UP" {
                 goal = "Pick up the alternator";
             } else {
                 goal = "Find the alternator by the radio station";
             }
+        } else {
+            goal = courier_goal();
         }
         if this.objective != null && goal != this.last_objective {
             this.last_objective = goal;
             Ui.set_text(this.objective, goal);
         }
+    }
+
+    fn courier_goal() -> String {
+        let order = Game.get("order_state", 0.0);
+        let cargo_state = Game.get("cargo_state", 0.0);
+        if order == 1.0 { return "Answer the radio at the signal station"; }
+        if order == 3.0 { return "Signal restored. Delivery complete"; }
+        if order == 4.0 { return "Route flooded. Wait, then try again"; }
+        if order != 2.0 { return "Engine repaired"; }
+        if cargo_state == 0.0 { return "Fetch the battery pack from the NW wreck"; }
+        if cargo_state == 2.0 { return "Drive it to the beacon, then unload"; }
+        return "Deliver the battery pack to the beacon";
     }
 
     fn walk(dt: f32) {
@@ -173,8 +247,13 @@ script Explorer {
         let motion = Physics3d.character_motion(this.entity);
         var supported = false;
         if motion != null { supported = motion.grounded; }
+        let carrying = Game.get("cargo_state", 0.0) == 1.0;
         if supported {
             if this.airborne > 0.25 { print("Keeper landed"); }
+            if carrying && this.airborne > HARD_LANDING {
+                let cargo = World.find("Battery pack");
+                if cargo != null { World.send_signal(cargo, "jolt", JOLT_WEAR); }
+            }
             this.airborne = 0.0;
         } else {
             this.airborne += dt;
@@ -213,7 +292,10 @@ script Explorer {
         } else {
             this.fall_speed += this.gravity * dt;
         }
-        let step = direction * this.walk_speed * dt + Vec3(0.0, -this.fall_speed * dt, 0.0);
+        var pace = this.walk_speed;
+        if carrying { pace *= LOADED_PACE; }
+        if this.transform.world_position.y < Game.get("tide_level", -10.0) { pace *= WADING_PACE; }
+        let step = direction * pace * dt + Vec3(0.0, -this.fall_speed * dt, 0.0);
         Physics3d.move_character(this.entity, step, grounded && this.fall_speed >= 0.0);
 
         // Lost below the seabed: put the Keeper back beside the crawler.
