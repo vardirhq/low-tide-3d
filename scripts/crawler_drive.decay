@@ -77,14 +77,14 @@ script CrawlerDrive {
             if this.antenna != null { World.set_active(this.antenna, this.antenna_installed); }
         }
 
-        // The first right-side finger belongs to the camera, not the stick.
-        // Preserve keyboard and left-side floating-stick driving.
+        // Only a touch that begins on the left half, off every button, is the
+        // stick; right-side touches orbit the camera. Keyboard driving is kept.
         if Input.Touch.count == 0.0 {
             this.had_touch = false;
             this.right_touch_camera = false;
         } else if !this.had_touch {
             this.had_touch = true;
-            this.right_touch_camera = Input.Pointer.overlay.x > 0.0 && !Input.Pointer.over_ui;
+            this.right_touch_camera = Input.Pointer.overlay_x > 0.0 || Input.Pointer.over_ui;
         }
         let stick_drives = this.at_helm && Input.Stick.held && !this.right_touch_camera;
         let keys = Input.Keyboard.axis("ArrowDown", "ArrowUp");
@@ -113,8 +113,9 @@ script CrawlerDrive {
         draw_stick();
     }
 
+    // Drawn whenever the stick is in use: driving at the helm or walking on foot.
     fn draw_stick() {
-        let stick_drives = this.at_helm && Input.Stick.held && !this.right_touch_camera;
+        let stick_drives = Input.Stick.held && !this.right_touch_camera;
         if stick_drives && !this.drawing {
             this.drawing = !Input.Pointer.over_ui;
             this.anchor = Input.Pointer.overlay;

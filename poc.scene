@@ -473,7 +473,7 @@
         ],
         "scale": [
           0.36,
-          0.16,
+          0.13,
           1
         ]
       },
@@ -505,8 +505,8 @@
           "font": "fonts/ChakraPetch-Regular.ttf",
           "font_size": 0.055,
           "bounds": [
-            0.38,
-            0.13
+            0.34,
+            0.12
           ],
           "anchor": "center",
           "layer": 21
@@ -707,8 +707,8 @@
           0
         ],
         "scale": [
-          0.4,
-          0.14,
+          0.36,
+          0.13,
           1
         ]
       },
@@ -740,8 +740,8 @@
           "font": "fonts/ChakraPetch-Regular.ttf",
           "font_size": 0.055,
           "bounds": [
-            0.38,
-            0.13
+            0.34,
+            0.12
           ],
           "anchor": "center",
           "layer": 21
@@ -758,8 +758,8 @@
           0
         ],
         "scale": [
-          0.4,
-          0.14,
+          0.36,
+          0.13,
           1
         ]
       },
@@ -791,8 +791,8 @@
           "font": "fonts/ChakraPetch-Regular.ttf",
           "font_size": 0.055,
           "bounds": [
-            0.38,
-            0.13
+            0.34,
+            0.12
           ],
           "anchor": "center",
           "layer": 21
@@ -809,8 +809,8 @@
           0
         ],
         "scale": [
-          0.4,
-          0.14,
+          0.36,
+          0.13,
           1
         ]
       },
@@ -842,8 +842,8 @@
           "font": "fonts/ChakraPetch-Regular.ttf",
           "font_size": 0.055,
           "bounds": [
-            0.38,
-            0.13
+            0.34,
+            0.12
           ],
           "anchor": "center",
           "layer": 21
@@ -1042,6 +1042,217 @@
         },
         "sindri.physics3d.character": {
           "snap_distance": 0.2
+        }
+      }
+    },
+    {
+      "id": "touch-board",
+      "name": "Board button",
+      "transform_3d": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.15,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.08,
+            0.14,
+            0.17,
+            0.82
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            1
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.button": {
+          "label": "STEP OFF"
+        },
+        "sindri.ui.text": {
+          "text": "STEP OFF",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.06,
+          "bounds": [
+            0.32,
+            0.13999999999999999
+          ],
+          "anchor": "center",
+          "layer": 21
+        }
+      }
+    },
+    {
+      "id": "touch-jump",
+      "name": "Jump button",
+      "transform_3d": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.15,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.08,
+            0.14,
+            0.17,
+            0.82
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            1
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.button": {
+          "label": "JUMP"
+        },
+        "sindri.ui.text": {
+          "text": "JUMP",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.06,
+          "bounds": [
+            0.32,
+            0.13999999999999999
+          ],
+          "anchor": "center",
+          "layer": 21
+        }
+      }
+    },
+    {
+      "id": "touch-action",
+      "name": "Action button",
+      "transform_3d": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.15,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.08,
+            0.14,
+            0.17,
+            0.82
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            1
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.button": {
+          "label": "PICK UP"
+        },
+        "sindri.ui.text": {
+          "text": "PICK UP",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.06,
+          "bounds": [
+            0.32,
+            0.13999999999999999
+          ],
+          "anchor": "center",
+          "layer": 21
+        }
+      }
+    },
+    {
+      "id": "hud-objective",
+      "name": "Objective",
+      "transform_3d": {
+        "position": [
+          0,
+          0.9,
+          0
+        ],
+        "scale": [
+          0.86,
+          0.1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.ui.shape": {
+          "kind": "rect",
+          "fill": [
+            0.04,
+            0.08,
+            0.1,
+            0.6
+          ],
+          "stroke": [
+            0.68,
+            0.56,
+            0.35,
+            0.6
+          ],
+          "stroke_width": 0.015,
+          "corner_radius": 0.15,
+          "anchor": "center",
+          "layer": 20
+        },
+        "sindri.ui.text": {
+          "text": "Engine dead. Step off to find an alternator",
+          "font": "fonts/ChakraPetch-Regular.ttf",
+          "font_size": 0.04,
+          "bounds": [
+            0.84,
+            0.09
+          ],
+          "anchor": "center",
+          "layer": 21
+        }
+      }
+    },
+    {
+      "id": "hud",
+      "name": "Touch HUD layout",
+      "components": {
+        "sindri.script": {
+          "source": "scripts/hud.decay",
+          "script": "Hud"
         }
       }
     }

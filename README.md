@@ -15,6 +15,17 @@ relative to the camera, **Space** jumps, **E** picks up the alternator by the
 station and installs it beside the crawler, and **F** boards again. Hold the
 right mouse button to orbit the camera.
 
+On a phone, the screen is split. The **left half** is a floating stick that
+drives the crawler or walks the Keeper, and the **right half** turns the
+camera. The buttons appear only when they apply:
+- **STEP OFF / BOARD** next to the crawler.
+- **JUMP** on foot.
+- **PICK UP / INSTALL** beside the alternator and back at the crawler.
+- The crawler's module toggles and **RESET** at the helm.
+
+A line at the top says what to do next. `scripts/hud.decay` pins every control
+to the screen edges for any shape or orientation.
+
 On foot the Keeper is a physics character (PR #507's 3D character
 controller). It stands on the imported seabed and is blocked by the salvage
 props, which use their own GLBs as model colliders. The camera also pulls in

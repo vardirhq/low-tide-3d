@@ -48,8 +48,12 @@ class LastSignalSlice(unittest.TestCase):
         source = ROOT / script["source"]
         self.assertTrue(source.is_file())
         content = source.read_text()
-        self.assertIn('Input.Keyboard.just_pressed("E")', content)
+        # The Explorer owns E and the PICK UP button and signals the part.
+        self.assertIn('World.take_signal("pick_up")', content)
         self.assertIn("World.set_active(this.entity, false)", content)
+        explorer = (ROOT / "scripts/explorer.decay").read_text()
+        self.assertIn('Input.Keyboard.just_pressed("E")', explorer)
+        self.assertIn('"pick_up"', explorer)
 
 
 if __name__ == "__main__":

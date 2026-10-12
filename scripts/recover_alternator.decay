@@ -1,14 +1,13 @@
 // First Last Signal salvage interaction slice.
-// Walk the explorer near the alternator and press E to recover it.
-// The explorer currently uses a placeholder mesh and keyboard movement.
+// The Keeper's Explorer script decides when E or the PICK UP button reaches
+// the alternator and signals it here; recovering hides the part.
 script RecoverAlternator {
     var recovered: bool = false;
     fn update(dt: f32) {
         if this.recovered { return; }
-        let explorer = World.find("Explorer");
-        if explorer == null { return; }
-        let distance = this.transform.world_position.distance(explorer.transform.world_position);
-        if distance <= 1.8 && Input.Keyboard.just_pressed("E") {
+        if World.take_signal("pick_up") > 0.0 {
+            let explorer = World.find("Explorer");
+            if explorer == null { return; }
             this.recovered = true;
             World.set_active(this.entity, false);
             World.send_signal(explorer, "take_alternator", 1.0);

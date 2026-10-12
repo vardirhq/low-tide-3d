@@ -1,0 +1,60 @@
+// Pins the touch controls to the screen edges for any screen shape.
+// Overlay units: the screen is 2 tall (y from -1 to 1) and 2 * aspect wide,
+// so a phone held upright is only about 0.9 wide. Each control keeps its
+// size and is placed from the nearest edges every frame, which also follows
+// rotation and browser resizes.
+const MARGIN: f32 = 0.06;
+const BUTTON_W: f32 = 0.36;
+const BUTTON_H: f32 = 0.13;
+const ACTION_W: f32 = 0.34;
+const ACTION_H: f32 = 0.15;
+const GAP: f32 = 0.03;
+
+script Hud {
+    var modules: List<Entity> = [];
+    var reset: Entity = null;
+    var board: Entity = null;
+    var jump: Entity = null;
+    var action: Entity = null;
+    var objective: Entity = null;
+
+    fn start() {
+        for name in ["Toggle cargo", "Toggle tank", "Toggle antenna"] {
+            let button = World.find(name);
+            if button != null { this.modules.push(button); }
+        }
+        this.reset = World.find("Reset crawler");
+        this.board = World.find("Board button");
+        this.jump = World.find("Jump button");
+        this.action = World.find("Action button");
+        this.objective = World.find("Objective");
+    }
+
+    fn update(dt: f32) {
+        let half_width = max(Viewport.aspect, 0.4);
+        let left = -half_width + MARGIN + BUTTON_W * 0.5;
+        let right = half_width - MARGIN - BUTTON_W * 0.5;
+        let top = 1.0 - MARGIN - BUTTON_H * 0.5;
+        // Crawler controls: modules down the top-left, reset top-right.
+        var row = 0.0;
+        for button in this.modules {
+            place(button, left, top - row * (BUTTON_H + GAP));
+            row += 1.0;
+        }
+        place(this.reset, right, top);
+        // The objective sits top-centre on wide screens, and below the
+        // module column where an upright phone has no room beside it.
+        if half_width > 1.0 { place(this.objective, 0.0, top); }
+        else { place(this.objective, 0.0, top - 3.0 * (BUTTON_H + GAP) - 0.02); }
+        // On-foot actions: a column in the bottom-right, under the right thumb.
+        let action_x = half_width - MARGIN - ACTION_W * 0.5;
+        let bottom = -1.0 + MARGIN + ACTION_H * 0.5;
+        place(this.jump, action_x, bottom);
+        place(this.action, action_x, bottom + ACTION_H + GAP);
+        place(this.board, action_x, bottom + 2.0 * (ACTION_H + GAP));
+    }
+
+    fn place(element: Entity, x: f32, y: f32) {
+        if element != null { element.transform.position = Vec3(x, y, 0.0); }
+    }
+}
