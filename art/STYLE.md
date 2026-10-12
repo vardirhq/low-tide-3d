@@ -21,6 +21,17 @@ look like it belongs beside the crawler.
 
 Requirements: Python 3 with `numpy`, `scipy` and `Pillow`.
 
+**Without a computer:**
+
+- **On GitHub:** add or edit a spec in `art/drafts/` from the GitHub app or
+  website and open a pull request. The *Asset preview* workflow builds it,
+  commits the preview to `art/drafts/previews/` and comments with the images
+  and reports. Push a fix and it updates.
+- **In ChatGPT:** upload `scripts/asset.py` and `Low_Tide_Kit/build_kit.py`
+  (plus this guide) to a chat. ChatGPT's own Python sandbox can run
+  `python3 asset.py <spec>.py` with the files side by side and show the
+  preview inline.
+
 ## Vocabulary
 
 ```python

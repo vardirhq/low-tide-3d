@@ -18,6 +18,8 @@ Assets are written as code, never modelled by hand or by tool. **Follow
 build, check and preview loop.
 
 - Draft in `art/drafts/<name>.py` and run `python3 scripts/asset.py art/drafts/<name>.py`.
+  If you cannot run it, open a pull request with the spec: the *Asset preview*
+  workflow builds it and comments with the preview and report.
 - Fix every error and warning in the report before calling an asset done.
 - Look at the preview image (or ask the person to share it) and revise.
 - Reuse existing assets as references; match their scale and detail density.

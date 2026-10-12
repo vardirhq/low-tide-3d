@@ -29,8 +29,11 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "Low_Tide_Kit"))
+HERE = Path(__file__).resolve().parent
+# In the repository build_kit.py lives in Low_Tide_Kit/. Uploaded to a chat
+# sandbox (ChatGPT's Python), the two files usually sit side by side.
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parent / "Low_Tide_Kit"))
 import build_kit as kit  # noqa: E402  (the shared vocabulary, palette and exporter)
 
 TRIANGLE_BUDGET = 4000
