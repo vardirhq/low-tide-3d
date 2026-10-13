@@ -61,8 +61,51 @@ jobs:
             } >> "$RUNNER_TEMP/comment.md"
           done
           echo "failed=$failed" >> "$GITHUB_OUTPUT"
+          echo "count=$(echo "$changed" | grep -c . || true)" >> "$GITHUB_OUTPUT"
+      - name: Suggest mechanical fixes on the spec lines
+        if: steps.build.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 - <<'PY'
+          import glob, json, os, subprocess
+          repo, pr, head = os.environ["REPO"], os.environ["PR"], os.environ["HEAD"]
+          comment = os.path.join(os.environ["RUNNER_TEMP"], "comment.md")
+
+          def review(comments, body):
+              payload = {"commit_id": head, "event": "COMMENT", "body": body, "comments": comments}
+              result = subprocess.run(
+                  ["gh", "api", f"repos/{repo}/pulls/{pr}/reviews", "-X", "POST", "--input", "-"],
+                  input=json.dumps(payload), text=True, capture_output=True)
+              return result.returncode == 0
+
+          posted, leftover = 0, []
+          for path in sorted(glob.glob("art/drafts/out/*_fixes.json")):
+              data = json.load(open(path))
+              for fix in data["fixes"]:
+                  body = "```suggestion\n" + fix["replacement"] + "\n```\n" + fix["reason"]
+                  comment_ = {"path": data["spec"], "line": fix["line"], "side": "RIGHT", "body": body}
+                  # One review per suggestion: a line outside the diff fails alone.
+                  if review([comment_], "Asset check: a mechanical fix with one right answer. "
+                                        "Commit the suggestion to apply it."):
+                      posted += 1
+                  else:
+                      leftover.append(f"- `{data['spec']}` line {fix['line']}: {fix['reason']}\n"
+                                      f"  ```python\n  {fix['replacement'].strip()}\n  ```")
+          with open(comment, "a") as out:
+              if posted:
+                  out.write(f"\n**{posted} suggested fix{'es' if posted > 1 else ''}** posted on the spec "
+                            "lines; commit them from the review to apply.\n")
+              if leftover:
+                  out.write("\n**Suggested fixes** (outside this pull request's diff, so apply by hand):\n"
+                            + "\n".join(leftover) + "\n")
+          PY
       - name: Publish previews on the asset-previews branch
         id: commit
+        if: steps.build.outputs.count != '0'
         env:
           PR: ${{ github.event.pull_request.number }}
         run: |
@@ -88,7 +131,9 @@ jobs:
           done
           echo "::error::Could not push the previews branch"
           exit 1
+      # A pull request that only deletes specs has nothing to show.
       - name: Post previews
+        if: steps.build.outputs.count != '0'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}

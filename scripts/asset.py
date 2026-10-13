@@ -21,7 +21,10 @@ No GPU, Blender or engine needed.
 """
 from __future__ import annotations
 
+import ast
+import json
 import math
+import os
 import runpy
 import sys
 from pathlib import Path
@@ -61,19 +64,37 @@ def build(spec: Path) -> dict:
         kit.begin(name, list(footprint), description,
                   [kit.socket("mount", [0, 0, 0], [0, 0, -1])] + list(sockets or []))
 
-    def need_asset(fn):
+    # Which spec line made each part, and how often each line ran, so a fix
+    # can be suggested on the exact line (only for lines that ran once).
+    calls: dict[int, int] = {}
+    spec_file = str(spec)
+
+    def need_asset(fn, kind):
         def wrapped(*args, **kwargs):
             if not made:
                 raise SystemExit("call asset(name, footprint, description) first")
-            return fn(*args, **kwargs)
+            frame = sys._getframe(1)
+            while frame is not None and frame.f_code.co_filename != spec_file:
+                frame = frame.f_back
+            line = frame.f_lineno if frame is not None else None
+            parts = kit.K[made[0]]["parts"]
+            before = len(parts)
+            result = fn(*args, **kwargs)
+            for part in parts[before:]:
+                part["line"], part["kind"] = line, kind
+            if line is not None:
+                calls[line] = calls.get(line, 0) + 1
+            return result
         return wrapped
 
-    env = {"asset": asset, "box": need_asset(kit.box), "cyl": need_asset(kit.cyl),
-           "pipe": need_asset(kit.pipe), "socket": kit.socket, "math": math}
-    runpy.run_path(str(spec), init_globals=env)
+    env = {"asset": asset, "box": need_asset(kit.box, "box"), "cyl": need_asset(kit.cyl, "cyl"),
+           "pipe": need_asset(kit.pipe, "pipe"), "socket": kit.socket, "math": math}
+    runpy.run_path(spec_file, init_globals=env)
     if len(made) != 1:
         raise SystemExit(f"a spec defines exactly one asset; this one defined {len(made)}")
-    return kit.K[made[0]]
+    record = kit.K[made[0]]
+    record["calls"], record["spec"] = calls, spec
+    return record
 
 
 # --------------------------------------------------------------------------- #
@@ -143,28 +164,12 @@ def check(a: dict) -> tuple[list[str], list[str]]:
         warnings.append(f"{what}: it is not connected to the ground through touching parts "
                         f"(nearest gap {nearest:.3f} m, lowest point z={min(lo[k, 2] for k in group):.3f})")
 
-    # Near misses: a sizeable part that sits just above the surface under its
-    # centre was almost certainly meant to rest on it. (Bigger gaps are left
-    # alone: wall-mounted parts have open air below them.)
-    for i in range(len(parts)):
-        footprint = (hi[i, 0] - lo[i, 0]) * (hi[i, 1] - lo[i, 1])
-        if lo[i, 2] <= GROUNDED or footprint < 0.01:
-            continue
-        cx, cy = (lo[i, 0] + hi[i, 0]) / 2, (lo[i, 1] + hi[i, 1]) / 2
-        under = [j for j in range(len(parts)) if j != i
-                 and lo[j, 0] <= cx <= hi[j, 0] and lo[j, 1] <= cy <= hi[j, 1]
-                 and lo[j, 2] < lo[i, 2] + TOUCH]
-        if any(hi[j, 2] >= lo[i, 2] - TOUCH for j in under):
-            continue  # resting on (or sunk into) something
-        top = max([hi[j, 2] for j in under], default=0.0)
-        gap = lo[i, 2] - top
-        if NEAR_MISS_MIN < gap < NEAR_MISS_MAX:
-            below = max(under, key=lambda j: hi[j, 2])
-            warnings.append(f"'{names[i]}' hovers {gap:.3f} m above '{names[below]}' under it; "
-                            f"seat it at z={top:.3f}")
+    for i, below, gap, top in _near_misses(parts, lo, hi):
+        warnings.append(f"'{names[i]}' hovers {gap:.3f} m above '{names[below]}' under it; "
+                        f"seat it at z={top:.3f}")
 
     flicker: dict[tuple[str, str], int] = {}
-    for i, j in _coplanar_pairs(parts):
+    for i, j, _ in _coplanar_pairs(parts):
         flicker[(names[i], names[j])] = flicker.get((names[i], names[j]), 0) + 1
     for (a_name, b_name), count in flicker.items():
         times = f" ({count} places)" if count > 1 else ""
@@ -180,6 +185,28 @@ def check(a: dict) -> tuple[list[str], list[str]]:
         warnings.append(f"{tris} triangles is over the {TRIANGLE_BUDGET} budget; "
                         "drop tiny details or lower cylinder segments")
     return errors, warnings
+
+
+def _near_misses(parts, lo, hi):
+    """Sizeable parts sitting just above the surface under their centre, which
+    were almost certainly meant to rest on it: (part, part below, gap, its top).
+    Bigger gaps are left alone: wall-mounted parts have open air below them."""
+    found = []
+    for i in range(len(parts)):
+        footprint = (hi[i, 0] - lo[i, 0]) * (hi[i, 1] - lo[i, 1])
+        if lo[i, 2] <= GROUNDED or footprint < 0.01:
+            continue
+        cx, cy = (lo[i, 0] + hi[i, 0]) / 2, (lo[i, 1] + hi[i, 1]) / 2
+        under = [j for j in range(len(parts)) if j != i
+                 and lo[j, 0] <= cx <= hi[j, 0] and lo[j, 1] <= cy <= hi[j, 1]
+                 and lo[j, 2] < lo[i, 2] + TOUCH]
+        if not under or any(hi[j, 2] >= lo[i, 2] - TOUCH for j in under):
+            continue  # nothing under it, or resting on (or sunk into) something
+        below = max(under, key=lambda j: hi[j, 2])
+        gap = lo[i, 2] - hi[below, 2]
+        if NEAR_MISS_MIN < gap < NEAR_MISS_MAX:
+            found.append((i, below, gap, hi[below, 2]))
+    return found
 
 
 def _faces(part):
@@ -217,7 +244,7 @@ def _coplanar_pairs(parts):
                 overlap = np.minimum(hi_a, other[1]) - np.maximum(lo_a, other[0])
                 # Two in-plane axes overlap by more than 2 mm (the third is the plane).
                 if (overlap > 0.002).sum() >= 2:
-                    found.append((i, j))
+                    found.append((i, j, np.array(key[0])))
                     break
     return found
 
@@ -335,6 +362,161 @@ def _draw(tri, normal, col, scale, ground=None):
 
 
 # --------------------------------------------------------------------------- #
+# Suggested fixes: corrected spec lines for problems with one right answer
+
+SEAT_CLEARANCE = 0.0005  # seat a hovering part this far into its support
+PROUD = 0.005            # move a flush detail this far out of its surface
+
+
+def suggest(a: dict) -> list[dict]:
+    """Corrected spec lines for mechanical problems, or none when unsure.
+
+    A fix is offered only for parts made by a call that ran once, sits on one
+    line and spells its points out as numbers, so the change is a plain edit
+    to that line. A hovering part is seated together with the parts that hang
+    from it, unless any of them is joined by a pipe to something that does not
+    move; then moving it would tear the joint, and it is left to judgement.
+    """
+    parts, calls = a["parts"], a.get("calls", {})
+    if not parts or "spec" not in a:
+        return []
+    source = Path(a["spec"]).read_text().splitlines()
+    lo = np.array([p["v"].min(0) for p in parts])
+    hi = np.array([p["v"].max(0) for p in parts])
+    names = [p["name"] for p in parts]
+    gaps = np.stack([np.maximum(np.maximum(lo - hi[i], lo[i] - hi), 0).max(axis=1)
+                     for i in range(len(parts))])
+    touching = gaps <= TOUCH
+    edits: dict[int, list] = {}  # line -> [(delta, reason)]
+
+    def movable(group):
+        lines = {parts[k].get("line") for k in group}
+        if None in lines or any(calls.get(line) != 1 for line in lines):
+            return None
+        # Every part a line made must move with it (a pipe's segments).
+        if any(p.get("line") in lines and k not in group for k, p in enumerate(parts)):
+            return None
+        return lines
+
+    for i, below, gap, top in _near_misses(parts, lo, hi):
+        rest = _grounded(parts, lo, touching, skip=i)
+        hanging = _reachable(i, touching, outside=rest)
+        group = {i} | hanging
+        joined = any(touching[m, g] and (parts[m]["kind"] == "pipe" or parts[g]["kind"] == "pipe")
+                     for m in group for g in rest if g != below)
+        lines = None if joined else movable(group)
+        if lines is None:
+            continue
+        what = f"'{names[i]}'" + (f" and the {len(hanging)} part{'s' if len(hanging) > 1 else ''} on it"
+                                  if hanging else "")
+        for line in lines:
+            edits.setdefault(line, []).append(
+                (np.array([0, 0, -(gap - SEAT_CLEARANCE)]),
+                 f"Seat {what} on '{names[below]}' (it hovered {gap:.3f} m above it)."))
+
+    for i, j, normal in _coplanar_pairs(parts):
+        size_i, size_j = np.prod(hi[i] - lo[i]), np.prod(hi[j] - lo[j])
+        small, big = (i, j) if size_i <= size_j else (j, i)
+        lines = movable({small})
+        if lines is None:
+            continue
+        for line in lines:
+            edits.setdefault(line, []).append(
+                (normal * PROUD, f"Move '{names[small]}' 5 mm proud of '{names[big]}' so they do not flicker."))
+
+    fixes = []
+    for line, changes in sorted(edits.items()):
+        original = source[line - 1]
+        delta = sum((d for d, _ in changes), np.zeros(3))
+        replacement = _shift_call(original, line, delta)
+        if replacement and replacement != original:
+            fixes.append({"line": line, "original": original, "replacement": replacement,
+                          "reason": " ".join(dict.fromkeys(r for _, r in changes))})
+    return fixes
+
+
+def _grounded(parts, lo, touching, skip=None):
+    """Parts that reach the ground through touching parts, avoiding `skip`."""
+    found = {k for k in range(len(parts)) if lo[k, 2] <= GROUNDED and k != skip}
+    frontier = list(found)
+    while frontier:
+        k = frontier.pop()
+        for j in np.where(touching[k])[0].tolist():
+            if j != skip and j not in found:
+                found.add(j)
+                frontier.append(j)
+    return found
+
+
+def _reachable(start, touching, outside):
+    """Parts reachable from `start` through touching parts not in `outside`."""
+    seen, frontier = set(), [start]
+    while frontier:
+        k = frontier.pop()
+        for j in np.where(touching[k])[0].tolist():
+            if j != start and j not in seen and j not in outside:
+                seen.add(j)
+                frontier.append(j)
+    return seen
+
+
+def _shift_call(text: str, line: int, delta: np.ndarray) -> str | None:
+    """The line with its box/cyl/pipe call's points moved by `delta`, or None
+    when the call is not a single-line call with plain numbers."""
+    try:
+        tree = ast.parse(text.strip())
+    except SyntaxError:
+        return None
+    indent = text[:len(text) - len(text.lstrip())]
+    calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call)
+             and isinstance(n.func, ast.Name) and n.func.id in ("box", "cyl", "pipe")]
+    if len(calls) != 1:
+        return None
+    call = calls[0]
+    kind = call.func.id
+    points = {"box": [1], "cyl": [1, 2], "pipe": [1]}[kind]
+    stripped = text.strip()
+    edits = []
+    for index in points:
+        if index >= len(call.args):
+            return None
+        node = call.args[index]
+        tuples = node.elts if (kind == "pipe" and isinstance(node, ast.List)) else [node]
+        for point in tuples:
+            if not isinstance(point, ast.Tuple) or len(point.elts) != 3:
+                return None
+            values = [_number(e) for e in point.elts]
+            if None in values:
+                return None
+            old = ast.get_source_segment(stripped, point)
+            style = old.strip("()").split(",")
+            new = "(" + ", ".join(_format(v + d, s.strip()) for v, d, s in zip(values, delta, style)) + ")"
+            edits.append((point.col_offset, point.end_col_offset, new))
+    for start, end, new in sorted(edits, reverse=True):
+        stripped = stripped[:start] + new + stripped[end:]
+    return indent + stripped
+
+
+def _number(node):
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+        return float(node.value)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+        inner = _number(node.operand)
+        return None if inner is None else -inner
+    return None
+
+
+def _format(value: float, like: str) -> str:
+    """A number written in the same style as the one it replaces (`.11`, not `0.110`)."""
+    text = f"{value:.4f}".rstrip("0").rstrip(".")
+    if text in ("-0", ""):
+        text = "0"
+    if like.lstrip("-").startswith("."):
+        text = text.replace("0.", ".", 1) if text.lstrip("-").startswith("0.") else text
+    return text
+
+
+# --------------------------------------------------------------------------- #
 
 
 def main(argv: list[str]) -> int:
@@ -346,7 +528,14 @@ def main(argv: list[str]) -> int:
     out = spec.parent / "out"
     out.mkdir(exist_ok=True)
     errors, warnings = check(a)
+    fixes = suggest(a)
     text = report(a, errors, warnings)
+    if fixes:
+        text += f"\nsuggested fixes {len(fixes)}\n" + "".join(
+            f"  - line {f['line']}: {f['reason']}\n    {f['replacement'].strip()}\n" for f in fixes)
+    spec_path = os.path.relpath(spec, Path.cwd())
+    (out / f"{a['id']}_fixes.json").write_text(
+        json.dumps({"spec": spec_path, "fixes": fixes}, indent=2))
     (out / f"{a['id']}_report.txt").write_text(text)
     render(a, out / f"{a['id']}_preview.png")
     if not any("unknown materials" in e for e in errors):

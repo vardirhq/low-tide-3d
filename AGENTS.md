@@ -21,6 +21,9 @@ build, check and preview loop.
   If you cannot run it, open a pull request with the spec: the *Asset preview*
   workflow builds it and comments with the preview and report.
 - Fix every error and warning in the report before calling an asset done.
+  Mechanical fixes come as suggested changes on the spec lines (in the
+  report's "suggested fixes" and, on a pull request, as review suggestions);
+  apply those as given and spend your effort on the rest.
 - Look at the preview image (or ask the person to share it) and revise.
 - Reuse existing assets as references; match their scale and detail density.
 - Use only palette materials. Do not invent colours or edit the palette.
