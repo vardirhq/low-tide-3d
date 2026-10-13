@@ -1,0 +1,39 @@
+name: Tidebreaker crane assets
+on:
+  pull_request:
+    paths:
+      - 'scripts/build_tidebreaker.py'
+      - 'Low_Tide_Kit/build_kit.py'
+      - '.github/workflows/tidebreaker.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install numpy scipy
+      - name: Generate modular crane GLBs
+        run: python scripts/build_tidebreaker.py
+      - name: Validate output
+        run: |
+          python - <<'PY'
+          import json, pathlib, struct
+          root = pathlib.Path('Low_Tide_Kit')
+          rig = json.loads((root / 'tidebreaker_rig.json').read_text())
+          assert len(rig['nodes']) == 6 and len(rig['outriggers']) == 4
+          for p in root.glob('modules/tidebreaker_*.glb'):
+              data = p.read_bytes()
+              assert data[:4] == b'glTF' and struct.unpack_from('<I', data, 8)[0] == len(data)
+              print(p, len(data))
+          assert len(list(root.glob('modules/tidebreaker_*.glb'))) == 7
+          PY
+      - run: python -m unittest discover -s tests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tidebreaker-modular-glbs
+          path: |
+            Low_Tide_Kit/modules/tidebreaker_*.glb
+            Low_Tide_Kit/tidebreaker_rig.json
