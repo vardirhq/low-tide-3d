@@ -7,6 +7,10 @@ on:
       - 'Low_Tide_Kit/build_kit.py'
       - '.github/workflows/tidebreaker.yml'
   workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -42,3 +46,37 @@ jobs:
             Low_Tide_Kit/tidebreaker_rig.json
             Low_Tide_Kit/tidebreaker_review.png
             Low_Tide_Kit/tidebreaker_review.json
+      - name: Publish assembled review to PR
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            dir="$RUNNER_TEMP/tidebreaker-previews"
+            rm -rf "$dir"
+            git worktree prune
+            if git fetch -q origin asset-previews; then
+              git worktree add -q --detach "$dir" FETCH_HEAD
+            else
+              git worktree add -q --detach "$dir"
+              (cd "$dir" && git checkout -q --orphan asset-previews && git rm -rfq . && git clean -fdq)
+            fi
+            mkdir -p "$dir/pr-$PR"
+            cp Low_Tide_Kit/tidebreaker_review.png "$dir/pr-$PR/tidebreaker_review.png"
+            (cd "$dir" && git add -A && { git diff --cached --quiet || git commit -qm "Tidebreaker preview for #$PR"; })
+            if (cd "$dir" && git push -q origin HEAD:refs/heads/asset-previews); then
+              sha=$(cd "$dir" && git rev-parse HEAD)
+              url="https://raw.githubusercontent.com/$REPO/$sha/pr-$PR/tidebreaker_review.png"
+              printf '### Tidebreaker assembled review\n\n![Tidebreaker crane](%s)\n\nSingle assembled inspection pose; seven modular GLBs remain separate for gameplay.\n' "$url" > "$RUNNER_TEMP/tidebreaker-comment.md"
+              gh pr comment "$PR" --repo "$REPO" --body-file "$RUNNER_TEMP/tidebreaker-comment.md"
+              exit 0
+            fi
+            git worktree remove --force "$dir" || true
+            sleep 5
+          done
+          echo "::error::Could not publish assembled crane preview"
+          exit 1
