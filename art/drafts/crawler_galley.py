@@ -16,7 +16,7 @@ box('storage_lip', (0, -.23, .115), (.95, .035, .05), 'rust', .008)
 box('upper_shelf', (0, .225, 1.16), (.87, .19, .04), 'woodlight', .008)
 # Detail
 for x in [-.35, -.14]:
-    cyl('control_knob', (x, -.29, .72), (x, -.315, .72), .031, 'gold', 10)
+    cyl('control_knob', (x, -.225, .72), (x, -.315, .72), .031, 'gold', 10)
 for x in [-.085, .405]:
     box('door_pull', (x, -.255, .47), (.018, .03, .12), 'gold', .004)
 cyl('kettle_body', (-.24, .19, 1.1805), (-.24, .19, 1.3305), .083, 'steel', 12)
