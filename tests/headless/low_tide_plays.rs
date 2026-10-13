@@ -357,7 +357,7 @@ fn a_phone_held_upright_plays_the_whole_loop_by_touch() {
     assert!(game.said("Engine repaired. The crawler is ready to travel."));
     assert!(!game.active("touch-action"));
 
-    // A drag on the right half turns the camera and leaves the Keeper put.
+    // The floorplan camera stays north-up when the right half is dragged,\n    // and the gesture must not move the Keeper.
     let here = game.at("explorer");
     let view = game.camera_yaw();
     let [w, h] = game.run.size;
@@ -369,7 +369,7 @@ fn a_phone_held_upright_plays_the_whole_loop_by_touch() {
     }
     game.run.input.apply(InputEvent::TouchEnded { id: 3 });
     game.steps(30);
-    assert!((game.camera_yaw() - view).abs() > 0.1, "a right-half drag orbits the camera");
+    assert!((game.camera_yaw() - view).abs() < 0.01, "the floorplan camera remains fixed on a right-half drag");
     let moved = game.at("explorer");
     assert!((moved[0] - here[0]).hypot(moved[2] - here[2]) < 0.05, "and does not walk");
 
