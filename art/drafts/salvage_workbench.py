@@ -11,9 +11,10 @@ box('vise_base', (-.38, -.19, .89), (.23, .19, .07), 'steel')
 box('vise_fixed_jaw', (-.38, -.275, .97), (.21, .055, .11), 'dark', .005)
 box('vise_moving_jaw', (-.38, -.105, .965), (.21, .055, .11), 'steel', .005)
 cyl('vise_screw', (-.38, -.14, .94), (-.38, .07, .94), .025, 'edge', 10)
+box('vise_screw_support', (-.38, .045, .895), (.065, .065, .075), 'steel', .006)
 pipe('vise_handle', [(-.48, .07, .94), (-.28, .07, .94)], .015, 'gold')
 box('sorting_bin_left', (.27, .05, .89), (.21, .27, .08), 'rust', .006)
-box('sorting_bin_right', (.495, .05, .895), (.18, .265, .075), 'steel', .006)
+box('sorting_bin_right', (.49, .055, .9), (.17, .25, .07), 'steel', .006)
 box('tool_rail', (0, .226, 1.29), (.98, .045, .045), 'edge')
 # Detail
 for x in [-.43, -.21, .02, .24]:
