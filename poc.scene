@@ -1392,7 +1392,7 @@
         "position": [
           -13.8,
           -0.42,
-          -17.0
+          -17
         ],
         "rotation": [
           0,
@@ -1520,7 +1520,7 @@
           "properties": {
             "cargo_name": "Battery pack",
             "destination_name": "Last Signal beacon",
-            "tide_seconds": 120.0
+            "tide_seconds": 120
           }
         }
       }
@@ -1626,6 +1626,90 @@
           ],
           "anchor": "center",
           "layer": 21
+        }
+      }
+    },
+    {
+      "id": "salvage-winch-display",
+      "name": "Abandoned heavy salvage winch",
+      "transform_3d": {
+        "position": [
+          11.8,
+          0,
+          -3.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/salvage_winch.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "water-pump-display",
+      "name": "Corroded station water pump",
+      "transform_3d": {
+        "position": [
+          10.8,
+          0,
+          -1.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/water_pump.glb",
+          "layer": 1
+        }
+      }
+    },
+    {
+      "id": "fuel-drum-display",
+      "name": "Old fuel drum beside station",
+      "transform_3d": {
+        "position": [
+          12.5,
+          0,
+          -1.6
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "components": {
+        "sindri.model": {
+          "asset": "art/salvage/modules/fuel_drum.glb",
+          "layer": 1
         }
       }
     }
