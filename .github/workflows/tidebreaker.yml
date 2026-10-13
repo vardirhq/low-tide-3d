@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'scripts/build_tidebreaker.py'
+      - 'scripts/review_tidebreaker.py'
       - 'Low_Tide_Kit/build_kit.py'
       - '.github/workflows/tidebreaker.yml'
   workflow_dispatch:
@@ -14,9 +15,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install numpy scipy
+      - run: python -m pip install numpy scipy pillow
       - name: Generate modular crane GLBs
         run: python scripts/build_tidebreaker.py
+      - name: Render assembled crane review sheet
+        run: python scripts/review_tidebreaker.py
       - name: Validate output
         run: |
           python - <<'PY'
@@ -37,3 +40,5 @@ jobs:
           path: |
             Low_Tide_Kit/modules/tidebreaker_*.glb
             Low_Tide_Kit/tidebreaker_rig.json
+            Low_Tide_Kit/tidebreaker_review.png
+            Low_Tide_Kit/tidebreaker_review.json
