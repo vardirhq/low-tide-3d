@@ -26,7 +26,10 @@ Requirements: Python 3 with `numpy`, `scipy` and `Pillow`.
 - **On GitHub:** add or edit a spec in `art/drafts/` from the GitHub app or
   website and open a pull request. The *Asset preview* workflow builds it
   and comments with the preview images (kept on the `asset-previews` branch)
-  and reports. Push a fix and it updates.
+  and reports. Push a fix and it updates. Problems with one right answer (a
+  part hovering just above what it stands on, a detail flush with its
+  surface) also arrive as **suggested changes** on the exact spec line:
+  commit them from the review.
 - **In ChatGPT:** upload `scripts/asset.py` and `Low_Tide_Kit/build_kit.py`
   (plus this guide) to a chat. ChatGPT's own Python sandbox can run
   `python3 asset.py <spec>.py` with the files side by side and show the

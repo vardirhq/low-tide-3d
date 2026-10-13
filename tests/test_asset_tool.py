@@ -27,6 +27,59 @@ class AssetToolChecks(unittest.TestCase):
             self.assertTrue((Path(tmp) / "preview.png").stat().st_size > 1000)
         return " ".join(errors), " ".join(warnings)
 
+    def suggestions(self, body):
+        """The fixes suggested for a spec, and the spec with them applied, rechecked."""
+        import sys
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import asset as tool
+        AssetToolChecks.count += 1
+        name = f"fix_{AssetToolChecks.count}"
+        with tempfile.TemporaryDirectory() as tmp:
+            spec = Path(tmp) / "spec.py"
+            spec.write_text(f"asset('{name}', [1, 1], 'test')\n" + body)
+            fixes = tool.suggest(tool.build(spec))
+            lines = spec.read_text().splitlines()
+            for fix in fixes:
+                self.assertEqual(lines[fix["line"] - 1], fix["original"])
+                lines[fix["line"] - 1] = fix["replacement"]
+            AssetToolChecks.count += 1
+            lines[0] = lines[0].replace(name, f"fix_{AssetToolChecks.count}")
+            spec.write_text("\n".join(lines) + "\n")
+            _, warnings = tool.check(tool.build(spec))
+        return fixes, warnings
+
+    def test_a_lone_hovering_part_gets_a_seating_suggestion(self):
+        fixes, after = self.suggestions(
+            "box('base', (0, 0, .055), (.8, .8, .11), 'rust')\n"
+            "box('crate', (0, 0, .34), (.4, .4, .4), 'wood')\n")
+        self.assertEqual(len(fixes), 1)
+        self.assertEqual(fixes[0]["line"], 3)
+        self.assertEqual(fixes[0]["replacement"], "box('crate', (0, 0, .3105), (.4, .4, .4), 'wood')")
+        self.assertEqual(after, [], "the fix clears the warning")
+
+    def test_a_part_joined_by_a_pipe_is_left_to_judgement(self):
+        fixes, _ = self.suggestions(
+            "box('base', (0, 0, .055), (.8, .8, .11), 'rust')\n"
+            "box('post', (.3, 0, .5), (.1, .1, .8), 'steel')\n"
+            "cyl('tank', (0, 0, .15), (0, 0, .7), .2, 'teal', 16)\n"
+            "pipe('feed', [(.2, 0, .5), (.25, 0, .5)], .02, 'edge')\n")
+        self.assertEqual(fixes, [])
+
+    def test_parts_made_in_a_loop_are_left_to_judgement(self):
+        fixes, _ = self.suggestions(
+            "box('base', (0, 0, .055), (.8, .8, .11), 'rust')\n"
+            "for x in [-.2, .2]:\n"
+            "    box('crate', (x, 0, .2), (.2, .2, .15), 'wood')\n")
+        self.assertEqual(fixes, [])
+
+    def test_a_flush_plate_is_moved_proud(self):
+        fixes, after = self.suggestions(
+            "box('body', (0, 0, .2), (.5, .5, .4), 'teal')\n"
+            "box('plate', (0, -.24, .2), (.2, .02, .1), 'cream')\n")
+        self.assertEqual([f["replacement"] for f in fixes],
+                         ["box('plate', (0, -.245, .2), (.2, .02, .1), 'cream')"])
+        self.assertEqual(after, [])
+
     def test_a_clean_asset_passes(self):
         errors, warnings = self.run_spec(
             "box('body', (0, 0, .2), (.5, .5, .4), 'teal')\n"
