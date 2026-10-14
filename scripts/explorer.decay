@@ -77,7 +77,7 @@ script Explorer {
             if this.aboard { print("Took the helm. Arrow keys or touch stick to drive."); }
             else { print("Left the helm. WASD to walk, Space to jump, E to interact, F at the helm to drive."); }
             World.send_signal(crawler, "toggle_helm", 1.0);
-            let camera = World.find("Overhead perspective camera");
+            let camera = World.find("Overhead orthographic camera");
             if camera != null { World.send_signal(camera, "toggle_follow", 1.0); }
         }
 

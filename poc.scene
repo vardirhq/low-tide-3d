@@ -1,7 +1,7 @@
 {
   "format_version": 10,
   "metadata": {
-    "name": "Low Tide 3D — The Last Signal (perspective overhead)"
+    "name": "Low Tide 3D — The Last Signal (orthographic overhead)"
   },
   "entities": [
     {
@@ -40,7 +40,7 @@
     },
     {
       "id": "camera",
-      "name": "Overhead perspective camera",
+      "name": "Overhead orthographic camera",
       "transform_3d": {
         "position": [
           0,
@@ -61,8 +61,8 @@
       },
       "components": {
         "sindri.camera": {
-          "projection": "perspective",
-          "vertical_fov_degrees": 35,
+          "projection": "orthographic",
+          "vertical_size": 18,
           "near": 0.1,
           "far": 120
         },
