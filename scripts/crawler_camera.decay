@@ -1,16 +1,13 @@
-// Floorplan experiment: a nearly vertical, north-up, orthographic camera.
-// Deliberately preserves follow toggle and movement input while disabling
-// free orbit so the view remains legible like the original top-down Low Tide.
+// Fixed north-up perspective overhead camera, wide while driving and close on foot.
 script CrawlerCamera {
     var following_explorer: bool = false;
 
     fn start() {
         let crawler = World.find("Astra starter crawler cutaway");
-        Camera.orbit(this.entity, crawler, 0.0, 1.55, 16.0);
+        Camera.perspective_fov(this.entity, 35.0);
+        Camera.orbit(this.entity, crawler, 0.0, 1.31, 21.0);
         Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
         Camera.orbit_smoothing(this.entity, 8.0);
-        // Do not use orbit_collision for an overhead view: tall scene
-        // geometry could otherwise push the camera into the crawler.
     }
 
     fn update(dt: f32) {
@@ -19,10 +16,10 @@ script CrawlerCamera {
         }
         if this.following_explorer {
             Camera.orbit_offset(this.entity, Vec3(0.0, 1.0, 0.0));
-            Camera.orbit(this.entity, World.find("Explorer"), 0.0, 1.55, 10.0);
+            Camera.orbit(this.entity, World.find("Explorer"), 0.0, 1.31, 12.0);
         } else {
             Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
-            Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), 0.0, 1.55, 16.0);
+            Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), 0.0, 1.31, 21.0);
         }
     }
 }
