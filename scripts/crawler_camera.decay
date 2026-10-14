@@ -1,25 +1,24 @@
-// North-up orthographic floorplan view. Follow the crawler while driving
-// and the Keeper on foot. The follow switch is sent by Explorer.
+// Fixed north-up orthographic camera. Only translate in WORLD space:
+// orbit tracking can inherit the crawler's yaw and rotate the whole view.
 script CrawlerCamera {
     var following_explorer: bool = false;
-
-    fn start() {
-        let crawler = World.find("Astra starter crawler cutaway");
-        Camera.orbit(this.entity, crawler, 0.0, 1.55, 16.0);
-        Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
-        Camera.orbit_smoothing(this.entity, 8.0);
-    }
+    var initialized: bool = false;
 
     fn update(dt: f32) {
         if World.take_signal("toggle_follow") > 0.0 {
             this.following_explorer = !this.following_explorer;
         }
-        if this.following_explorer {
-            Camera.orbit_offset(this.entity, Vec3(0.0, 1.0, 0.0));
-            Camera.orbit(this.entity, World.find("Explorer"), 0.0, 1.55, 10.0);
+        var target = World.find("Astra starter crawler cutaway");
+        if this.following_explorer { target = World.find("Explorer"); }
+        if target == null { return; }
+        let focus = target.transform.world_position;
+        let desired = Vec3(focus.x, focus.y + 18.0, focus.z);
+        if !this.initialized {
+            this.transform.world_position = desired;
+            this.initialized = true;
         } else {
-            Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
-            Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), 0.0, 1.55, 16.0);
+            let blend = min(1.0, 8.0 * dt);
+            this.transform.world_position += (desired - this.transform.world_position) * blend;
         }
     }
 }
