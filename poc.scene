@@ -1,7 +1,7 @@
 {
   "format_version": 10,
   "metadata": {
-    "name": "Low Tide 3D — The Last Signal (top-down floorplan experiment)"
+    "name": "Low Tide 3D — The Last Signal (perspective overhead)"
   },
   "entities": [
     {
@@ -40,7 +40,7 @@
     },
     {
       "id": "camera",
-      "name": "Overhead floorplan camera",
+      "name": "Overhead perspective camera",
       "transform_3d": {
         "position": [
           0,
@@ -61,8 +61,8 @@
       },
       "components": {
         "sindri.camera": {
-          "projection": "orthographic",
-          "vertical_size": 18,
+          "projection": "perspective",
+          "vertical_fov_degrees": 35,
           "near": 0.1,
           "far": 120
         },
