@@ -1,78 +1,28 @@
-// Third-person camera. A finger that lands on the right half of the screen
-// orbits it, alongside a left-thumb stick; that finger keeps ownership until
-// release. On desktop, hold the right mouse button and drag.
+// Floorplan experiment: a nearly vertical, north-up, orthographic camera.
+// Deliberately preserves follow toggle and movement input while disabling
+// free orbit so the view remains legible like the original top-down Low Tide.
 script CrawlerCamera {
     var following_explorer: bool = false;
-    var yaw: f32 = 0.0;
-    var pitch: f32 = 0.35;
-    var previous_x: f32 = 0.0;
-    var previous_y: f32 = 0.0;
-    var camera_finger: f32 = -1.0;
-    var previous_count: f32 = 0.0;
-    var screen_middle: f32 = 100000.0;
-    @export var sensitivity: f32 = 0.005;
 
     fn start() {
         let crawler = World.find("Astra starter crawler cutaway");
-        Camera.perspective_fov(this.entity, 65.0);
-        Camera.orbit(this.entity, crawler, yaw, pitch, 12.0);
+        Camera.orbit(this.entity, crawler, 0.0, 1.55, 16.0);
         Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
         Camera.orbit_smoothing(this.entity, 8.0);
-        // Pull in against the seabed and salvage model colliders.
-        Camera.orbit_collision(this.entity, 1.0, 0.25);
+        // Do not use orbit_collision for an overhead view: tall scene
+        // geometry could otherwise push the camera into the crawler.
     }
 
     fn update(dt: f32) {
-        if World.take_signal("toggle_follow") > 0.0 { this.following_explorer = !this.following_explorer; }
-        let count = Input.Touch.count;
-        if count == 0.0 {
-            this.camera_finger = -1.0;
-        } else {
-            // Moving and looking use different halves of the screen: only a
-            // finger that lands on the right half (off the buttons) turns the
-            // camera, first finger or not; the left half is the move stick.
-            if this.previous_count == 0.0 {
-                // The first finger is the pointer, which locates the screen's
-                // middle in the pixels Touch reports.
-                let rise = 1.0 - Input.Pointer.overlay_y;
-                if rise > 0.05 {
-                    let half_height = Input.Pointer.y / rise;
-                    this.screen_middle = Input.Pointer.x - Input.Pointer.overlay_x * half_height;
-                }
-            }
-            if count > this.previous_count && this.camera_finger < 0.0 {
-                let newest = count - 1.0;
-                let clear = newest > 0.0 || !Input.Pointer.over_ui;
-                if clear && Input.Touch.x(newest) > this.screen_middle {
-                    this.camera_finger = newest;
-                    this.previous_x = Input.Touch.x(newest);
-                    this.previous_y = Input.Touch.y(newest);
-                }
-            }
-            // If a finger disappears, reset ownership rather than jumping.
-            if count < this.previous_count { this.camera_finger = -1.0; }
-            if this.camera_finger >= 0.0 && this.camera_finger < count {
-                let x = Input.Touch.x(this.camera_finger);
-                let y = Input.Touch.y(this.camera_finger);
-                yaw -= (x - this.previous_x) * sensitivity;
-                pitch = clamp(pitch + (y - this.previous_y) * sensitivity, 0.18, 1.1);
-                this.previous_x = x;
-                this.previous_y = y;
-            }
+        if World.take_signal("toggle_follow") > 0.0 {
+            this.following_explorer = !this.following_explorer;
         }
-        this.previous_count = count;
-        if Input.Pointer.is_down("Right") && !Input.Pointer.over_ui {
-            let delta = Input.Pointer.delta;
-            yaw -= delta.x * sensitivity;
-            pitch = clamp(pitch + delta.y * sensitivity, 0.18, 1.1);
-        }
-        // Positive pitch keeps the orbit above the flat seabed reference.
         if this.following_explorer {
-            Camera.orbit_offset(this.entity, Vec3(0.0, 1.4, 0.0));
-            Camera.orbit(this.entity, World.find("Explorer"), yaw, pitch, 5.0);
+            Camera.orbit_offset(this.entity, Vec3(0.0, 1.0, 0.0));
+            Camera.orbit(this.entity, World.find("Explorer"), 0.0, 1.55, 10.0);
         } else {
             Camera.orbit_offset(this.entity, Vec3(0.0, 1.5, 0.0));
-            Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), yaw, pitch, 12.0);
+            Camera.orbit(this.entity, World.find("Astra starter crawler cutaway"), 0.0, 1.55, 16.0);
         }
     }
 }
