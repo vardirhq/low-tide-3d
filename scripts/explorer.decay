@@ -260,13 +260,9 @@ script Explorer {
         }
         let grounded = this.airborne < 0.1 && this.fall_speed >= 0.0;
 
-        // Movement is relative to where the camera looks, flattened onto the ground.
-        var ahead = Vec3(0.0, 0.0, -1.0);
-        let camera = World.find("Overhead perspective camera");
-        if camera != null {
-            let look = camera.transform.forward;
-            if abs(look.x) + abs(look.z) > 0.01 { ahead = Vec3(look.x, 0.0, look.z).normalized; }
-        }
+        // Floorplan controls use stable world axes. Sampling the nearly vertical
+        // camera forward vector makes walking direction unstable during follow.
+        let ahead = Vec3(0.0, 0.0, -1.0);
         let side = Vec3(-ahead.z, 0.0, ahead.x);
         var forward_input = Input.Keyboard.axis("S", "W");
         var side_input = Input.Keyboard.axis("A", "D");
